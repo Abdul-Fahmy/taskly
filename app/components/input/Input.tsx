@@ -8,9 +8,9 @@ export default function Input({
   placeholder?: string;
 }) {
   return (
-    <div>
+    <div className="w-full">
       <p>{label}</p>
-      <input className="input" type={type} placeholder={placeholder} />
+      <input className="input " type={type} placeholder={placeholder} />
     </div>
   );
 }
