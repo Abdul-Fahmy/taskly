@@ -90,7 +90,7 @@
   :focus {
     outline: none;
   }
-  :placeholder {
+  ::placeholder {
     color: #737685;
   }
 }

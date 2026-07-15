@@ -1,19 +1,29 @@
-import { SignupFormData } from "../schemas/signUpSchema";
+import { SignupRequest } from "../types/auth";
 
-export async function signup(data: SignupFormData) {
-  const response = await fetch("YOUR_API_URL", {
-    method: "POST",
+export async function signup(data: SignupRequest) {
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    headers: {
-      "Content-Type": "application/json",
+  if (!apiKey) {
+    throw new Error("Missing Supabase API key");
+  }
+  const response = await fetch(
+    "https://vfimoyyouwxofuyyvqsj.supabase.co/auth/v1/signup",
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      },
+
+      body: JSON.stringify(data),
     },
-
-    body: JSON.stringify(data),
-  });
+  );
+  const result = await response.json();
 
   if (!response.ok) {
-    throw new Error("Signup failed");
+    throw result;
   }
 
-  return response.json();
+  return result;
 }

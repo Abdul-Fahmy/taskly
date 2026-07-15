@@ -7,8 +7,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "@/app/schemas/signUpSchema";
 import { signup } from "@/app/serviecs/auth.services";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -18,12 +22,18 @@ export default function SignupPage() {
   });
 
   async function onSubmit(data: SignupFormData) {
-    try {
-      const response = await signup(data);
+    const { confirmPassword, ...payload } = data;
 
-      console.log(response);
+    try {
+      const response = await signup(payload);
+      if (response) {
+        router.push("/project");
+      }
     } catch (error) {
       console.error(error);
+      if (typeof error === "object" && error !== null && "msg" in error) {
+        setErrorMessage(error.msg as string);
+      }
     }
   }
 
@@ -41,20 +51,23 @@ export default function SignupPage() {
               type="text"
               placeholder="Enter your full name"
               {...register("data.name")}
+              error={errors.data?.name?.message}
             />
-            <p>{errors.data?.name?.message}</p>
+
             <Input
               label="Email"
               type="email"
               placeholder="yourname@company.com"
               {...register("email")}
+              error={errors.email?.message}
             />
-            <p>{errors.email?.message}</p>
+
             <Input
               label="Job title (optinal)"
               type="text"
               placeholder="e.g. Project Manager"
               {...register("data.job_title")}
+              error={errors.data?.job_title?.message}
             />
             <div className="flex  items-center  justify-between gap-4">
               <Input
@@ -62,12 +75,14 @@ export default function SignupPage() {
                 type="password"
                 placeholder="Password"
                 {...register("password")}
+                error={errors.password?.message}
               />
               <Input
                 label="Confirm Password"
                 type="password"
                 placeholder="Repeat your password"
                 {...register("confirmPassword")}
+                error={errors.confirmPassword?.message}
               />
             </div>
             <div className="hidden md:flex bg-[#E8EDFF] p-4 gap-2 mt-6">
@@ -78,9 +93,13 @@ export default function SignupPage() {
               </ul>
             </div>
             <Button
+              type="submit"
               displayText={isSubmitting ? "Loading..." : "Create Account"}
               disabled={isSubmitting}
             />
+            {errorMessage && (
+              <p className="text-red-500 text-sm">{errorMessage}</p>
+            )}
           </form>
           <div>
             <p className="text-neutral-700 text-sm ">
