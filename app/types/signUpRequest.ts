@@ -1,7 +1,7 @@
-export type SignupFormData = {
+export type SignUpRequest = {
   email: string;
   password: string;
-  confirmPassword: string;
+
   data: {
     name: string;
     job_title?: string;

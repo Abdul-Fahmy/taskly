@@ -1,18 +1,18 @@
 "use client";
+
 import Button from "@/app/components/button/Button";
 import Input from "@/app/components/input/Input";
-import { SignupFormData } from "@/app/types/signUpForm";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { SignupFormData, signupSchema } from "@/app/schemas/signUpSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema } from "@/app/schemas/signUpSchema";
-import { signup } from "@/app/serviecs/auth.services";
-import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function SignupPage() {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -22,30 +22,44 @@ export default function SignupPage() {
   });
 
   async function onSubmit(data: SignupFormData) {
-    const { confirmPassword, ...payload } = data;
+    setErrorMessage(null);
+
+    const payload = {
+      email: data.email,
+      password: data.password,
+      data: data.data,
+    };
 
     try {
-      const response = await signup(payload);
-      if (response) {
-        router.push("/project");
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(result.msg ?? "Signup failed");
+        return;
       }
-    } catch (error) {
-      console.error(error);
-      if (typeof error === "object" && error !== null && "msg" in error) {
-        setErrorMessage(error.msg as string);
-      }
+
+      router.push(result.hasSession ? "/project" : "/login");
+      router.refresh();
+    } catch {
+      setErrorMessage("Something went wrong. Please try again.");
     }
   }
 
   return (
     <section className="section">
-      <div className="container">
-        <div className="card flex flex-col gap-4 items-center justify-center py-12 w-3/4 m-auto">
+      <div className="mt-4">
+        <div className="bg-white rounded-lg shadow flex flex-col gap-4 items-center justify-center py-12 w-full md:w-3/4 m-auto">
           <h1 className="text-3xl font-semibold">Create your workspace</h1>
           <p className="text-neutral-700 text-sm font-normal">
             Join the editorial approach to task management.
           </p>
-          <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 space-y-4 ">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-3/4 space-y-4">
             <Input
               label="Full Name"
               type="text"
@@ -63,13 +77,14 @@ export default function SignupPage() {
             />
 
             <Input
-              label="Job title (optinal)"
+              label="Job title (optional)"
               type="text"
               placeholder="e.g. Project Manager"
               {...register("data.job_title")}
               error={errors.data?.job_title?.message}
             />
-            <div className="flex  items-center  justify-between gap-4">
+
+            <div className="flex-col md:flex-rowitems-center justify-between gap-4">
               <Input
                 label="Password"
                 type="password"
@@ -85,6 +100,7 @@ export default function SignupPage() {
                 error={errors.confirmPassword?.message}
               />
             </div>
+
             <div className="hidden md:flex bg-[#E8EDFF] p-4 gap-2 mt-6">
               <ul className="text-[11px] text-[#434654]">
                 <li>At least 8 characters</li>
@@ -92,19 +108,22 @@ export default function SignupPage() {
                 <li>One special character</li>
               </ul>
             </div>
+
             <Button
               type="submit"
               displayText={isSubmitting ? "Loading..." : "Create Account"}
               disabled={isSubmitting}
             />
+
             {errorMessage && (
               <p className="text-red-500 text-sm">{errorMessage}</p>
             )}
           </form>
+
           <div>
-            <p className="text-neutral-700 text-sm ">
+            <p className="text-neutral-700 text-sm">
               Already have an account?{" "}
-              <Link href="/log-in" className="text-primary font-semibold">
+              <Link href="/login" className="text-primary font-semibold">
                 Log in
               </Link>
             </p>

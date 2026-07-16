@@ -40,10 +40,6 @@
    Spacing
 =========================== */
 
-  --spacing-section: 8rem;
-  --spacing-content: 5rem;
-  --spacing-card: 2rem;
-
   /* ===========================
    Typography
 =========================== */
@@ -95,6 +91,9 @@
   }
 }
 @utility section {
+  padding-block: 5rem;
+}
+/* @utility section {
   padding-block: var(--spacing-section);
 }
 
@@ -107,8 +106,8 @@
 @utility card {
   background: white;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-}
+  box-shadow: var(--shadow-card); */
+/* } */
 
 @utility btn-primary {
   background: linear-gradient(

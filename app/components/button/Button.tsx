@@ -1,14 +1,17 @@
+import { ButtonHTMLAttributes } from "react";
+
+type ButtonProps = {
+  displayText: string;
+} & ButtonHTMLAttributes<HTMLButtonElement>;
+
 export default function Button({
   displayText,
   disabled,
-  type,
-}: {
-  displayText: string;
-  disabled?: boolean;
-  type?: "button" | "submit" | "reset";
-}) {
+  type = "button",
+  ...props
+}: ButtonProps) {
   return (
-    <button type={type} className="btn-primary" disabled={disabled}>
+    <button type={type} className="btn-primary" disabled={disabled} {...props}>
       {displayText}
     </button>
   );
