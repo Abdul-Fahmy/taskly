@@ -1,3 +1,11 @@
+export type AuthSession = {
+  access_token?: string;
+  refresh_token?: string;
+  expires_in?: number;
+  expires_at?: number;
+  token_type?: string;
+};
+
 export type AuthResponse = {
   access_token?: string;
   token_type?: string;
@@ -5,6 +13,7 @@ export type AuthResponse = {
   expires_at?: number;
   refresh_token?: string;
   user: User;
+  session?: AuthSession | null;
 };
 
 export type User = {
@@ -12,29 +21,29 @@ export type User = {
   aud: string;
   role: string;
   email: string;
-  email_confirmed_at: string;
-  phone: string;
-  last_sign_in_at: string;
+  email_confirmed_at?: string;
+  phone?: string;
+  last_sign_in_at?: string;
   app_metadata: AppMetadata;
   user_metadata: UserMetadata;
-  identities: Identity[];
+  identities?: Identity[];
   created_at: string;
   updated_at: string;
-  is_anonymous: boolean;
+  is_anonymous?: boolean;
 };
 
 export type AppMetadata = {
-  provider: string;
-  providers: string[];
+  provider?: string;
+  providers?: string[];
 };
 
 export type UserMetadata = {
-  email: string;
-  email_verified: boolean;
-  job_title: string;
-  name: string;
-  phone_verified: boolean;
-  sub: string;
+  email?: string;
+  email_verified?: boolean;
+  job_title?: string;
+  name?: string;
+  phone_verified?: boolean;
+  sub?: string;
 };
 
 export type Identity = {
@@ -50,10 +59,10 @@ export type Identity = {
 };
 
 export type IdentityData = {
-  email: string;
-  email_verified: boolean;
-  job_title: string;
-  name: string;
-  phone_verified: boolean;
-  sub: string;
+  email?: string;
+  email_verified?: boolean;
+  job_title?: string;
+  name?: string;
+  phone_verified?: boolean;
+  sub?: string;
 };

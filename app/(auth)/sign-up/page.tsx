@@ -2,7 +2,9 @@
 
 import Button from "@/app/components/button/Button";
 import Input from "@/app/components/input/Input";
+import { useAppDispatch } from "@/app/hooks/store.hooks";
 import { SignupFormData, signupSchema } from "@/app/schemas/signUpSchema";
+import { setUser } from "@/app/store/features/user.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,6 +13,7 @@ import { useForm } from "react-hook-form";
 
 export default function SignupPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
@@ -44,8 +47,17 @@ export default function SignupPage() {
         return;
       }
 
-      router.push(result.hasSession ? "/project" : "/login");
-      router.refresh();
+      if (result.hasSession && result.user) {
+        dispatch(setUser(result.user));
+        router.push("/project");
+        router.refresh();
+        return;
+      }
+
+      setErrorMessage(
+        "Account created. Please confirm your email, then log in.",
+      );
+      router.push("/login");
     } catch {
       setErrorMessage("Something went wrong. Please try again.");
     }

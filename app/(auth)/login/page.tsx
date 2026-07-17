@@ -2,7 +2,9 @@
 
 import Button from "@/app/components/button/Button";
 import Input from "@/app/components/input/Input";
+import { useAppDispatch } from "@/app/hooks/store.hooks";
 import { LoginFormData, loginSchema } from "@/app/schemas/signInSchema";
+import { setUser } from "@/app/store/features/user.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,6 +15,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -32,9 +35,15 @@ export default function LoginPage() {
         body: JSON.stringify({ ...data, rememberMe }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
         setErrorMessage("Invalid email or password");
         return;
+      }
+
+      if (result.user) {
+        dispatch(setUser(result.user));
       }
 
       router.push("/project");
@@ -46,8 +55,8 @@ export default function LoginPage() {
 
   return (
     <section className="section">
-      <div className="container">
-        <div className="card flex flex-col gap-4 items-center justify-center py-12 w-3/4 m-auto">
+      <div className="mt-4">
+        <div className="bg-white rounded-lg shadow flex flex-col gap-4 items-center justify-center py-12 w-full md:w-3/4 m-auto">
           <h1 className="text-3xl font-semibold">Welcome back</h1>
           <p className="text-neutral-700 text-sm font-normal">
             Log in to continue managing your tasks.

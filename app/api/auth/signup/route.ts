@@ -15,18 +15,24 @@ export async function POST(req: Request) {
     }
 
     const result = await signup({ email, password, data });
-    const hasSession = Boolean(result.access_token && result.refresh_token);
+
+    const accessToken =
+      result.access_token ?? result.session?.access_token;
+    const refreshToken =
+      result.refresh_token ?? result.session?.refresh_token;
+    const expiresIn = result.expires_in ?? result.session?.expires_in;
+    const hasSession = Boolean(accessToken && refreshToken);
 
     const response = NextResponse.json({
       user: result.user,
       hasSession,
     });
 
-    if (result.access_token && result.refresh_token) {
+    if (accessToken && refreshToken) {
       setAuthCookies(response, {
-        access_token: result.access_token,
-        refresh_token: result.refresh_token,
-        expires_in: result.expires_in,
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_in: expiresIn,
       });
     }
 
