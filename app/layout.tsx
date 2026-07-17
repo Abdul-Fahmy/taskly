@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import NavBar from "./components/navBar/NavBar";
-import SideBar from "./components/sideBar/SideBar";
 import "./globals.css";
 import ReduxProvider from "./components/reduxProvider/ReduxProvider";
+import SideBar from "./components/sideBar/SideBar";
 
 const inter = Inter({
   subsets: ["latin"],
