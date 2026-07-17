@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import NavBar from "./components/navBar/NavBar";
 import "./globals.css";
 import ReduxProvider from "./components/reduxProvider/ReduxProvider";
-import SideBar from "./components/sideBar/SideBar";
+import SideBar from "./components/SideBar/SideBar";
 
 const inter = Inter({
   subsets: ["latin"],
