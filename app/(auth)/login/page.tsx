@@ -6,6 +6,7 @@ import { useAppDispatch } from "@/app/hooks/store.hooks";
 import { LoginFormData, loginSchema } from "@/app/schemas/signInSchema";
 import { setUser } from "@/app/store/features/user.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -55,65 +56,89 @@ export default function LoginPage() {
 
   return (
     <section className="section">
-      <div className="mt-4">
-        <div className="bg-white rounded-lg shadow flex flex-col gap-4 items-center justify-center py-12 w-full md:w-3/4 m-auto">
-          <h1 className="text-3xl font-semibold">Welcome back</h1>
-          <p className="text-neutral-700 text-sm font-normal">
-            Log in to continue managing your tasks.
-          </p>
-          <form className="w-3/4 space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <Input
-              label="Email"
-              type="email"
-              placeholder="yourname@company.com"
-              {...register("email")}
-              error={errors.email?.message}
-            />
+      <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
+        <div className="ml-10 flex items-center gap-2">
+          <Image
+            src={"/Logo.svg"}
+            alt="Logo"
+            width={18}
+            height={20}
+            style={{ width: "18px", height: "20px" }}
+          />
+          <p className="font-bold text-xl ">Taskly</p>
+        </div>
+      </div>
 
+      <div className="bg-white shadow-card rounded-lg flex flex-col gap-4 items-center justify-center py-12 w-full md:max-w-[480px] m-auto">
+        <h1 className="text-3xl font-semibold">Welcome back</h1>
+        <p className="text-neutral-700 text-sm font-normal">
+          Log in to continue managing your tasks.
+        </p>
+        <form className="w-[384px] space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            label="Email"
+            type="email"
+            placeholder="yourname@company.com"
+            {...register("email")}
+            error={errors.email?.message}
+          />
+
+        
             <Input
-              label="Password"
+              label={
+                <div className="flex w-full items-center justify-between">
+                  <span>Password</span>
+                  <Link
+                    href="/forgot-password"
+                    className="text-primary font-bold text-[11px] md:hidden"
+                  >
+                    Forgot?
+                  </Link>
+                </div>
+              }
               type="password"
               placeholder="Password"
               {...register("password")}
               error={errors.password?.message}
             />
+          
 
-            {errorMessage && (
-              <p className="text-red-500 text-sm font-normal">{errorMessage}</p>
-            )}
+          {errorMessage && (
+            <p className="text-red-500 text-sm font-normal">{errorMessage}</p>
+          )}
 
-            <div className="flex items-center justify-between gap-4">
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                Remember me
-              </label>
+          <div className="flex items-center justify-between gap-4">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              Remember me
+            </label>
 
-              <button
-                type="button"
-                className="text-sm text-primary font-semibold"
-              >
-                Forgot password?
-              </button>
-            </div>
-
-            <Button
-              type="submit"
-              displayText={isSubmitting ? "Loading..." : "Login"}
-              disabled={isSubmitting}
-            />
-          </form>
-
-          <p className="text-neutral-700 text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="text-primary font-semibold">
-              Sign up
+            <Link
+            href={'/forgot-password'}
+              type="button"
+              className="text-sm text-primary font-semibold hidden md:block"
+            >
+              Forgot password?
             </Link>
-          </p>
-        </div>
+          </div>
+
+          <Button
+            type="submit"
+            displayText={isSubmitting ? "Loading..." : "Login"}
+            disabled={isSubmitting}
+          />
+        </form>
+
+        <p className="text-neutral-700 text-sm">
+          Don&apos;t have an account?{" "}
+          <Link href="/sign-up" className="text-primary font-semibold">
+            Sign up
+          </Link>
+        </p>
       </div>
     </section>
   );
