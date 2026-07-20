@@ -3,31 +3,34 @@
 import Button from "@/app/components/button/Button";
 import Input from "@/app/components/input/Input";
 import { useAppDispatch } from "@/app/hooks/store.hooks";
-import { passwordRules, SignupFormData, signupSchema } from "@/app/schemas/signUpSchema";
+import {
+  passwordRules,
+  SignupFormData,
+  signupSchema,
+} from "@/app/schemas/signUpSchema";
 import { setUser } from "@/app/store/features/user.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 export default function SignupPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
-    mode: 'onChange'
+    mode: "onChange",
   });
-  const password = watch("password");
+  const password = useWatch({ control, name: "password" });
 
   const passwordStatus = Object.values(passwordRules).map((rule) => ({
     message: rule.message,
@@ -76,17 +79,26 @@ export default function SignupPage() {
   return (
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
-        <div className="ml-10 flex items-center gap-2">
-          <Image src={'/Logo.svg'} alt="Logo" width={18} height={20} style={{ width: '18px', height: '20px' }} />
+        <Link href={"/"} className="ml-10 flex items-center gap-2">
+          <Image
+            src={"/Logo.svg"}
+            alt="Logo"
+            width={18}
+            height={20}
+            style={{ width: "18px", height: "20px" }}
+          />
           <p className="font-bold text-xl ">Taskly</p>
-        </div>
+        </Link>
       </div>
       <div className="bg-white rounded-lg shadow-card flex flex-col gap-4 items-center justify-center py-12 w-full md:max-w-[576px] m-auto">
         <h1 className="text-3xl font-semibold">Create your workspace</h1>
         <p className="text-neutral-700 text-sm font-normal">
           Join the editorial approach to task management.
         </p>
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-[480px] space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="max-w-[480px] space-y-4"
+        >
           <Input
             label="Full Name"
             type="text"
@@ -132,7 +144,23 @@ export default function SignupPage() {
               {passwordStatus.map((rule) => (
                 <li key={rule.message} className="flex items-center gap-2">
                   <span>
-                    {rule.valid ? <Image src={'/icons/checkedIcon.svg'} alt="check icon" width={12} height={12} style={{ width: '12px', height: '12px' }} /> : <Image src={'/icons/uncheckedIcon.svg'} alt="unchecked icon" width={12} height={12} style={{width:'12px', height:'12px'}}/>}
+                    {rule.valid ? (
+                      <Image
+                        src={"/icons/checkedIcon.svg"}
+                        alt="check icon"
+                        width={12}
+                        height={12}
+                        style={{ width: "12px", height: "12px" }}
+                      />
+                    ) : (
+                      <Image
+                        src={"/icons/uncheckedIcon.svg"}
+                        alt="unchecked icon"
+                        width={12}
+                        height={12}
+                        style={{ width: "12px", height: "12px" }}
+                      />
+                    )}
                   </span>
                   {rule.message}
                 </li>
@@ -160,7 +188,6 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
-
     </section>
   );
 }

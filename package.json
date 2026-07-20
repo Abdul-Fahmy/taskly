@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier . --write",
+    "lint:fix": "eslint . --fix",
+    "fix": "prettier . --write && eslint . --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
