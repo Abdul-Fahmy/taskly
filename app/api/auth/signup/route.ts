@@ -1,7 +1,7 @@
+import { getApiErrorMessage, getApiErrorStatus } from "@/app/lib/api";
 import { setAuthCookies } from "@/app/lib/auth-cookies";
 import { signup } from "@/app/services/auth.services";
 import { NextResponse } from "next/server";
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -38,22 +38,8 @@ export async function POST(req: Request) {
 
     return response;
   } catch (error) {
-    const message =
-      typeof error === "object" &&
-      error !== null &&
-      "msg" in error &&
-      typeof error.msg === "string"
-        ? error.msg
-        : "Signup failed";
-
-    const status =
-      typeof error === "object" &&
-      error !== null &&
-      "status" in error &&
-      typeof error.status === "number"
-        ? error.status
-        : 400;
-
-    return NextResponse.json({ msg: message }, { status });
-  }
-}
+    return NextResponse.json(
+      { msg: getApiErrorMessage(error, "Signup failed") },
+      { status: getApiErrorStatus(error, 400) },
+    );
+  }}

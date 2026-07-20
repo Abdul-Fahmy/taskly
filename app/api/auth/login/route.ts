@@ -1,3 +1,8 @@
+import {
+  getApiErrorMessage,
+  getApiErrorStatus,
+  isApiFetchError,
+} from "@/app/lib/api";
 import { setAuthCookies } from "@/app/lib/auth-cookies";
 import { login } from "@/app/services/auth.services";
 import { NextResponse } from "next/server";
@@ -37,10 +42,24 @@ export async function POST(req: Request) {
     );
 
     return response;
-  } catch {
-    return NextResponse.json(
-      { msg: "Invalid email or password" },
-      { status: 401 },
-    );
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ msg: error.message }, { status: 500 });
+    }
+
+    if (isApiFetchError(error)) {
+      const isAuthFailure = error.status === 400 || error.status === 401;
+
+      return NextResponse.json(
+        {
+          msg: isAuthFailure
+            ? "Invalid email or password"
+            : getApiErrorMessage(error, "Login failed"),
+        },
+        { status: isAuthFailure ? 401 : getApiErrorStatus(error, 500) },
+      );
+    }
+
+    return NextResponse.json({ msg: "Login failed" }, { status: 500 });
   }
 }
