@@ -8,6 +8,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const hash = window.location.hash.substring(1);
+    if (!hash) return
     if (hash) {
       const params = new URLSearchParams(hash);
       if (params.get("type") === "recovery" && params.get("access_token")) {

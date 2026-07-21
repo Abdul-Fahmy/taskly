@@ -104,7 +104,7 @@ export default function ResetPasswordPage() {
 
   return (
     <section className="section">
-      <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
+      <div className="fixed top-0 left-0 right-0 bg-white p-4">
         <Link href={"/"} className="ml-10 flex items-center gap-2">
           <Image
             src={"/Logo.svg"}
@@ -122,7 +122,7 @@ export default function ResetPasswordPage() {
           Create a new, strong password to secure your workstation access.
         </p>
         <form
-          className="min-w-[414px] space-y-4"
+          className="w-full md:min-w-[414px] space-y-4"
           onSubmit={handleSubmit(onSubmit)}
           noValidate
         >
@@ -151,9 +151,8 @@ export default function ResetPasswordPage() {
               {passwordStatus.map((rule) => (
                 <li
                   key={rule.message}
-                  className={`flex w-1/2 items-center gap-1 text-[13px] ${
-                    rule.valid ? "text-black" : "text-[#737685]"
-                  }`}
+                  className={`flex w-1/2 items-center gap-1 text-[13px] ${rule.valid ? "text-black" : "text-[#737685]"
+                    }`}
                 >
                   <span>
                     {rule.valid ? (
