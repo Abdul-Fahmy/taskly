@@ -8,11 +8,9 @@ export default function RecoveryHashRedirect() {
   const pathname = usePathname();
 
   useEffect(() => {
-    console.log("RecoveryHashRedirect mounted");
     if (typeof window === "undefined") return;
 
     const hash = window.location.hash.substring(1);
-    console.log("Hash:", hash);
     if (!hash) return;
 
     const params = new URLSearchParams(hash);
