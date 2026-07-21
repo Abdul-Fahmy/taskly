@@ -18,6 +18,7 @@ export default function NavBar() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user.user);
   const status = useAppSelector((state) => state.user.status);
+  const collapsed = useAppSelector((state) => state.sidebar.collapsed);
 
   useEffect(() => {
     if (status === "idle") {
@@ -30,20 +31,24 @@ export default function NavBar() {
   const initials = getInitials(name);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-10 py-4 px-2 bg-white border-b-2 border-[#F9F9FF]">
-      <div className="flex items-center justify-end gap-2">
-        <div className="flex-col items-start justify-center hidden md:flex">
+    <nav
+      className={`fixed top-0 right-0 z-20 h-20 border-b border-black/10 bg-white px-5 transition-[left] duration-300 ${
+        collapsed ? "left-20" : "left-64"
+      }`}
+    >
+      <div className="flex h-full items-center justify-end gap-2">
+        <div className="hidden flex-col items-start justify-center md:flex">
           <h3 className="text-sm font-bold">
             {status === "loading" ? "Loading..." : name}
           </h3>
           {jobTitle && (
-            <p className="text-xs text-primary font-bold uppercase">
+            <p className="text-xs font-bold uppercase text-primary">
               {jobTitle}
             </p>
           )}
         </div>
-        <div className="bg-primary-container w-10 h-10 rounded-md text-white flex items-center justify-center">
-          <span className="font-bold uppercase text-lg">{initials || "U"}</span>
+        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary-container text-white">
+          <span className="text-lg font-bold uppercase">{initials || "U"}</span>
         </div>
       </div>
     </nav>

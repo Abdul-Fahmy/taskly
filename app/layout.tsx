@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
-import NavBar from "./components/navBar/NavBar";
 import "./globals.css";
 import ReduxProvider from "./components/reduxProvider/ReduxProvider";
-import SideBar from "./components/SideBar/SideBar";
+import DashboardLayout from "./components/dashboardLayout/DashboardLayout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,6 +25,7 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const hasToken = Boolean(cookieStore.get("access_token")?.value);
+  
 
   return (
     <html
@@ -35,9 +35,10 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <ReduxProvider>
-          {hasToken && <NavBar />}
-          {hasToken && <SideBar />}
-          {children}
+          
+          <DashboardLayout hasToken={hasToken}>
+            {children}
+          </DashboardLayout>
         </ReduxProvider>
       </body>
     </html>

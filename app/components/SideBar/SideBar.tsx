@@ -4,32 +4,33 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAppDispatch } from "@/app/hooks/store.hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { clearUser } from "@/app/store/features/user.slice";
+import { toggle } from "@/app/store/features/sidebar.slice";
 
 const navItems = [
-  { label: "Projects", src: "/icons/folderIcon.png", width: 22, height: 16 },
+  { label: "Projects", src: "/icons/projectIcon.svg", width: 22, height: 16 },
   {
     label: "Project Epics",
-    src: "/icons/epicsIcon.png",
+    src: "/icons/epicIcon.svg",
     width: 20,
     height: 18,
   },
   {
     label: "Project Tasks",
-    src: "/icons/tasksIcon.png",
+    src: "/icons/tasksIcon.svg",
     width: 20,
     height: 16,
   },
   {
     label: "Project Members",
-    src: "/icons/membersIcon.png",
+    src: "/icons/membersIcon.svg",
     width: 22,
     height: 16,
   },
   {
     label: "Project Details",
-    src: "/icons/detailsIcon.png",
+    src: "/icons/detailIcon.svg",
     width: 20,
     height: 20,
   },
@@ -38,7 +39,7 @@ const navItems = [
 const footerItems = [
   {
     label: "Collapse",
-    src: "/icons/collapseIcon.png",
+    src: "/icons/collapseIcon.svg",
     width: 12,
     height: 20,
   },
@@ -48,8 +49,7 @@ export default function SideBar() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
+const isCollapsed = useAppSelector((state)=>state.sidebar.collapsed)
   async function handleLogout() {
     setIsLoggingOut(true);
 
@@ -65,8 +65,8 @@ export default function SideBar() {
 
   return (
     <aside
-      className={`fixed top-0 left-0 bottom-0 z-50 bg-surface-low transition-all duration-500 ${
-        isCollapsed ? "w-20" : "w-3xs"
+      className={`fixed left-0 top-0 z-30 h-screen border-r border-black/5 bg-surface-low transition-all duration-300 ${
+        isCollapsed ? "w-20" : "w-64"
       }`}
     >
       <section
@@ -74,7 +74,7 @@ export default function SideBar() {
       >
         <div className="flex items-center gap-2 px-6 h-20">
           <Image
-            src="/Logo.png"
+            src="/Logo.svg"
             alt="Taskly logo"
             width={18}
             height={20}
@@ -108,7 +108,7 @@ export default function SideBar() {
           <ul className="space-y-2">
             {footerItems.map((item) => (
               <li
-                onClick={() => setIsCollapsed(!isCollapsed)}
+                onClick={() => dispatch(toggle())}
                 key={item.label}
                 className="flex items-center gap-2 cursor-pointer"
               >
@@ -128,8 +128,8 @@ export default function SideBar() {
               onClick={handleLogout}
             >
               <Image
-                alt=""
-                src="/icons/logoutIcon.png"
+                alt="logout Icon"
+                src="/icons/logoutIcon.svg"
                 width={18}
                 height={18}
                 style={{ width: "auto", height: "auto" }}

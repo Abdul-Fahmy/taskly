@@ -5,6 +5,7 @@ type ButtonProps = {
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function Button({
+  children,
   displayText,
   disabled,
   type = "button",
@@ -12,7 +13,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button type={type} className="btn-primary" disabled={disabled} {...props}>
-      {displayText}
+      {children}{displayText}
     </button>
   );
 }
