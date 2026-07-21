@@ -16,6 +16,12 @@ const SUCCESS_MESSAGE =
   "If an account exists with this email, we’ve sent a password reset link.";
 const MAX_TRIALS = 3;
 const COOLDOWN_SECONDS = 5 * 60;
+const STORAGE_KEY = "taskly:forgot-password";
+
+type ForgotPasswordStorage = {
+  trials: number;
+  cooldownEndsAt: number | null;
+};
 
 function formatCountdown(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -25,31 +31,117 @@ function formatCountdown(totalSeconds: number) {
     .padStart(2, "0")}`;
 }
 
+function readStorage(): ForgotPasswordStorage | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw) as ForgotPasswordStorage;
+    if (
+      typeof parsed.trials !== "number" ||
+      (parsed.cooldownEndsAt !== null &&
+        typeof parsed.cooldownEndsAt !== "number")
+    ) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function writeStorage(data: ForgotPasswordStorage) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function getCooldownLeft(cooldownEndsAt: number | null) {
+  if (!cooldownEndsAt) return 0;
+  return Math.max(0, Math.ceil((cooldownEndsAt - Date.now()) / 1000));
+}
+
 export default function ForgotPasswordPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [trials, setTrials] = useState(0);
   const [cooldownLeft, setCooldownLeft] = useState(0);
+  const [cooldownEndsAt, setCooldownEndsAt] = useState<number | null>(null);
   const [isResending, setIsResending] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const {
     register,
     handleSubmit,
     getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
 
   useEffect(() => {
-    if (cooldownLeft <= 0) return;
+    const saved = readStorage();
+    if (saved) {
+      const remaining = getCooldownLeft(saved.cooldownEndsAt);
+      const endsAt = remaining > 0 ? saved.cooldownEndsAt : null;
 
-    const timer = window.setInterval(() => {
-      setCooldownLeft((prev) => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
+      setTrials(saved.trials);
+      setCooldownEndsAt(endsAt);
+      setCooldownLeft(remaining);
 
+     
+
+      if (saved.trials > 0) {
+        setSuccessMessage(SUCCESS_MESSAGE);
+      }
+
+      writeStorage({
+        trials: saved.trials,
+        cooldownEndsAt: endsAt,
+       
+      });
+    }
+
+    setReady(true);
+  }, [setValue]);
+
+  useEffect(() => {
+    if (!ready) return;
+
+    writeStorage({
+      trials,
+      cooldownEndsAt: cooldownLeft > 0 ? cooldownEndsAt : null,
+     
+    });
+  }, [ready, trials, cooldownEndsAt, cooldownLeft]);
+
+  
+  useEffect(() => {
+    if (!cooldownEndsAt) {
+      setCooldownLeft(0);
+      return;
+    }
+
+    const tick = () => {
+      const remaining = getCooldownLeft(cooldownEndsAt);
+      setCooldownLeft(remaining);
+      if (remaining <= 0) {
+        setCooldownEndsAt(null);
+      }
+    };
+
+    tick();
+    const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
-  }, [cooldownLeft]);
+  }, [cooldownEndsAt]);
+
+  function startCooldown( nextTrials: number) {
+    const endsAt = Date.now() + COOLDOWN_SECONDS * 1000;
+    setTrials(nextTrials);
+    setCooldownEndsAt(endsAt);
+    setCooldownLeft(COOLDOWN_SECONDS);
+    setSuccessMessage(SUCCESS_MESSAGE);
+  }
 
   async function sendResetLink(email: string) {
     const response = await fetch("/api/auth/forgotpassword", {
@@ -76,9 +168,7 @@ export default function ForgotPasswordPage() {
 
     try {
       await sendResetLink(data.email);
-      setTrials((prev) => prev + 1);
-      setCooldownLeft(COOLDOWN_SECONDS);
-      setSuccessMessage(SUCCESS_MESSAGE);
+      startCooldown( trials + 1);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -102,9 +192,7 @@ export default function ForgotPasswordPage() {
 
     try {
       await sendResetLink(email);
-      setTrials((prev) => prev + 1);
-      setCooldownLeft(COOLDOWN_SECONDS);
-      setSuccessMessage(SUCCESS_MESSAGE);
+      startCooldown(trials + 1);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -119,7 +207,8 @@ export default function ForgotPasswordPage() {
   const trialsLeft = Math.max(MAX_TRIALS - trials, 0);
   const canResend =
     trials > 0 && trials < MAX_TRIALS && cooldownLeft === 0 && !isResending;
-  const isSubmitDisabled = isSubmitting || trials > 0 || trials >= MAX_TRIALS;
+  const isSubmitDisabled =
+    !ready || isSubmitting || trials > 0 || trials >= MAX_TRIALS;
 
   return (
     <section className="section">
