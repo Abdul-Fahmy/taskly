@@ -47,7 +47,7 @@ export default function LoginPage() {
         dispatch(setUser(result.user));
       }
 
-      router.push("/project");
+      router.push("/projects");
       router.refresh();
     } catch {
       setErrorMessage("Something went wrong. Please try again.");

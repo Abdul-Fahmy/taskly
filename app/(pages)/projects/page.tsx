@@ -1,6 +1,6 @@
 "use client";
 
-export default function Project() {
+export default function Projects() {
   return (
     <section className="w-3/4 section mx-auto">
       <div className=" space-y-6">

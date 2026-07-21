@@ -18,7 +18,7 @@ export default function HomePage() {
 
     fetch("/api/user")
       .then((res) => {
-        router.replace(res.ok ? "/project" : "/login");
+        router.replace(res.ok ? "/projects" : "/login");
       })
       .catch(() => {
         router.replace("/login");

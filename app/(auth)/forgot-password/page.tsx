@@ -55,82 +55,79 @@ function writeStorage(data: ForgotPasswordStorage) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-function getCooldownLeft(cooldownEndsAt: number | null) {
-  if (!cooldownEndsAt) return 0;
-  return Math.max(0, Math.ceil((cooldownEndsAt - Date.now()) / 1000));
+function getStoredTrials() {
+  if (typeof window === "undefined") return 0;
+  return readStorage()?.trials ?? 0;
+}
+
+function getStoredCooldownEndsAt() {
+  if (typeof window === "undefined") return null;
+  return readStorage()?.cooldownEndsAt ?? null;
+}
+
+
+function beginCooldown(nextTrials: number) {
+  return {
+    trials: nextTrials,
+    cooldownEndsAt: Date.now() + COOLDOWN_SECONDS * 1000,
+    cooldownLeft: COOLDOWN_SECONDS,
+  };
+}
+
+function remainingFromEndsAt(endsAt: number, nowMs: number) {
+  return Math.max(0, Math.ceil((endsAt - nowMs) / 1000));
 }
 
 export default function ForgotPasswordPage() {
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(() =>
+    getStoredTrials() > 0 ? SUCCESS_MESSAGE : null,
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [trials, setTrials] = useState(0);
+  const [trials, setTrials] = useState(getStoredTrials);
   const [cooldownLeft, setCooldownLeft] = useState(0);
-  const [cooldownEndsAt, setCooldownEndsAt] = useState<number | null>(null);
+  const [cooldownEndsAt, setCooldownEndsAt] = useState<number | null>(
+    getStoredCooldownEndsAt,
+  );
   const [isResending, setIsResending] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [ready] = useState(() => typeof window !== "undefined");
 
   const {
     register,
     handleSubmit,
     getValues,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
 
   useEffect(() => {
-    const saved = readStorage();
-    if (saved) {
-      const remaining = getCooldownLeft(saved.cooldownEndsAt);
-      const endsAt = remaining > 0 ? saved.cooldownEndsAt : null;
-
-      setTrials(saved.trials);
-      setCooldownEndsAt(endsAt);
-      setCooldownLeft(remaining);
-
-
-
-      if (saved.trials > 0) {
-        setSuccessMessage(SUCCESS_MESSAGE);
-      }
-
-      writeStorage({
-        trials: saved.trials,
-        cooldownEndsAt: endsAt,
-
-      });
-    }
-
-    setReady(true);
-  }, [setValue]);
-
-  useEffect(() => {
-    if (!ready) return;
-
     writeStorage({
       trials,
       cooldownEndsAt: cooldownLeft > 0 ? cooldownEndsAt : null,
-
     });
-  }, [ready, trials, cooldownEndsAt, cooldownLeft]);
+  }, [trials, cooldownEndsAt, cooldownLeft]);
 
-
+ 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setCooldownLeft((prev) => (prev <= 1 ? 0 : prev - 1));
-    }, 1000);
+    if (!cooldownEndsAt) return;
 
-    return () => window.clearInterval(timer);
-  }, []);
+    const tick = () => {
+      const remaining = remainingFromEndsAt(cooldownEndsAt, Date.now());
+      setCooldownLeft(remaining);
 
-  function startCooldown(nextTrials: number) {
-    const endsAt = Date.now() + COOLDOWN_SECONDS * 1000;
-    setTrials(nextTrials);
-    setCooldownEndsAt(endsAt);
-    setCooldownLeft(COOLDOWN_SECONDS);
-    setSuccessMessage(SUCCESS_MESSAGE);
-  }
+      if (remaining <= 0) {
+        setCooldownEndsAt(null);
+      }
+    };
+
+    const immediate = window.setTimeout(tick, 0);
+    const timer = window.setInterval(tick, 1000);
+
+    return () => {
+      window.clearTimeout(immediate);
+      window.clearInterval(timer);
+    };
+  }, [cooldownEndsAt]);
 
   async function sendResetLink(email: string) {
     const response = await fetch("/api/auth/forgotpassword", {
@@ -164,7 +161,11 @@ export default function ForgotPasswordPage() {
 
     try {
       await sendResetLink(data.email);
-      startCooldown(trials + 1);
+      const next = beginCooldown(trials + 1);
+      setTrials(next.trials);
+      setCooldownEndsAt(next.cooldownEndsAt);
+      setCooldownLeft(next.cooldownLeft);
+      setSuccessMessage(SUCCESS_MESSAGE);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -188,7 +189,11 @@ export default function ForgotPasswordPage() {
 
     try {
       await sendResetLink(email);
-      startCooldown(trials + 1);
+      const next = beginCooldown(trials + 1);
+      setTrials(next.trials);
+      setCooldownEndsAt(next.cooldownEndsAt);
+      setCooldownLeft(next.cooldownLeft);
+      setSuccessMessage(SUCCESS_MESSAGE);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -209,7 +214,7 @@ export default function ForgotPasswordPage() {
   return (
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
-        <Link href={'/'} className="ml-10 flex items-center gap-2">
+        <Link href={"/"} className="ml-10 flex items-center gap-2">
           <Image
             src={"/Logo.svg"}
             alt="Logo"

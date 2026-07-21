@@ -62,7 +62,7 @@ export default function SignupPage() {
 
       if (result.hasSession && result.user) {
         dispatch(setUser(result.user));
-        router.push("/project");
+        router.push("/projects");
         router.refresh();
         return;
       }
