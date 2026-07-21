@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
       setCooldownEndsAt(endsAt);
       setCooldownLeft(remaining);
 
-     
+
 
       if (saved.trials > 0) {
         setSuccessMessage(SUCCESS_MESSAGE);
@@ -98,7 +98,7 @@ export default function ForgotPasswordPage() {
       writeStorage({
         trials: saved.trials,
         cooldownEndsAt: endsAt,
-       
+
       });
     }
 
@@ -111,31 +111,20 @@ export default function ForgotPasswordPage() {
     writeStorage({
       trials,
       cooldownEndsAt: cooldownLeft > 0 ? cooldownEndsAt : null,
-     
+
     });
   }, [ready, trials, cooldownEndsAt, cooldownLeft]);
 
-  
+
   useEffect(() => {
-    if (!cooldownEndsAt) {
-      setCooldownLeft(0);
-      return;
-    }
+    const timer = window.setInterval(() => {
+      setCooldownLeft((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
 
-    const tick = () => {
-      const remaining = getCooldownLeft(cooldownEndsAt);
-      setCooldownLeft(remaining);
-      if (remaining <= 0) {
-        setCooldownEndsAt(null);
-      }
-    };
-
-    tick();
-    const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
-  }, [cooldownEndsAt]);
+  }, []);
 
-  function startCooldown( nextTrials: number) {
+  function startCooldown(nextTrials: number) {
     const endsAt = Date.now() + COOLDOWN_SECONDS * 1000;
     setTrials(nextTrials);
     setCooldownEndsAt(endsAt);
@@ -166,9 +155,16 @@ export default function ForgotPasswordPage() {
       return;
     }
 
+    if (cooldownLeft > 0) {
+      setErrorMessage(
+        `Please wait ${formatCountdown(cooldownLeft)} before trying again.`,
+      );
+      return;
+    }
+
     try {
       await sendResetLink(data.email);
-      startCooldown( trials + 1);
+      startCooldown(trials + 1);
     } catch (error) {
       setErrorMessage(
         error instanceof Error
@@ -208,21 +204,21 @@ export default function ForgotPasswordPage() {
   const canResend =
     trials > 0 && trials < MAX_TRIALS && cooldownLeft === 0 && !isResending;
   const isSubmitDisabled =
-    !ready || isSubmitting || trials > 0 || trials >= MAX_TRIALS;
+    !ready || isSubmitting || cooldownLeft > 0 || trials >= MAX_TRIALS;
 
   return (
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
-        <div className="ml-10 flex items-center gap-2">
+        <Link href={'/'} className="ml-10 flex items-center gap-2">
           <Image
             src={"/Logo.svg"}
             alt="Logo"
             width={18}
             height={20}
-            style={{ width: "18px", height: "20px" }}
+            style={{ width: "auto", height: "20px" }}
           />
           <p className="font-bold text-xl uppercase">Taskly</p>
-        </div>
+        </Link>
       </div>
 
       <div className="bg-white shadow-card rounded-lg flex flex-col gap-6 items-center justify-center py-12 px-8 w-full md:max-w-[448px] m-auto">
