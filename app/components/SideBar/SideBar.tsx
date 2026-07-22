@@ -65,7 +65,7 @@ const isCollapsed = useAppSelector((state)=>state.sidebar.collapsed)
 
   return (
     <aside
-      className={`fixed left-0 top-0 z-30 h-screen border-r border-black/5 bg-surface-low transition-all duration-300 ${
+      className={`hidden md:block fixed left-0 top-0 z-30 h-screen border-r border-black/5 bg-surface-low transition-all duration-300 ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >

@@ -130,6 +130,7 @@ export default function LoginPage() {
             type="submit"
             displayText={isSubmitting ? "Loading..." : "Login"}
             disabled={isSubmitting}
+            className="w-full btn-primary"
           />
         </form>
 

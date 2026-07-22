@@ -3,7 +3,11 @@
 import Button from "@/app/components/button/Button";
 import Input from "@/app/components/input/Input";
 import { useAppDispatch } from "@/app/hooks/store.hooks";
-import { passwordRules, SignupFormData, signupSchema } from "@/app/schemas/signUpSchema";
+import {
+  passwordRules,
+  SignupFormData,
+  signupSchema,
+} from "@/app/schemas/signUpSchema";
 import { setUser } from "@/app/store/features/user.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -17,7 +21,6 @@ export default function SignupPage() {
   const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-
   const {
     register,
     handleSubmit,
@@ -25,7 +28,7 @@ export default function SignupPage() {
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
-    mode: 'onChange'
+    mode: "onChange",
   });
   const password = watch("password");
 
@@ -76,8 +79,14 @@ export default function SignupPage() {
   return (
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
-        <div className="ml-10 flex items-center gap-2">
-          <Image src={'/Logo.svg'} alt="Logo" width={18} height={20} style={{ width: '18px', height: '20px' }} />
+        <div className="md:ml-10 flex items-center gap-2">
+          <Image
+            src={"/Logo.svg"}
+            alt="Logo"
+            width={18}
+            height={20}
+            style={{ width: "18px", height: "20px" }}
+          />
           <p className="font-bold text-xl ">Taskly</p>
         </div>
       </div>
@@ -86,7 +95,10 @@ export default function SignupPage() {
         <p className="text-neutral-700 text-sm font-normal">
           Join the editorial approach to task management.
         </p>
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-[480px] space-y-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full p-4 md:p-0    md:max-w-[480px] space-y-4"
+        >
           <Input
             label="Full Name"
             type="text"
@@ -111,8 +123,9 @@ export default function SignupPage() {
             error={errors.data?.job_title?.message}
           />
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex w-full md:w-auto flex-col md:flex-row items-center justify-between gap-4">
             <Input
+            className="w-full md:w-auto"
               label="Password"
               type="password"
               placeholder="Password"
@@ -132,7 +145,23 @@ export default function SignupPage() {
               {passwordStatus.map((rule) => (
                 <li key={rule.message} className="flex items-center gap-2">
                   <span>
-                    {rule.valid ? <Image src={'/icons/checkedIcon.svg'} alt="check icon" width={12} height={12} style={{ width: '12px', height: '12px' }} /> : <Image src={'/icons/uncheckedIcon.svg'} alt="unchecked icon" width={12} height={12} style={{width:'12px', height:'12px'}}/>}
+                    {rule.valid ? (
+                      <Image
+                        src={"/icons/checkedIcon.svg"}
+                        alt="check icon"
+                        width={12}
+                        height={12}
+                        style={{ width: "12px", height: "12px" }}
+                      />
+                    ) : (
+                      <Image
+                        src={"/icons/uncheckedIcon.svg"}
+                        alt="unchecked icon"
+                        width={12}
+                        height={12}
+                        style={{ width: "12px", height: "12px" }}
+                      />
+                    )}
                   </span>
                   {rule.message}
                 </li>
@@ -144,6 +173,7 @@ export default function SignupPage() {
             type="submit"
             displayText={isSubmitting ? "Loading..." : "Create Account"}
             disabled={isSubmitting}
+            className="w-full btn-primary"
           />
 
           {errorMessage && (
@@ -160,7 +190,6 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
-
     </section>
   );
 }

@@ -27,7 +27,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputType = isPassword && showPassword ? "text" : type;
 
     return (
-      <div className="">
+      <div className="w-full">
         {label && <div >{label}</div>}
 
         <div className="relative">

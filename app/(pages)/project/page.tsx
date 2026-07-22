@@ -17,7 +17,16 @@ export default function Project() {
         </div>
         <Button onClick={()=>{
           router.push('/project/add')
-        }} displayText="Create New Project" className="flex items-center gap-2 btn-primary w-fit" >
+        }} displayText="Create New Project" className="hidden md:flex items-center gap-2 btn-primary w-fit " >
+          <Image src={'/icons/plusIcon.svg'} alt="plus Icon" width={11} height={11} style={{ width: '11px', height: '11px' }} />
+        </Button>
+      </div>
+
+
+      <div className="flex justify-end">
+      <Button onClick={()=>{
+          router.push('/project/add')
+        }} displayText="" className="flex md:hidden items-center gap-2 btn-primary w-fit " >
           <Image src={'/icons/plusIcon.svg'} alt="plus Icon" width={11} height={11} style={{ width: '11px', height: '11px' }} />
         </Button>
       </div>

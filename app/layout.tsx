@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import ReduxProvider from "./components/reduxProvider/ReduxProvider";
 import DashboardLayout from "./components/dashboardLayout/DashboardLayout";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default async function RootLayout({
           <DashboardLayout hasToken={hasToken}>
             {children}
           </DashboardLayout>
+          <Toaster />
         </ReduxProvider>
       </body>
     </html>

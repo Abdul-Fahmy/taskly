@@ -23,11 +23,11 @@ export default function DashboardLayout({
 
       <div
         className={`min-h-screen transition-[margin] duration-300 ${
-          collapsed ? "ml-20" : "ml-64"
+          collapsed ? "md:ml-20" : "md:ml-64"
         }`}
       >
         <NavBar />
-        <main className="min-h-[calc(100vh-5rem)] pt-20 p-4">{children}</main>
+        <main className="min-h-[calc(100vh-5rem)] pt-20 md:px-4">{children}</main>
       </div>
     </div>
   );
