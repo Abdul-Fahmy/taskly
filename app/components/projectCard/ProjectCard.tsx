@@ -10,7 +10,7 @@ export default function ProjectCard({project}:{project:Project}){
       };
 
     return(
-        <div className="w-full rounded-md bg-white p-4 flex flex-col justify-center items-start gap-4">
+        <div className="w-full rounded-md bg-white p-4 flex flex-col justify-between items-start gap-4 h-[220px]">
             <h1 className="font-medium text-[18px]">{project.name}</h1>
             <p className="text-[14px] text-[#434654] ">{project.description}</p>
             <div className="flex items-center justify-between w-full">

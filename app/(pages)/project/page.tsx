@@ -63,8 +63,9 @@ export default function Project() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4 pb-6 ">
             {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
+<Link href={`/project/${project.id}/epics`} key={project.id}>
+<ProjectCard  project={project} />
+</Link>            ))}
             <Link
               href={"/project/add"}
               className="hidden md:flex flex-col w-full items-center justify-center gap-2"
