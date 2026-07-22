@@ -3,6 +3,7 @@
 import { useAppSelector } from "@/app/hooks/store.hooks";
 import SideBar from "../SideBar/SideBar";
 import NavBar from "../navBar/NavBar";
+import Footer from "../footer/Footer";
 
 export default function DashboardLayout({
   children,
@@ -27,7 +28,10 @@ export default function DashboardLayout({
         }`}
       >
         <NavBar />
-        <main className="min-h-[calc(100vh-5rem)] pt-20 md:px-4">{children}</main>
+        
+        <main className="min-h-[calc(100vh-5rem)] pt-20 md:px-4">{children}
+          <Footer />
+        </main>
       </div>
     </div>
   );
