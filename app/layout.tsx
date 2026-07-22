@@ -5,6 +5,7 @@ import NavBar from "./components/navBar/NavBar";
 import "./globals.css";
 import ReduxProvider from "./components/reduxProvider/ReduxProvider";
 import SideBar from "./components/SideBar/SideBar";
+import RecoveryHashRedirect from "./components/RecoveryHashRedirect";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,9 +15,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Taskly",
   description: "Editorial task management for focused teams.",
-  icons:{
-    icon:'/Logo.svg'
-  }
+  icons: {
+    icon: "/Logo.svg",
+  },
 };
 
 export default async function RootLayout({
@@ -35,6 +36,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <ReduxProvider>
+          <RecoveryHashRedirect />
           {hasToken && <NavBar />}
           {hasToken && <SideBar />}
           {children}

@@ -3,6 +3,8 @@ import { LoginForm } from "../types/loginForm";
 import { SignUpRequest } from "../types/signUpRequest";
 import { cookies } from "next/headers";
 import { apiFetch } from "../lib/api";
+import { ForgotPasswordForm } from "../types/forgotPasswordForm";
+import { ResetPasswordForm } from "../types/resetPasswordForm";
 
 function getSupabaseConfig() {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -30,6 +32,25 @@ export async function login(data: LoginForm): Promise<AuthResponse> {
     `${baseUrl}/auth/v1/token?grant_type=password`,
     { method: "POST", body: data },
   );
+}
+
+export async function forgotPassword(data: ForgotPasswordForm) {
+  const { baseUrl } = getSupabaseConfig();
+
+  return apiFetch(`${baseUrl}/auth/v1/recover`, {
+    method: "POST",
+    body: data,
+  });
+}
+
+export async function resetPassword(data: ResetPasswordForm) {
+  const { baseUrl } = getSupabaseConfig();
+
+  return apiFetch(`${baseUrl}/auth/v1/user`, {
+    method: "PUT",
+    token: data.access_token,
+    body: { password: data.password },
+  });
 }
 
 export async function getUser(): Promise<User> {

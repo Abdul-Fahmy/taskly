@@ -47,7 +47,7 @@ export default function LoginPage() {
         dispatch(setUser(result.user));
       }
 
-      router.push("/project");
+      router.push("/projects");
       router.refresh();
     } catch {
       setErrorMessage("Something went wrong. Please try again.");
@@ -57,7 +57,7 @@ export default function LoginPage() {
   return (
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
-        <div className="ml-10 flex items-center gap-2">
+        <Link href={"/"} className="ml-10 flex items-center gap-2">
           <Image
             src={"/Logo.svg"}
             alt="Logo"
@@ -66,7 +66,7 @@ export default function LoginPage() {
             style={{ width: "18px", height: "20px" }}
           />
           <p className="font-bold text-xl ">Taskly</p>
-        </div>
+        </Link>
       </div>
 
       <div className="bg-white shadow-card rounded-lg flex flex-col gap-4 items-center justify-center py-12 w-full md:max-w-[480px] m-auto">
@@ -83,25 +83,23 @@ export default function LoginPage() {
             error={errors.email?.message}
           />
 
-        
-            <Input
-              label={
-                <div className="flex w-full items-center justify-between">
-                  <span>Password</span>
-                  <Link
-                    href="/forgot-password"
-                    className="text-primary font-bold text-[11px] md:hidden"
-                  >
-                    Forgot?
-                  </Link>
-                </div>
-              }
-              type="password"
-              placeholder="Password"
-              {...register("password")}
-              error={errors.password?.message}
-            />
-          
+          <Input
+            label={
+              <div className="flex w-full items-center justify-between">
+                <span>Password</span>
+                <Link
+                  href="/forgot-password"
+                  className="text-primary font-bold text-[11px] md:hidden"
+                >
+                  Forgot?
+                </Link>
+              </div>
+            }
+            type="password"
+            placeholder="Password"
+            {...register("password")}
+            error={errors.password?.message}
+          />
 
           {errorMessage && (
             <p className="text-red-500 text-sm font-normal">{errorMessage}</p>
@@ -118,7 +116,7 @@ export default function LoginPage() {
             </label>
 
             <Link
-            href={'/forgot-password'}
+              href={"/forgot-password"}
               type="button"
               className="text-sm text-primary font-semibold hidden md:block"
             >
