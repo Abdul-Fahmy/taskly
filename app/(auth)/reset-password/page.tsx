@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const SUCCESS_MESSAGE =
   "Your password has been updated successfully. You can now log in";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const accessToken = searchParams.get("access_token");
@@ -62,10 +62,12 @@ export default function ResetPasswordPage() {
     try {
       const response = await fetch("/api/auth/resetpassword", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({
           password: data.password,
-          access_token: accessToken,
         }),
       });
 
@@ -146,13 +148,14 @@ export default function ResetPasswordPage() {
           </div>
           <p>Security Requirements</p>
 
-          <div className="flex bg-[#E8EDFF] p-3 mt-6 min-w-[414px]">
+          <div className="flex bg-[#E8EDFF] p-3 mt-6 w-full md:min-w-[414px]">
             <ul className="text-[11px] space-y-2 w-full flex flex-wrap">
               {passwordStatus.map((rule) => (
                 <li
                   key={rule.message}
-                  className={`flex w-1/2 items-center gap-1 text-[13px] ${rule.valid ? "text-black" : "text-[#737685]"
-                    }`}
+                  className={`flex w-1/2 items-center gap-1 text-[13px] ${
+                    rule.valid ? "text-black" : "text-[#737685]"
+                  }`}
                 >
                   <span>
                     {rule.valid ? (
@@ -189,6 +192,7 @@ export default function ResetPasswordPage() {
             type="submit"
             displayText={isSubmitting ? "Loading..." : "Update password"}
             disabled={isSubmitting || Boolean(successMessage)}
+            className="w-full btn-primary"
           />
 
           {errorMessage && (
@@ -204,5 +208,19 @@ export default function ResetPasswordPage() {
         </Link>
       </div>
     </section>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center text-neutral-700">
+          Loading...
+        </div>
+      }
+    >
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

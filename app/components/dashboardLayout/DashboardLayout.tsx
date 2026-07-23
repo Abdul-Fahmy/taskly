@@ -28,8 +28,9 @@ export default function DashboardLayout({
         }`}
       >
         <NavBar />
-        
-        <main className="min-h-[calc(100vh-5rem)] pt-20 md:px-4">{children}
+
+        <main className="min-h-[calc(100vh-5rem)] pt-20 md:px-4">
+          {children}
           <Footer />
         </main>
       </div>

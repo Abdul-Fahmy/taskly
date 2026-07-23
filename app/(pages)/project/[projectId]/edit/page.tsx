@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 
 const breadcrumbMap: Record<string, string> = {
   project: "Projects",
-  projectId:'Project Title',
+  projectId: "Project Title",
 
   edit: "Edit",
 };
@@ -22,8 +22,10 @@ const breadcrumbMap: Record<string, string> = {
 export default function EditPage() {
   const pathname = usePathname();
   const router = useRouter();
-const {projectId} = useParams();
-const project = useAppSelector((state)=> state.project.projects.find((project)=> project.id === projectId))
+  const { projectId } = useParams();
+  const project = useAppSelector((state) =>
+    state.project.projects.find((project) => project.id === projectId),
+  );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const breadcrumbs = pathname
@@ -38,9 +40,9 @@ const project = useAppSelector((state)=> state.project.projects.find((project)=>
     control,
     formState: { errors, isSubmitting },
   } = useForm<projectFormData>({
-    values:{
-        name:project?.name ||'',
-        description:project?.description ||''
+    values: {
+      name: project?.name || "",
+      description: project?.description || "",
     },
     resolver: zodResolver(projectSchema),
     mode: "onChange",
@@ -49,7 +51,7 @@ const project = useAppSelector((state)=> state.project.projects.find((project)=>
 
   async function onSubmit(data: projectFormData) {
     setErrorMsg(null);
-    let toastId = toast.loading("Creating project...");
+    const toastId = toast.loading("Creating project...");
 
     try {
       const response = await fetch(`/api/project/${projectId}/editproject`, {
@@ -77,7 +79,7 @@ const project = useAppSelector((state)=> state.project.projects.find((project)=>
     } finally {
       setTimeout(() => {
         toast.dismiss(toastId);
-        router.push('/project')
+        router.push("/project");
       }, 2000);
     }
   }
@@ -188,7 +190,7 @@ const project = useAppSelector((state)=> state.project.projects.find((project)=>
 
           <div className="mt-[60px] pb-8 flex items-center justify-between">
             <Link
-              href={'/project'}
+              href={"/project"}
               className="font-bold text-[14px] text-[#4F5F7B] py-3 px-4 "
             >
               Back

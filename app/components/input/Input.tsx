@@ -33,7 +33,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-fullw-full">
-        {label && <div >{label}</div>}
+        {label && <div>{label}</div>}
 
         <div className="relative">
           <input

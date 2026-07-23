@@ -27,7 +27,6 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const hasToken = Boolean(cookieStore.get("access_token")?.value);
-  
 
   return (
     <html
@@ -38,10 +37,8 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <ReduxProvider>
           <RecoveryHashRedirect />
-          
-          <DashboardLayout hasToken={hasToken}>
-            {children}
-          </DashboardLayout>
+
+          <DashboardLayout hasToken={hasToken}>{children}</DashboardLayout>
           <Toaster />
         </ReduxProvider>
       </body>

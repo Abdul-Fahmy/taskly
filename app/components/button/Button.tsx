@@ -9,11 +9,18 @@ export default function Button({
   displayText,
   disabled,
   type = "button",
+  className,
   ...props
 }: ButtonProps) {
   return (
-    <button type={type} className="btn-primary" disabled={disabled} {...props}>
-      {children}{displayText}
+    <button
+      type={type}
+      className={["btn-primary", className].filter(Boolean).join(" ")}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+      {displayText}
     </button>
   );
 }

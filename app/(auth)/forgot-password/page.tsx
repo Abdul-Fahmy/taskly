@@ -65,7 +65,6 @@ function getStoredCooldownEndsAt() {
   return readStorage()?.cooldownEndsAt ?? null;
 }
 
-
 function beginCooldown(nextTrials: number) {
   return {
     trials: nextTrials,
@@ -107,7 +106,6 @@ export default function ForgotPasswordPage() {
     });
   }, [trials, cooldownEndsAt, cooldownLeft]);
 
- 
   useEffect(() => {
     if (!cooldownEndsAt) return;
 

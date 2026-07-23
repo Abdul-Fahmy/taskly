@@ -1,10 +1,25 @@
+"use client";
 
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default async function HomePage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access_token")?.value;
+export default function HomePage() {
+  const router = useRouter();
 
-  redirect(token ? "/project" : "/login");
+  useEffect(() => {
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      const params = new URLSearchParams(hash);
+      if (params.get("type") === "recovery" && params.get("access_token")) {
+        router.replace(`/reset-password?${hash}`);
+        return;
+      }
+    }
+
+    void fetch("/api/user")
+      .then((res) => router.replace(res.ok ? "/project" : "/login"))
+      .catch(() => router.replace("/login"));
+  }, [router]);
+
+  return null;
 }

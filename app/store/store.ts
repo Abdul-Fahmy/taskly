@@ -7,7 +7,7 @@ export const store = configureStore({
   reducer: {
     user: userReducer,
     sidebar: sidebarReducer,
-    project: projectReducer
+    project: projectReducer,
   },
 });
 

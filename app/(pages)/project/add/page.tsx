@@ -6,7 +6,7 @@ import { projectFormData, projectSchema } from "@/app/schemas/addProjectSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -18,6 +18,7 @@ const breadcrumbMap: Record<string, string> = {
 
 export default function AddProject() {
   const pathname = usePathname();
+  const router = useRouter();
   const previousPage =
     pathname.substring(0, pathname.lastIndexOf("/")) || "/project";
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -41,7 +42,7 @@ export default function AddProject() {
 
   async function onSubmit(data: projectFormData) {
     setErrorMsg(null);
-    let toastId = toast.loading("Creating project...");
+    const toastId = toast.loading("Creating project...");
 
     try {
       const response = await fetch("/api/addproject", {
@@ -58,6 +59,8 @@ export default function AddProject() {
       }
       reset({ name: "", description: "" });
       toast.success("Project created successfully", { id: toastId });
+      router.push("/project");
+      router.refresh();
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "An unknown error occurred",
@@ -98,7 +101,7 @@ export default function AddProject() {
 
       <div className="w-full md:w-[672px] bg-white rounded-md shadow-[0_1px_2px_0_#0000000D] mx-auto ">
         <div className="p-8 flex items-center justify-start gap-4">
-          <div className="hidden md:blockp-3 h-auto rounded-md bg-[#0052CC1A]">
+          <div className="hidden md:block p-3 h-auto rounded-md bg-[#0052CC1A]">
             <Image
               src={"/icons/icon.svg"}
               alt="icon"

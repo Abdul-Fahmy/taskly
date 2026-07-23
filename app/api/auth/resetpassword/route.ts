@@ -2,9 +2,18 @@ import { getApiErrorMessage, getApiErrorStatus } from "@/app/lib/api";
 import { resetPassword } from "@/app/services/auth.services";
 import { NextResponse } from "next/server";
 
+function getBearerToken(req: Request) {
+  const authorization = req.headers.get("authorization");
+  if (!authorization?.startsWith("Bearer ")) return null;
+  const token = authorization.slice("Bearer ".length).trim();
+  return token || null;
+}
+
 export async function PUT(req: Request) {
   try {
-    const { password, access_token } = await req.json();
+    const body = await req.json();
+    const password = body?.password;
+    const access_token = getBearerToken(req) ?? body?.access_token;
 
     if (!password || typeof password !== "string") {
       return NextResponse.json(

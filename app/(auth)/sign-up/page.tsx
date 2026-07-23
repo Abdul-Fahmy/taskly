@@ -3,11 +3,7 @@
 import Button from "@/app/components/button/Button";
 import Input from "@/app/components/input/Input";
 import { useAppDispatch } from "@/app/hooks/store.hooks";
-import {
-  passwordRules,
-  SignupFormData,
-  signupSchema,
-} from "@/app/schemas/signUpSchema";
+
 import {
   passwordRules,
   SignupFormData,
@@ -33,7 +29,6 @@ export default function SignupPage() {
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
-    mode: "onChange",
     mode: "onChange",
   });
   const password = useWatch({ control, name: "password" });
@@ -68,7 +63,7 @@ export default function SignupPage() {
 
       if (result.hasSession && result.user) {
         dispatch(setUser(result.user));
-        router.push("/projects");
+        router.push("/project");
         router.refresh();
         return;
       }
@@ -131,7 +126,7 @@ export default function SignupPage() {
 
           <div className="flex w-full md:w-auto flex-col md:flex-row items-center justify-between gap-4">
             <Input
-            className="w-full md:w-auto"
+              className="w-full md:w-auto"
               label="Password"
               type="password"
               placeholder="Password"

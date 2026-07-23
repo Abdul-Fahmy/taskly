@@ -1,46 +1,24 @@
 import { z } from "zod";
+import { passwordRules } from "./signUpSchema";
 
-export const passwordRules = {
-  length: {
-    regex: /^.{8,64}$/,
-    message: "8 and 64 characters.",
-  },
-  uppercase: {
-    regex: /[A-Z]/,
-    message: "uppercase letter.",
-  },
-  lowercase: {
-    regex: /[a-z]/,
-    message: "lowercase letter.",
-  },
-  digit: {
-    regex: /\d/,
-    message: "one digit.",
-  },
-  specialCharacter: {
-    regex: /[!@#$%^&*(),.?":{}|<>_\-+=/\\[\]';`~]/,
-    message: "special character.",
-  },
-};
+export { passwordRules };
+
 export const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .refine((value) => passwordRules.length.regex.test(value), {
-        message: passwordRules.length.message,
-      })
-      .refine((value) => passwordRules.uppercase.regex.test(value), {
-        message: passwordRules.uppercase.message,
-      })
-      .refine((value) => passwordRules.lowercase.regex.test(value), {
-        message: passwordRules.lowercase.message,
-      })
-      .refine((value) => passwordRules.digit.regex.test(value), {
-        message: passwordRules.digit.message,
-      })
-      .refine((value) => passwordRules.specialCharacter.regex.test(value), {
-        message: passwordRules.specialCharacter.message,
-      }),
+      .refine(
+        (value) => passwordRules.minLength.regex.test(value),
+        passwordRules.minLength.message,
+      )
+      .refine(
+        (value) => passwordRules.characters.regex.test(value),
+        passwordRules.characters.message,
+      )
+      .refine(
+        (value) => passwordRules.specialCharacter.regex.test(value),
+        passwordRules.specialCharacter.message,
+      ),
 
     confirmPassword: z
       .string()

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getProjects } from "@/app/services/project.services";
 
-
 export async function GET() {
   const token = (await cookies()).get("access_token")?.value;
 

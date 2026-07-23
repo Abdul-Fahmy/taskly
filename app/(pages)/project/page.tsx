@@ -1,6 +1,5 @@
 "use client";
 
-<<<<<<< HEAD:app/(pages)/project/page.tsx
 import Button from "@/app/components/button/Button";
 import ProjectCardSkeleton from "@/app/components/cardSkeleton/CardSkeleton";
 import ProjectCard from "@/app/components/projectCard/ProjectCard";
@@ -27,21 +26,14 @@ export default function Project() {
           {Array.from({ length: 6 }).map((_, index) => (
             <ProjectCardSkeleton key={index} />
           ))}
-=======
-export default function Projects() {
-  return (
-    <section className="w-3/4 section mx-auto">
-      <div className=" space-y-6">
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-semibold">Projects</h1>
->>>>>>> 66659ddf60b522511cfdfb52ea3402e1c60de58d:app/(pages)/projects/page.tsx
         </div>
       </section>
     );
   }
+
   return (
     <section className="w-full p-2">
-      {projects ? (
+      {projects.length > 0 ? (
         <>
           <div className="flex items-center justify-between px-3">
             <div className="flex flex-col gap-2">

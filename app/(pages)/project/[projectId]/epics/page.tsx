@@ -1,7 +1,7 @@
-export default function EpicsPage(){
-    return (
-        <div className="">
-        <h2>Epics</h2>
-        </div>
-    )
+export default function EpicsPage() {
+  return (
+    <div className="">
+      <h2>Epics</h2>
+    </div>
+  );
 }

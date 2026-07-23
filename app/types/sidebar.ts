@@ -1,4 +1,3 @@
 export interface SidebarState {
-    collapsed: boolean;
-  }
-  
+  collapsed: boolean;
+}
