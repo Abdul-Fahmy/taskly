@@ -5,6 +5,7 @@ import "./globals.css";
 import ReduxProvider from "./components/reduxProvider/ReduxProvider";
 import DashboardLayout from "./components/dashboardLayout/DashboardLayout";
 import { Toaster } from "react-hot-toast";
+import RecoveryHashRedirect from "./components/RecoveryHashRedirect";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,9 +15,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Taskly",
   description: "Editorial task management for focused teams.",
-  icons:{
-    icon:'/Logo.svg'
-  }
+  icons: {
+    icon: "/Logo.svg",
+  },
 };
 
 export default async function RootLayout({
@@ -36,6 +37,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <ReduxProvider>
+          <RecoveryHashRedirect />
           
           <DashboardLayout hasToken={hasToken}>
             {children}

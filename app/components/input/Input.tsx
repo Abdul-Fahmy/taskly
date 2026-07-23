@@ -11,12 +11,17 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 function EyeIcon({ open }: { open: boolean }) {
   if (open) {
     return (
-      <Image src={'/icons/eyeIcon.svg'} alt="eye icon" width={20} height={20} />
+      <Image src={"/icons/eyeIcon.svg"} alt="eye icon" width={20} height={20} />
     );
   }
 
   return (
-   <Image src={'/icons/closedEyeIcon.svg'} alt="closed eye icon" width={20} height={20} />
+    <Image
+      src={"/icons/closedEyeIcon.svg"}
+      alt="closed eye icon"
+      width={20}
+      height={20}
+    />
   );
 }
 
@@ -27,7 +32,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputType = isPassword && showPassword ? "text" : type;
 
     return (
-      <div className="w-full">
+      <div className="w-fullw-full">
         {label && <div >{label}</div>}
 
         <div className="relative">

@@ -23,19 +23,19 @@ export const signupSchema = z
     email: z.email("Invalid email"),
 
     password: z
-    .string()
-    .refine(
-      (value) => passwordRules.minLength.regex.test(value),
-      passwordRules.minLength.message
-    )
-    .refine(
-      (value) => passwordRules.characters.regex.test(value),
-      passwordRules.characters.message
-    )
-    .refine(
-      (value) => passwordRules.specialCharacter.regex.test(value),
-      passwordRules.specialCharacter.message
-    ),
+      .string()
+      .refine(
+        (value) => passwordRules.minLength.regex.test(value),
+        passwordRules.minLength.message,
+      )
+      .refine(
+        (value) => passwordRules.characters.regex.test(value),
+        passwordRules.characters.message,
+      )
+      .refine(
+        (value) => passwordRules.specialCharacter.regex.test(value),
+        passwordRules.specialCharacter.message,
+      ),
 
     confirmPassword: z
       .string()

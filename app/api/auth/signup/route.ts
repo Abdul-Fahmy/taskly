@@ -16,10 +16,8 @@ export async function POST(req: Request) {
 
     const result = await signup({ email, password, data });
 
-    const accessToken =
-      result.access_token ?? result.session?.access_token;
-    const refreshToken =
-      result.refresh_token ?? result.session?.refresh_token;
+    const accessToken = result.access_token ?? result.session?.access_token;
+    const refreshToken = result.refresh_token ?? result.session?.refresh_token;
     const expiresIn = result.expires_in ?? result.session?.expires_in;
     const hasSession = Boolean(accessToken && refreshToken);
 
@@ -42,4 +40,5 @@ export async function POST(req: Request) {
       { msg: getApiErrorMessage(error, "Signup failed") },
       { status: getApiErrorStatus(error, 400) },
     );
-  }}
+  }
+}

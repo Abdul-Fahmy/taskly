@@ -8,13 +8,18 @@ import {
   SignupFormData,
   signupSchema,
 } from "@/app/schemas/signUpSchema";
+import {
+  passwordRules,
+  SignupFormData,
+  signupSchema,
+} from "@/app/schemas/signUpSchema";
 import { setUser } from "@/app/store/features/user.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -24,13 +29,14 @@ export default function SignupPage() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     mode: "onChange",
+    mode: "onChange",
   });
-  const password = watch("password");
+  const password = useWatch({ control, name: "password" });
 
   const passwordStatus = Object.values(passwordRules).map((rule) => ({
     message: rule.message,
@@ -62,7 +68,7 @@ export default function SignupPage() {
 
       if (result.hasSession && result.user) {
         dispatch(setUser(result.user));
-        router.push("/project");
+        router.push("/projects");
         router.refresh();
         return;
       }
@@ -145,6 +151,23 @@ export default function SignupPage() {
               {passwordStatus.map((rule) => (
                 <li key={rule.message} className="flex items-center gap-2">
                   <span>
+                    {rule.valid ? (
+                      <Image
+                        src={"/icons/checkedIcon.svg"}
+                        alt="check icon"
+                        width={12}
+                        height={12}
+                        style={{ width: "12px", height: "12px" }}
+                      />
+                    ) : (
+                      <Image
+                        src={"/icons/uncheckedIcon.svg"}
+                        alt="unchecked icon"
+                        width={12}
+                        height={12}
+                        style={{ width: "12px", height: "12px" }}
+                      />
+                    )}
                     {rule.valid ? (
                       <Image
                         src={"/icons/checkedIcon.svg"}

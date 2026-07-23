@@ -23,6 +23,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
+  matcher: ["/projects/:path*"],
   matcher: [
     "/project",
     "/project/:path*",

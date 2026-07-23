@@ -46,43 +46,37 @@ export function getApiErrorStatus(error: unknown, fallback: number): number {
   return fallback;
 }
 
-
-
-
 export async function apiFetch<T>(
-    url: string,
-    { token, ...options }: FetchOptions = {}
+  url: string,
+  { token, ...options }: FetchOptions = {},
 ): Promise<T> {
-    const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!apiKey) throw new Error('missing supabase api key')
-    const response = await fetch(url, {
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            apikey: apiKey,
-            ...(token && {
-                Authorization: `Bearer ${token}`,
-            }),
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!apiKey) throw new Error("missing supabase api key");
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      apikey: apiKey,
+      ...(token && {
+        Authorization: `Bearer ${token}`,
+      }),
 
-            ...options.headers,
-        },
-        body:
-            options.body && typeof options.body !== "string"
-                ? JSON.stringify(options.body)
-                : (options.body as BodyInit),
-    });
-    const data = await response.json().catch(() => null);
+      ...options.headers,
+    },
+    body:
+      options.body && typeof options.body !== "string"
+        ? JSON.stringify(options.body)
+        : (options.body as BodyInit),
+  });
+  const data = await response.json().catch(() => null);
 
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      data,
+      message: (data as { message?: string })?.message || response.statusText,
+    };
+  }
 
-    // Axios-like error handling
-    if (!response.ok) {
-
-        throw {
-            status: response.status,
-            data,
-            message: (data as { message?: string })?.message || response.statusText,
-        };
-    }
-
-    return data as T
+  return data as T;
 }
