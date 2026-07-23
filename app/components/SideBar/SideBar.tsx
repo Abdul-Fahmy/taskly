@@ -38,7 +38,7 @@ const navItems = [
     src: "/icons/detailIcon.svg",
     width: 20,
     height: 20,
-    href:'details'
+    href:'edit'
 
   },
 ] as const;
