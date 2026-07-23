@@ -55,16 +55,6 @@ function writeStorage(data: ForgotPasswordStorage) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-function getStoredTrials() {
-  if (typeof window === "undefined") return 0;
-  return readStorage()?.trials ?? 0;
-}
-
-function getStoredCooldownEndsAt() {
-  if (typeof window === "undefined") return null;
-  return readStorage()?.cooldownEndsAt ?? null;
-}
-
 function beginCooldown(nextTrials: number) {
   return {
     trials: nextTrials,
@@ -78,17 +68,13 @@ function remainingFromEndsAt(endsAt: number, nowMs: number) {
 }
 
 export default function ForgotPasswordPage() {
-  const [successMessage, setSuccessMessage] = useState<string | null>(() =>
-    getStoredTrials() > 0 ? SUCCESS_MESSAGE : null,
-  );
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [trials, setTrials] = useState(getStoredTrials);
+  const [trials, setTrials] = useState(0);
   const [cooldownLeft, setCooldownLeft] = useState(0);
-  const [cooldownEndsAt, setCooldownEndsAt] = useState<number | null>(
-    getStoredCooldownEndsAt,
-  );
+  const [cooldownEndsAt, setCooldownEndsAt] = useState<number | null>(null);
   const [isResending, setIsResending] = useState(false);
-  const [ready] = useState(() => typeof window !== "undefined");
+  const [ready, setReady] = useState(false);
 
   const {
     register,
@@ -100,11 +86,36 @@ export default function ForgotPasswordPage() {
   });
 
   useEffect(() => {
+    const saved = readStorage();
+
+    const id = window.setTimeout(() => {
+      if (saved) {
+        const remaining = saved.cooldownEndsAt
+          ? remainingFromEndsAt(saved.cooldownEndsAt, Date.now())
+          : 0;
+        const endsAt = remaining > 0 ? saved.cooldownEndsAt : null;
+
+        setTrials(saved.trials);
+        setCooldownEndsAt(endsAt);
+        setCooldownLeft(remaining);
+        if (saved.trials > 0) {
+          setSuccessMessage(SUCCESS_MESSAGE);
+        }
+      }
+      setReady(true);
+    }, 0);
+
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+
     writeStorage({
       trials,
       cooldownEndsAt: cooldownLeft > 0 ? cooldownEndsAt : null,
     });
-  }, [trials, cooldownEndsAt, cooldownLeft]);
+  }, [ready, trials, cooldownEndsAt, cooldownLeft]);
 
   useEffect(() => {
     if (!cooldownEndsAt) return;
@@ -258,6 +269,7 @@ export default function ForgotPasswordPage() {
             type="submit"
             displayText={isSubmitting ? "Loading..." : "Send Reset Link"}
             disabled={isSubmitDisabled}
+            className="w-full"
           />
         </form>
 
@@ -275,7 +287,7 @@ export default function ForgotPasswordPage() {
           Back to log in
         </Link>
 
-        {successMessage && (
+        {ready && successMessage && (
           <div className="w-full max-w-[366px] flex flex-col gap-4 pt-2">
             <div className="flex items-start gap-3 rounded-md bg-[#E7F8EF] px-4 py-3">
               <Image
