@@ -47,3 +47,18 @@ export async function getProjects() : Promise<Project[]>{
 }
 
 
+export async function editProject(data: AddProjectForm, projectId:string) {
+  const { baseUrl } = getSupabaseConfig();
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
+
+  if (!token) {
+    throw new Error("Missing access token");
+  }
+
+  return apiFetch(`${baseUrl}/rest/v1/projects?id=eq.${projectId}`, {
+    method: "PATCH",
+    token,
+    body: data,
+  });
+}

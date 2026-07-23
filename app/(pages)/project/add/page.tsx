@@ -6,7 +6,7 @@ import { projectFormData, projectSchema } from "@/app/schemas/addProjectSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -18,9 +18,9 @@ const breadcrumbMap: Record<string, string> = {
 
 export default function AddProject() {
   const pathname = usePathname();
-  const previousPage = pathname.substring(0, pathname.lastIndexOf("/")) || "/project";
+  const previousPage =
+    pathname.substring(0, pathname.lastIndexOf("/")) || "/project";
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  
 
   const breadcrumbs = pathname
     .split("/")
@@ -37,11 +37,11 @@ export default function AddProject() {
     resolver: zodResolver(projectSchema),
     mode: "onChange",
   });
-  const description = useWatch({control,name:'description'})
+  const description = useWatch({ control, name: "description" });
 
   async function onSubmit(data: projectFormData) {
     setErrorMsg(null);
-    let toastId = toast.loading('Creating project...')
+    let toastId = toast.loading("Creating project...");
 
     try {
       const response = await fetch("/api/addproject", {
@@ -56,21 +56,21 @@ export default function AddProject() {
         setErrorMsg(result?.msg || "Failed to create project");
         return;
       }
-       reset({name:'',description:''})
-        toast.success('Project created successfully',{id:toastId})
-      
-      
-     
+      reset({ name: "", description: "" });
+      toast.success("Project created successfully", { id: toastId });
     } catch (error) {
-        toast.error(error instanceof Error ? error.message : "An unknown error occurred",{id:toastId})
+      toast.error(
+        error instanceof Error ? error.message : "An unknown error occurred",
+        { id: toastId },
+      );
       setErrorMsg(
         error instanceof Error ? error.message : "An unknown error occurred",
       );
-    }finally{
-setTimeout(() => {
-    toast.dismiss(toastId)
-
-}, 3000);    }
+    } finally {
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 3000);
+    }
   }
 
   return (
@@ -105,7 +105,6 @@ setTimeout(() => {
               width={22}
               height={20}
               style={{ width: "22px", height: "20px" }}
-           
             />
           </div>
           <div className="flex flex-col">
@@ -132,11 +131,21 @@ setTimeout(() => {
               type="text"
               {...register("name")}
             />
-            {errors.name && <div className="flex items-center gap-1">
-                <Image src={'/icons/error.svg'} alt="error" width={13} height={13} style={{width:'13px', height:'13px'}} />
-                <p className="text-[12px] text-[#BA1A1A]">              {errors.name?.message}
+            {errors.name && (
+              <div className="flex items-center gap-1">
+                <Image
+                  src={"/icons/error.svg"}
+                  alt="error"
+                  width={13}
+                  height={13}
+                  style={{ width: "13px", height: "13px" }}
+                />
+                <p className="text-[12px] text-[#BA1A1A]">
+                  {" "}
+                  {errors.name?.message}
                 </p>
-                </div>}
+              </div>
+            )}
           </div>
           <div className="">
             <span className="text-[#4F5F7B] font-bold text-[11px] uppercase">
@@ -151,17 +160,17 @@ setTimeout(() => {
               placeholder="Provide a high-level overview of the project's architectural objectives and key milestones..."
             />
             <div className="flex items-center justify-between">
-            {errors.description?.message ? (
-              <p className="text-[12px] text-error">
-                {errors.description.message}
+              {errors.description?.message ? (
+                <p className="text-[12px] text-error">
+                  {errors.description.message}
+                </p>
+              ) : (
+                <span />
+              )}
+              <p className="text-xs text-[#4F5F7B]">
+                {description?.length ?? 0}/500
               </p>
-            ): <span/>}
-            <p className="text-xs text-[#4F5F7B]">
-      {description?.length ?? 0}/500
-    </p>
-
             </div>
-            
           </div>
 
           {errorMsg && (

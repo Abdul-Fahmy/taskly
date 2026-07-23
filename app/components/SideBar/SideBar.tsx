@@ -96,7 +96,6 @@ export default function SideBar() {
             {isCollapsed ? "" : "Taskly"}
           </Link>
         </div>
-
         <div className="flex flex-col justify-between flex-1 px-6 py-4">
           <ul className="space-y-5">
             {navItems.map((item) => {

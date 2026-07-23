@@ -13,24 +13,22 @@ import { useEffect } from "react";
 export default function Project() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const {projects,status}  = useAppSelector((state) => state.project);
+  const { projects, status } = useAppSelector((state) => state.project);
 
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
 
-  if (status === 'loading') {
-  
-      return (
-        <section className="w-full p-2">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <ProjectCardSkeleton key={index} />
-            ))}
-          </div>
-        </section>
-      );
-    
+  if (status === "loading") {
+    return (
+      <section className="w-full p-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <ProjectCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+    );
   }
   return (
     <section className="w-full p-2">
@@ -63,9 +61,8 @@ export default function Project() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4 pb-6 ">
             {projects.map((project) => (
-<Link href={`/project/${project.id}/epics`} key={project.id}>
-<ProjectCard  project={project} />
-</Link>            ))}
+              <ProjectCard key={project.id} project={project} />
+            ))}
             <Link
               href={"/project/add"}
               className="hidden md:flex flex-col w-full items-center justify-center gap-2"
@@ -85,7 +82,7 @@ export default function Project() {
             </Link>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end pb-20">
             <Button
               onClick={() => {
                 router.push("/project/add");
@@ -133,7 +130,6 @@ export default function Project() {
             </Link>
           </div>
         </>
-        
       )}
     </section>
   );
