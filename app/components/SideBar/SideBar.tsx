@@ -2,64 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { clearUser } from "@/app/store/features/user.slice";
 import { toggle } from "@/app/store/features/sidebar.slice";
 
-const navItems = [
-  {
-    label: "Projects",
-    src: "/icons/projectIcon.svg",
-    width: 22,
-    height: 16,
-    href: "project",
-  },
-  {
-    label: "Project Epics",
-    src: "/icons/epicIcon.svg",
-    width: 20,
-    height: 18,
-    href: "epics",
-  },
-  {
-    label: "Project Tasks",
-    src: "/icons/tasksIcon.svg",
-    width: 20,
-    height: 16,
-    href: "tasks",
-  },
-  {
-    label: "Project Members",
-    src: "/icons/membersIcon.svg",
-    width: 22,
-    height: 16,
-    href: "members",
-  },
-  {
-    label: "Project Details",
-    src: "/icons/detailIcon.svg",
-    width: 20,
-    height: 20,
-    href: "edit",
-  },
-] as const;
 
-function getProjectId(pathname: string) {
-  const segments = pathname.split("/").filter(Boolean);
-  if (segments[0] !== "project") return null;
-  const maybeId = segments[1];
-  if (!maybeId || maybeId === "add") return null;
-  return maybeId;
-}
 
-function getNavHref(pathname: string, href: string) {
-  if (href === "project") return "/project";
-  const projectId = getProjectId(pathname);
-  if (!projectId) return "/project";
-  return `/project/${projectId}/${href}`;
-}
 
 export default function SideBar() {
   const pathname = usePathname();
@@ -67,6 +17,50 @@ export default function SideBar() {
   const dispatch = useAppDispatch();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const isCollapsed = useAppSelector((state) => state.sidebar.collapsed);
+  const { projectId } = useParams<{ projectId: string }>();
+
+  const navItems = [
+    {
+      label: "Projects",
+      src: "/icons/projectIcon.svg",
+      width: 22,
+      height: 16,
+      href: "/project",
+    },
+  
+    ...(projectId
+      ? [
+          {
+            label: "Tasks",
+            src: "/icons/tasksIcon.svg",
+            width: 20,
+            height: 16,
+            href: `/project/${projectId}/tasks`,
+          },
+          {
+            label: "Members",
+            src: "/icons/membersIcon.svg",
+            width: 22,
+            height: 16,
+            href: `/project/${projectId}/members`,
+          },
+          {
+            label: "Epics",
+            src: "/icons/epicIcon.svg",
+            width: 20,
+            height: 18,
+            href: `/project/${projectId}/epics`,
+          },
+          {
+            label: "Project Details",
+            src: "/icons/detailIcon.svg",
+            width: 20,
+            height: 20,
+            href: `/project/${projectId}/edit`,
+          },
+        ]
+      : []),
+  ] as const;
 
   async function handleLogout() {
     setIsLoggingOut(true);
@@ -106,16 +100,14 @@ export default function SideBar() {
         <div className="flex flex-col justify-between flex-1 px-6 py-4">
           <ul className="space-y-5">
             {navItems.map((item) => {
-              const href = getNavHref(pathname, item.href);
-              const isActive =
-                item.href === "project"
-                  ? pathname === "/project" || pathname === "/project/"
-                  : pathname.endsWith(`/${item.href}`);
+             const isActive =   item.href === "/project"
+             ? pathname === "/project"
+             : pathname.startsWith(item.href);
 
               return (
                 <li key={item.label}>
                   <Link
-                    href={href}
+                    href={item.href}
                     className={`flex items-center gap-2 cursor-pointer p-2 rounded-md ${
                       isActive ? "bg-white text-primary" : ""
                     }`}
