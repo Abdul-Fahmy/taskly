@@ -32,7 +32,7 @@ export default function ProjectCard({ project }: { project: Project }) {
       </div>
       <Link
         href={`/project/${project.id}/epics`}
-        className="text-[14px] text-[#434654] "
+        className="text-[14px] text-[#434654] line-clamp-2 "
       >
         {project.description}
       </Link>

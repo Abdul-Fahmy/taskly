@@ -2,6 +2,7 @@
 
 import Button from "@/app/components/button/Button";
 import Input from "@/app/components/input/Input";
+import ProjectForm from "@/app/components/projectForm/ProjectForm";
 import { useAppSelector } from "@/app/hooks/store.hooks";
 import { projectFormData, projectSchema } from "@/app/schemas/addProjectSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,13 +34,7 @@ export default function EditPage() {
     .filter(Boolean)
     .map((segment) => breadcrumbMap[segment] || segment);
 
-  const {
-    register,
-    reset,
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<projectFormData>({
+  const form = useForm<projectFormData>({
     values: {
       name: project?.name || "",
       description: project?.description || "",
@@ -47,7 +42,7 @@ export default function EditPage() {
     resolver: zodResolver(projectSchema),
     mode: "onChange",
   });
-  const description = useWatch({ control, name: "description" });
+ 
 
   async function onSubmit(data: projectFormData) {
     setErrorMsg(null);
@@ -66,7 +61,7 @@ export default function EditPage() {
         setErrorMsg(result?.msg || "Failed to Edit project");
         return;
       }
-      reset({ name: "", description: "" });
+      form.reset({ name: "", description: "" });
       toast.success("Project Edited successfully", { id: toastId });
     } catch (error) {
       toast.error(
@@ -107,102 +102,7 @@ export default function EditPage() {
         <h3 className="font-bold text-[36px]">Edit Project</h3>
       </div>
 
-      <div className="w-full md:w-[672px] bg-white rounded-md shadow-[0_1px_2px_0_#0000000D] mx-auto ">
-        <div className="p-8 flex items-center justify-start gap-4">
-          <div className="hidden md:blockp-3 h-auto rounded-md bg-[#0052CC1A]">
-            <Image
-              src={"/icons/icon.svg"}
-              alt="icon"
-              width={22}
-              height={20}
-              style={{ width: "22px", height: "20px" }}
-            />
-          </div>
-          <div className="flex flex-col">
-            <p className="text-[24px] font-semibold text-[#041B3C] leading-8">
-              Initialize New Project
-            </p>
-            <p className="text-[#4F5F7B] text-[14px] leading-5 ">
-              Define the scope and foundational details of your project.
-            </p>
-          </div>
-        </div>
-
-        <form
-          className="space-y-8 px-8"
-          onSubmit={handleSubmit(onSubmit)}
-          noValidate
-        >
-          <div className="">
-            <span className="text-[#4F5F7B] font-bold text-[11px] uppercase">
-              Project title *
-            </span>
-            <Input
-              placeholder="Enter project title"
-              type="text"
-              {...register("name")}
-            />
-            {errors.name && (
-              <div className="flex items-center gap-1">
-                <Image
-                  src={"/icons/error.svg"}
-                  alt="error"
-                  width={13}
-                  height={13}
-                  style={{ width: "13px", height: "13px" }}
-                />
-                <p className="text-[12px] text-[#BA1A1A]">
-                  {" "}
-                  {errors.name?.message}
-                </p>
-              </div>
-            )}
-          </div>
-          <div className="">
-            <span className="text-[#4F5F7B] font-bold text-[11px] uppercase">
-              DESCRIPTION
-            </span>
-            <textarea
-              title="DESCRIPTION"
-              maxLength={501}
-              {...register("description")}
-              className="w-full bg-surface-highest py-3.5 px-4 rounded-md resize-none"
-              rows={10}
-              placeholder="Provide a high-level overview of the project's architectural objectives and key milestones..."
-            />
-            <div className="flex items-center justify-between">
-              {errors.description?.message ? (
-                <p className="text-[12px] text-error">
-                  {errors.description.message}
-                </p>
-              ) : (
-                <span />
-              )}
-              <p className="text-xs text-[#4F5F7B]">
-                {description?.length ?? 0}/500
-              </p>
-            </div>
-          </div>
-
-          {errorMsg && (
-            <p className="text-error text-sm font-normal">{errorMsg}</p>
-          )}
-
-          <div className="mt-[60px] pb-8 flex items-center justify-between">
-            <Link
-              href={"/project"}
-              className="font-bold text-[14px] text-[#4F5F7B] py-3 px-4 "
-            >
-              Back
-            </Link>
-            <Button
-              displayText={isSubmitting ? "Loading..." : "Save Changes"}
-              type="submit"
-              disabled={isSubmitting}
-            />
-          </div>
-        </form>
-      </div>
+  <ProjectForm form={form} onSubmit={onSubmit} errorMsg={errorMsg}  />
       <div className="md:w-[672px] mx-auto pb-8 flex items-center justify-center gap-2 mt-8 px-3">
         <Image
           src={"/icons/tip.svg"}
