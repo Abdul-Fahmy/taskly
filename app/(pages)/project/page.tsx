@@ -4,7 +4,7 @@ import Button from "@/app/components/button/Button";
 import ProjectCardSkeleton from "@/app/components/cardSkeleton/CardSkeleton";
 import ProjectCard from "@/app/components/projectCard/ProjectCard";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
-import { fetchProjects } from "@/app/store/features/project.slice";
+import { fetchPagination, fetchProjects, setCurrentPage } from "@/app/store/features/project.slice";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,11 +13,15 @@ import { useEffect } from "react";
 export default function Project() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { projects, status } = useAppSelector((state) => state.project);
+  const { projects, status,currentPage,totalCount
+    ,limit
+   } = useAppSelector((state) => state.project);
+
+const totalPages = Math.ceil(totalCount / limit)
 
   useEffect(() => {
-    dispatch(fetchProjects());
-  }, [dispatch]);
+    dispatch(fetchPagination({limit,page:currentPage}))
+  }, [dispatch,currentPage,limit]);
 
   if (status === "loading") {
     return (
@@ -132,6 +136,24 @@ export default function Project() {
           </div>
         </>
       )}
+
+      <div className="flex items-center justify-between">
+        <div className="">
+          <p>Showing {limit} of {totalCount} Projects</p>
+        </div>
+        <div className="">
+          <button disabled={currentPage === 1} onClick={()=>{
+            dispatch(setCurrentPage(currentPage - 1))
+          }}>
+           {'<'}
+          </button>
+          {currentPage} / {totalPages}
+
+          <button disabled={currentPage === totalPages} onClick={()=>{
+            dispatch(setCurrentPage(currentPage + 1))
+          }}>{'>'}</button>
+        </div>
+      </div>
     </section>
   );
 }
