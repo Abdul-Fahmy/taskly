@@ -65,3 +65,10 @@ export async function editProject(data: AddProjectForm, projectId: string) {
     body: data,
   });
 }
+export async function getProjectsPagination({
+  limit,
+  offset,
+}: {
+  limit: number;
+  offset: number;
+}) {}
