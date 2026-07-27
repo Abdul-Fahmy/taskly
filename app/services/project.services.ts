@@ -65,10 +65,62 @@ export async function editProject(data: AddProjectForm, projectId: string) {
     body: data,
   });
 }
+
 export async function getProjectsPagination({
   limit,
   offset,
 }: {
   limit: number;
   offset: number;
-}) {}
+}): Promise<{ projects: Project[]; contentRange: string }> {
+  const { baseUrl } = getSupabaseConfig();
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
+
+  if (!token) {
+    throw new Error("Missing access token");
+  }
+
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!apiKey) {
+    throw new Error("missing supabase api key");
+  }
+
+  const response = await fetch(
+    `${baseUrl}/rest/v1/rpc/get_projects?limit=${limit}&offset=${offset}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        Prefer: "count=exact",
+      },
+    },
+  );
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      data,
+      message: (data as { message?: string })?.message || response.statusText,
+    };
+  }
+  const projects = Array.isArray(data) ? (data as Project[]) : null;
+  if (!projects){
+throw new Error('an invaild pagination response')
+  }
+
+  const contentRange = response.headers.get('content-range');
+
+  if(!contentRange){
+    throw new Error('response is missing the content-range header')
+  }
+
+  return {
+    projects,
+    contentRange,
+  };
+}
