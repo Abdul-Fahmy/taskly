@@ -4,7 +4,7 @@ import Button from "@/app/components/button/Button";
 import ProjectCardSkeleton from "@/app/components/cardSkeleton/CardSkeleton";
 import ProjectCard from "@/app/components/projectCard/ProjectCard";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
-import { fetchPagination, fetchProjects, setCurrentPage } from "@/app/store/features/project.slice";
+import { fetchPagination, setCurrentPage } from "@/app/store/features/project.slice";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -137,11 +137,11 @@ const totalPages = Math.ceil(totalCount / limit)
         </>
       )}
 
-      <div className="flex items-center justify-between">
-        <div className="">
-          <p>Showing {limit} of {totalCount} Projects</p>
+      <div className="flex items-center justify-between text-[#434654]">
+        <div className="font-medium ">
+          <p>Showing {limit} of {totalCount} active Projects</p>
         </div>
-        <div className="">
+        <div className="flex items-center gap-2">
           <button disabled={currentPage === 1} onClick={()=>{
             dispatch(setCurrentPage(currentPage - 1))
           }}>
