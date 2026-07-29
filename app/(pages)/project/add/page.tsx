@@ -1,15 +1,12 @@
 "use client";
-
-import Button from "@/app/components/button/Button";
-import Input from "@/app/components/input/Input";
 import ProjectForm from "@/app/components/projectForm/ProjectForm";
 import { projectFormData, projectSchema } from "@/app/schemas/addProjectSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import Link from "next/link";
+
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 const breadcrumbMap: Record<string, string> = {
@@ -20,8 +17,7 @@ const breadcrumbMap: Record<string, string> = {
 export default function AddProject() {
   const pathname = usePathname();
   const router = useRouter();
-  const previousPage =
-    pathname.substring(0, pathname.lastIndexOf("/")) || "/project";
+
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const breadcrumbs = pathname
@@ -72,7 +68,7 @@ export default function AddProject() {
 
   return (
     <>
-      <div className="hidden md:flex flex-col gap-4 items-start justify-start pt-[24px] pl-6">
+      <div className="hidden md:flex flex-col gap-4 items-start justify-start pt-6 pl-6">
         <span className="font-bold uppercase text-[12px] flex items-center gap-1 ">
           {breadcrumbs.map((item, index) => (
             <span key={item}>
@@ -94,7 +90,7 @@ export default function AddProject() {
       </div>
 
       <ProjectForm form={form} onSubmit={onSubmit} errorMsg={errorMsg} />
-      <div className="md:w-[672px] mx-auto pb-8 flex items-center justify-center gap-2 mt-8 px-3">
+      <div className="md:w-2xl mx-auto pb-8 flex items-center justify-center gap-2 mt-8 px-3">
         <Image
           src={"/icons/tip.svg"}
           alt="tip icon"

@@ -8,9 +8,6 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { clearUser } from "@/app/store/features/user.slice";
 import { toggle } from "@/app/store/features/sidebar.slice";
 
-
-
-
 export default function SideBar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -27,7 +24,7 @@ export default function SideBar() {
       height: 16,
       href: "/project",
     },
-  
+
     ...(projectId
       ? [
           {
@@ -100,9 +97,10 @@ export default function SideBar() {
         <div className="flex flex-col justify-between flex-1 px-6 py-4">
           <ul className="space-y-5">
             {navItems.map((item) => {
-             const isActive =   item.href === "/project"
-             ? pathname === "/project"
-             : pathname.startsWith(item.href);
+              const isActive =
+                item.href === "/project"
+                  ? pathname === "/project"
+                  : pathname.startsWith(item.href);
 
               return (
                 <li key={item.label}>

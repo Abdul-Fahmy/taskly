@@ -1,38 +1,28 @@
 "use client";
-
-import Button from "@/app/components/button/Button";
-import Input from "@/app/components/input/Input";
 import ProjectForm from "@/app/components/projectForm/ProjectForm";
+import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { useAppSelector } from "@/app/hooks/store.hooks";
 import { projectFormData, projectSchema } from "@/app/schemas/addProjectSchema";
+import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import Link from "next/link";
+
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-
-const breadcrumbMap: Record<string, string> = {
-  project: "Projects",
-  projectId: "Project Title",
-
-  edit: "Edit",
-};
 
 export default function EditPage() {
   const pathname = usePathname();
   const router = useRouter();
-  const { projectId } = useParams();
+  const { projectId } = useParams<{ projectId: string }>();
   const project = useAppSelector((state) =>
     state.project.projects.find((project) => project.id === projectId),
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const breadcrumbs = pathname
-    .split("/")
-    .filter(Boolean)
-    .map((segment) => breadcrumbMap[segment] || segment);
+  const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
+    [projectId]: project?.name || projectId,
+  });
 
   const form = useForm<projectFormData>({
     values: {
@@ -42,7 +32,6 @@ export default function EditPage() {
     resolver: zodResolver(projectSchema),
     mode: "onChange",
   });
- 
 
   async function onSubmit(data: projectFormData) {
     setErrorMsg(null);
@@ -81,7 +70,7 @@ export default function EditPage() {
 
   return (
     <>
-      <div className="hidden md:flex flex-col gap-4 items-start justify-start pt-[24px] pl-6">
+      <div className="hidden md:flex flex-col gap-4 items-start justify-start pt-6 pl-6">
         <span className="font-bold uppercase text-[12px] flex items-center gap-1 ">
           {breadcrumbs.map((item, index) => (
             <span key={item}>
@@ -102,8 +91,8 @@ export default function EditPage() {
         <h3 className="font-bold text-[36px]">Edit Project</h3>
       </div>
 
-  <ProjectForm form={form} onSubmit={onSubmit} errorMsg={errorMsg}  />
-      <div className="md:w-[672px] mx-auto pb-8 flex items-center justify-center gap-2 mt-8 px-3">
+      <ProjectForm form={form} onSubmit={onSubmit} errorMsg={errorMsg} />
+      <div className="md:w-2xl mx-auto pb-8 flex items-center justify-center gap-2 mt-8 px-3">
         <Image
           src={"/icons/tip.svg"}
           alt="tip icon"

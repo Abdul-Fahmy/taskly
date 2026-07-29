@@ -1,6 +1,7 @@
 "use client";
 import Button from "@/app/components/button/Button";
 import { MemberCard } from "@/app/components/memberCard/MemberCard";
+import MemberSkeleton from "@/app/components/memberSkeleton/MemberSkeleton";
 import { Member } from "@/app/types/members";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -25,7 +26,9 @@ export default function MembersPage() {
     <section className="w-full p-2">
       <div className="flex items-center justify-between px-3">
         <div className="flex flex-col gap-2">
-          <h3 className="font-semibold text-[30px] text-[#041B3C]">Project Members</h3>
+          <h3 className="font-semibold text-[30px] text-[#041B3C]">
+            Project Members
+          </h3>
         </div>
         <Button
           onClick={() => {}}
@@ -42,7 +45,7 @@ export default function MembersPage() {
         </Button>
       </div>
 
-      <div className="mt-6 max-w-2xl mx-auto rounded-md bg-white mt-10">
+      <div className=" max-w-2xl mx-auto rounded-md bg-white mt-10">
         <div className="grid grid-cols-[1fr_120px_64px] items-center gap-4 border-b border-black/10 px-4 py-3">
           <span className="text-[11px] font-bold uppercase text-[#4F5F7B]">
             Member
@@ -56,7 +59,7 @@ export default function MembersPage() {
         </div>
 
         {members === null ? (
-          <p className="px-4 py-6 text-[14px] text-[#434654]">Loading...</p>
+          <MemberSkeleton />
         ) : members.length === 0 ? (
           <p className="px-4 py-6 text-[14px] text-[#434654]">No members yet</p>
         ) : (

@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getMembers } from "@/app/services/member.service";
 
-export async function GET(req:Request,{ params }: {params: Promise<{ projectId: string }> }) {
-    const { projectId} =  await params;
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ projectId: string }> },
+) {
+  const { projectId } = await params;
   const token = (await cookies()).get("access_token")?.value;
 
   if (!token) {
