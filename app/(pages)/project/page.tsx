@@ -5,30 +5,105 @@ import ProjectCardSkeleton from "@/app/components/cardSkeleton/CardSkeleton";
 import Pagination from "@/app/components/pagination/Paagination";
 import ProjectCard from "@/app/components/projectCard/ProjectCard";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
-import { fetchPagination } from "@/app/store/features/project.slice";
+import {
+  fetchPagination,
+  setCurrentPage,
+} from "@/app/store/features/project.slice";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Project() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { projects, status, currentPage, totalCount, limit } = useAppSelector(
-    (state) => state.project,
-  );
+  const { projects, status, error, currentPage, totalCount, limit } =
+    useAppSelector((state) => state.project);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const hasMore = projects.length < totalCount;
 
   useEffect(() => {
-    dispatch(fetchPagination({ limit, page: currentPage }));
-  }, [dispatch, currentPage, limit]);
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
 
-  if (status === "loading") {
+    function updateScreenMode() {
+      setIsMobile(mediaQuery.matches);
+      dispatch(setCurrentPage(1));
+    }
+
+    updateScreenMode();
+    mediaQuery.addEventListener("change", updateScreenMode);
+
+    return () => mediaQuery.removeEventListener("change", updateScreenMode);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isMobile === null) {
+      return;
+    }
+
+    dispatch(
+      fetchPagination({
+        limit,
+        page: currentPage,
+        append: isMobile && currentPage > 1,
+      }),
+    );
+  }, [dispatch, currentPage, limit, isMobile]);
+
+  useEffect(() => {
+    const target = loadMoreRef.current;
+
+    if (
+      !isMobile ||
+      !target ||
+      !hasMore ||
+      status === "loading" ||
+      status === "failed"
+    ) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          dispatch(setCurrentPage(currentPage + 1));
+        }
+      },
+      { rootMargin: "200px" },
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [currentPage, dispatch, hasMore, isMobile, status]);
+
+  if (
+    isMobile === null ||
+    (status === "loading" && (!isMobile || projects.length === 0))
+  ) {
     return (
       <section className="w-full p-2">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {Array.from({ length: 6 }).map((_, index) => (
             <ProjectCardSkeleton key={index} />
           ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (status === "failed" && projects.length === 0) {
+    return (
+      <section className="w-full p-6">
+        <div className="rounded-lg bg-red-50 p-4 text-red-700">
+          <p>{error ?? "Failed to load projects."}</p>
+          <Button
+            displayText="Try Again"
+            className="mt-4 w-fit"
+            onClick={() =>
+              dispatch(fetchPagination({ limit, page: currentPage }))
+            }
+          />
         </div>
       </section>
     );
@@ -136,11 +211,46 @@ export default function Project() {
         </>
       )}
 
-      <Pagination
-        limit={limit}
-        totalCount={totalCount}
-        currentPage={currentPage}
-      />
+      {totalCount > limit && (
+        <div className="hidden md:block">
+          <Pagination
+            limit={limit}
+            totalCount={totalCount}
+            currentPage={currentPage}
+          />
+        </div>
+      )}
+
+      <div ref={loadMoreRef} className="h-1 md:hidden" aria-hidden="true" />
+
+      {isMobile && status === "loading" && projects.length > 0 && (
+        <div className="grid grid-cols-1 gap-8 py-6 md:hidden">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <ProjectCardSkeleton key={index} />
+          ))}
+        </div>
+      )}
+
+      {isMobile && status === "failed" && projects.length > 0 && (
+        <div className="py-4 text-center text-red-700 md:hidden">
+          <p>{error ?? "Failed to load more projects."}</p>
+          <button
+            type="button"
+            className="mt-2 font-semibold text-primary"
+            onClick={() =>
+              dispatch(
+                fetchPagination({
+                  limit,
+                  page: currentPage,
+                  append: true,
+                }),
+              )
+            }
+          >
+            Try again
+          </button>
+        </div>
+      )}
     </section>
   );
 }
