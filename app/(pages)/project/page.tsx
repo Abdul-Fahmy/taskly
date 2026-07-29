@@ -2,9 +2,10 @@
 
 import Button from "@/app/components/button/Button";
 import ProjectCardSkeleton from "@/app/components/cardSkeleton/CardSkeleton";
+import Pagination from "@/app/components/pagination/Paagination";
 import ProjectCard from "@/app/components/projectCard/ProjectCard";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
-import { fetchPagination, setCurrentPage } from "@/app/store/features/project.slice";
+import { fetchPagination } from "@/app/store/features/project.slice";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,15 +14,13 @@ import { useEffect } from "react";
 export default function Project() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { projects, status,currentPage,totalCount
-    ,limit
-   } = useAppSelector((state) => state.project);
-
-const totalPages = Math.ceil(totalCount / limit)
+  const { projects, status, currentPage, totalCount, limit } = useAppSelector(
+    (state) => state.project,
+  );
 
   useEffect(() => {
-    dispatch(fetchPagination({limit,page:currentPage}))
-  }, [dispatch,currentPage,limit]);
+    dispatch(fetchPagination({ limit, page: currentPage }));
+  }, [dispatch, currentPage, limit]);
 
   if (status === "loading") {
     return (
@@ -137,23 +136,11 @@ const totalPages = Math.ceil(totalCount / limit)
         </>
       )}
 
-      <div className="flex items-center justify-between text-[#434654]">
-        <div className="font-medium ">
-          <p>Showing {limit} of {totalCount} active Projects</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button disabled={currentPage === 1} onClick={()=>{
-            dispatch(setCurrentPage(currentPage - 1))
-          }}>
-           {'<'}
-          </button>
-          {currentPage} / {totalPages}
-
-          <button disabled={currentPage === totalPages} onClick={()=>{
-            dispatch(setCurrentPage(currentPage + 1))
-          }}>{'>'}</button>
-        </div>
-      </div>
+      <Pagination
+        limit={limit}
+        totalCount={totalCount}
+        currentPage={currentPage}
+      />
     </section>
   );
 }
