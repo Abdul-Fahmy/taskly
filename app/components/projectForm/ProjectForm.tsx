@@ -19,7 +19,7 @@ export default function ProjectForm({
   const description = watch("description");
 
   return (
-    <div className="w-full md:w-[672px] bg-white rounded-md shadow-[0_1px_2px_0_#0000000D] mx-auto ">
+    <div className="w-full md:w-2xl bg-white rounded-md shadow-[0_1px_2px_0_#0000000D] mx-auto ">
       <div className="p-8 flex items-center justify-start gap-4">
         <div className="hidden md:blockp-3 h-auto rounded-md bg-[#0052CC1A]">
           <Image
@@ -100,7 +100,7 @@ export default function ProjectForm({
           <p className="text-error text-sm font-normal">{errorMsg}</p>
         )}
 
-        <div className="mt-[60px] pb-8 flex items-center justify-between">
+        <div className="mt-15 pb-8 flex items-center justify-between">
           <Link
             href={"/project"}
             className="font-bold text-[14px] text-[#4F5F7B] py-3 px-4 "
