@@ -21,7 +21,7 @@ export function MemberCard({ members }: { members: Member[] }) {
         return (
           <div
             key={member.member_id}
-            className="grid grid-cols-[1fr_120px_64px] items-center gap-4 border-b border-black/5 px-4 py-4 last:border-b-0"
+            className="flex md:grid grid-cols-[1fr_120px_64px] items-center gap-4 border-b border-black/5 px-4 py-4 last:border-b-0"
           >
             <div className="flex min-w-0 items-center gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary-container text-white">
@@ -39,7 +39,7 @@ export function MemberCard({ members }: { members: Member[] }) {
               </div>
             </div>
 
-            <span className="text-[14px] capitalize text-[#434654]">
+            <span className="text-[14px] capitalize bg-primary-container text-white rounded-sm  w-fit px-2 py-1">
               {member.role}
             </span>
 

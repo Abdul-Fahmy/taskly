@@ -6,13 +6,44 @@ export default function EmptyEpic() {
   const { projectId } = useParams<{ projectId: string }>();
   return (
     <div className="w-full min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center gap-4">
-      <Image
-        src={"icons/noepic.svg"}
-        alt="no epics found"
-        width={188}
-        height={188}
-        style={{ width: "188px", height: "188px" }}
-      />
+      <div className="grid grid-cols-2 gap-2 bg-white p-6 rounded-md">
+        <div className="bg-[#0052CC33] w-16 h-16">
+          <Image
+            src={"icons/rocket.svg"}
+            alt="no epics found"
+            width={25}
+            height={25}
+            style={{ width: "25px", height: "25px" }}
+          />
+        </div>
+        <div className="bg-[#0052CC33] w-16 h-16">
+          <Image
+            src={"icons/cut.svg"}
+            alt="cut"
+            width={25}
+            height={25}
+            style={{ width: "25px", height: "25px" }}
+          />
+        </div>
+        <div className="bg-[#0052CC33] w-16 h-16">
+          <Image
+            src={"icons/track.svg"}
+            alt="dots"
+            width={25}
+            height={25}
+            style={{ width: "25px", height: "25px" }}
+          />
+        </div>
+        <div className="bg-[#003D9B33] w-16 h-16 border border-dashed border-primary-container">
+          <Image
+            src={"icons/plusEpic.svg"}
+            alt="plus"
+            width={25}
+            height={25}
+            style={{ width: "25px", height: "25px" }}
+          />
+        </div>
+      </div>
       <h3 className="text-[36px] font-semibold">
         No epics in this project yet.
       </h3>
@@ -33,6 +64,11 @@ export default function EmptyEpic() {
         />
         Create First Epic
       </Link>
+      <div className="flex items-center gap-4">
+        <div className=""></div>
+        <div className=""></div>
+        <div className=""></div>
+      </div>
     </div>
   );
 }

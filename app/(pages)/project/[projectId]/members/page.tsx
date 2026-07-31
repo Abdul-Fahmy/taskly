@@ -46,7 +46,7 @@ export default function MembersPage() {
       </div>
 
       <div className=" max-w-2xl mx-auto rounded-md bg-white mt-10">
-        <div className="grid grid-cols-[1fr_120px_64px] items-center gap-4 border-b border-black/10 px-4 py-3">
+        <div className="hidden md:grid grid-cols-[1fr_120px_64px] items-center gap-4 border-b border-black/10 px-4 py-3">
           <span className="text-[11px] font-bold uppercase text-[#4F5F7B]">
             Member
           </span>
