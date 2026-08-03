@@ -6,44 +6,58 @@ type AuthTokens = {
   expires_in?: number;
 };
 
+const cookieBase = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  path: "/",
+};
+
 export function setAuthCookies(
   response: NextResponse,
   tokens: AuthTokens,
   rememberMe = false,
 ) {
-  const maxAge = rememberMe ? 60 * 60 * 24 * 30 : tokens.expires_in;
+  const accessTokenMaxAge = tokens.expires_in;
+  const refreshTokenMaxAge = rememberMe
+    ? 60 * 60 * 24 * 30
+    : 60 * 60 * 24;
 
   response.cookies.set("access_token", tokens.access_token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    ...(maxAge ? { maxAge } : {}),
+    ...cookieBase,
+    ...(accessTokenMaxAge ? { maxAge: accessTokenMaxAge } : {}),
   });
 
   response.cookies.set("refresh_token", tokens.refresh_token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    ...(rememberMe ? { maxAge: 60 * 60 * 24 * 30 } : {}),
+    ...cookieBase,
+    maxAge: refreshTokenMaxAge,
+  });
+
+  response.cookies.set("remember_me", rememberMe ? "1" : "0", {
+    ...cookieBase,
+    maxAge: refreshTokenMaxAge,
   });
 }
 
 export function clearAuthCookies(response: NextResponse) {
   response.cookies.set("access_token", "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
+    ...cookieBase,
     maxAge: 0,
   });
 
   response.cookies.set("refresh_token", "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
+    ...cookieBase,
     maxAge: 0,
   });
+
+  response.cookies.set("remember_me", "", {
+    ...cookieBase,
+    maxAge: 0,
+  });
+}
+
+export function isRememberMeEnabled(
+  rememberMeCookie: string | undefined,
+): boolean {
+  return rememberMeCookie === "1";
 }

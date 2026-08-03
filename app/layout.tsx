@@ -6,6 +6,7 @@ import ReduxProvider from "./components/reduxProvider/ReduxProvider";
 import DashboardLayout from "./components/dashboardLayout/DashboardLayout";
 import { Toaster } from "react-hot-toast";
 import RecoveryHashRedirect from "./components/RecoveryHashRedirect";
+import SessionKeepAlive from "./components/SessionKeepAlive";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,7 +27,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const hasToken = Boolean(cookieStore.get("access_token")?.value);
+  const hasAccessToken = Boolean(cookieStore.get("access_token")?.value);
+  const hasRefreshToken = Boolean(cookieStore.get("refresh_token")?.value);
 
   return (
     <html
@@ -37,8 +39,9 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <ReduxProvider>
           <RecoveryHashRedirect />
+          <SessionKeepAlive enabled={hasAccessToken || hasRefreshToken} />
 
-          <DashboardLayout hasToken={hasToken}>{children}</DashboardLayout>
+          <DashboardLayout hasToken={hasAccessToken}>{children}</DashboardLayout>
           <Toaster />
         </ReduxProvider>
       </body>

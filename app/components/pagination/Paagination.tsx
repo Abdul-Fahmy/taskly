@@ -50,9 +50,9 @@ export default function Pagination({
           Showing {limit} of {totalCount} active Projects
         </p>
       </div>
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5 justify-between">
         <button
-          className=" flex items-center justify-center border border-[#C3C6D64D] px-1 py-2.5 w-8 h-8 "
+          className=" flex items-center justify-center border border-[#C3C6D64D] px-1 py-2.5 w-full h-8 disabled:cursor-not-allowed "
           disabled={currentPage === 1}
           onClick={() => {
             dispatch(setCurrentPage(currentPage - 1));
@@ -75,8 +75,8 @@ export default function Pagination({
               onClick={() => dispatch(setCurrentPage(item))}
               className={
                 currentPage === item
-                  ? "bg-primary text-white w-full px-1 py-1.5"
-                  : "bg-[#C3C6D64D] w-full px-1 py-1.5 text-black"
+                  ? "bg-primary text-white w-full h-8 px-1 py-1.5"
+                  : "bg-[#C3C6D64D] w-full px-1 py-1.5 h-8 text-black"
               }
             >
               {item}
@@ -84,7 +84,7 @@ export default function Pagination({
           ),
         )}
         <button
-          className="flex items-center justify-center border border-[#C3C6D64D] px-1 py-2.5 w-8 h-8"
+          className="flex items-center justify-center border border-[#C3C6D64D] px-1 py-2.5 w-full h-8  disabled:cursor-not-allowed"
           disabled={currentPage === totalPages}
           onClick={() => {
             dispatch(setCurrentPage(currentPage + 1));

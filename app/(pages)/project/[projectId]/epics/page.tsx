@@ -39,6 +39,7 @@ export default function EpicsPage() {
   return (
     <div className="pt-6">
       <div className="flex items-center justify-between px-3">
+        
         <div className="flex flex-col gap-2 ">
           <h3 className="font-semibold text-[30px] text-[#041B3C]">
             Project Epics

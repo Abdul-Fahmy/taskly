@@ -163,23 +163,7 @@ export default function SignupPage() {
                         style={{ width: "12px", height: "12px" }}
                       />
                     )}
-                    {rule.valid ? (
-                      <Image
-                        src={"/icons/checkedIcon.svg"}
-                        alt="check icon"
-                        width={12}
-                        height={12}
-                        style={{ width: "12px", height: "12px" }}
-                      />
-                    ) : (
-                      <Image
-                        src={"/icons/uncheckedIcon.svg"}
-                        alt="unchecked icon"
-                        width={12}
-                        height={12}
-                        style={{ width: "12px", height: "12px" }}
-                      />
-                    )}
+                   
                   </span>
                   {rule.message}
                 </li>
