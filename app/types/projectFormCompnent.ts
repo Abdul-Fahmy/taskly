@@ -5,4 +5,5 @@ export interface ProjectFormProps {
   form: UseFormReturn<projectFormData>;
   onSubmit: SubmitHandler<projectFormData>;
   errorMsg: string | null;
+  displayText: string,
 }
