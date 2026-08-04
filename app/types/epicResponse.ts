@@ -15,3 +15,17 @@ export type Epic = {
   created_by: UserInfo;
   assignee: UserInfo;
 };
+export type EpicState = {
+  epics: Epic[];
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+  currentPage: number;
+  limit:number;
+  totalCount:number;
+
+};
+
+export type PaginationResponse = {
+  epics:Epic[];
+  totalCount:number;
+}
