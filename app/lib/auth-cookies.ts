@@ -37,6 +37,18 @@ export function setAuthCookies(
     ...cookieBase,
     maxAge: refreshTokenMaxAge,
   });
+
+  // Readable by the client so SessionKeepAlive can skip unnecessary refreshes.
+  if (accessTokenMaxAge) {
+    const expiresAt = Date.now() + accessTokenMaxAge * 1000;
+    response.cookies.set("access_expires_at", String(expiresAt), {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: accessTokenMaxAge,
+    });
+  }
 }
 
 export function clearAuthCookies(response: NextResponse) {
@@ -52,6 +64,14 @@ export function clearAuthCookies(response: NextResponse) {
 
   response.cookies.set("remember_me", "", {
     ...cookieBase,
+    maxAge: 0,
+  });
+
+  response.cookies.set("access_expires_at", "", {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
     maxAge: 0,
   });
 }

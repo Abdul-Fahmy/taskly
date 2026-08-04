@@ -3,20 +3,50 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-/** Refresh a bit before the typical 1h Supabase access token expires. */
-const REFRESH_INTERVAL_MS = 45 * 60 * 1000;
+/** Poll locally often; only call the API when a refresh is actually due. */
+const CHECK_INTERVAL_MS = 60 * 1000;
+const REFRESH_AHEAD_MS = 5 * 60 * 1000;
+
+function getAccessExpiresAt(): number | null {
+  const match = document.cookie.match(/(?:^|; )access_expires_at=([^;]*)/);
+  if (!match) return null;
+
+  const value = Number(decodeURIComponent(match[1]));
+  return Number.isFinite(value) ? value : null;
+}
 
 export default function SessionKeepAlive({ enabled }: { enabled: boolean }) {
   const router = useRouter();
   const inFlight = useRef(false);
+  const bootstrappedExpiry = useRef(false);
 
   useEffect(() => {
     if (!enabled) return;
 
-    async function refreshSession() {
-      if (inFlight.current || document.visibilityState === "hidden") return;
+    function shouldRefreshAccessToken(): boolean {
+      const expiresAt = getAccessExpiresAt();
 
+      // Older sessions may lack the readable expiry cookie — refresh once to set it.
+      if (expiresAt === null) {
+        return !bootstrappedExpiry.current;
+      }
+
+      bootstrappedExpiry.current = true;
+      return Date.now() >= expiresAt - REFRESH_AHEAD_MS;
+    }
+
+    async function refreshSession() {
+      if (
+        inFlight.current ||
+        document.visibilityState === "hidden" ||
+        !shouldRefreshAccessToken()
+      ) {
+        return;
+      }
+
+      const wasMissingExpiry = getAccessExpiresAt() === null;
       inFlight.current = true;
+
       try {
         const response = await fetch("/api/auth/refresh", {
           method: "POST",
@@ -28,15 +58,16 @@ export default function SessionKeepAlive({ enabled }: { enabled: boolean }) {
           router.refresh();
         }
       } catch {
-        // Network blips — keep the tab open; next tick or focus will retry.
+        // Network blips — next check or focus will retry.
       } finally {
+        if (wasMissingExpiry) {
+          bootstrappedExpiry.current = true;
+        }
         inFlight.current = false;
       }
     }
 
-    void refreshSession();
-
-    const intervalId = window.setInterval(refreshSession, REFRESH_INTERVAL_MS);
+    const intervalId = window.setInterval(refreshSession, CHECK_INTERVAL_MS);
 
     function onVisibilityChange() {
       if (document.visibilityState === "visible") {

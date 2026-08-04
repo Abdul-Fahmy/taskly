@@ -47,10 +47,24 @@ export async function proxy(request: NextRequest) {
   const refreshToken = request.cookies.get("refresh_token")?.value;
   const { pathname } = request.nextUrl;
 
+  const isHome = pathname === "/";
   const isProtectedRoute = pathname.startsWith("/project");
   const isAuthRoute = AUTH_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
+
+  if (isHome) {
+    if (accessToken) {
+      return NextResponse.redirect(new URL("/project", request.url));
+    }
+
+    if (refreshToken) {
+      const redirected = await refreshAndRedirect(request, "/project");
+      if (redirected) return redirected;
+    }
+
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
 
   if (isProtectedRoute && !accessToken) {
     if (refreshToken) {
@@ -75,6 +89,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/project",
     "/project/:path*",
     "/login",
