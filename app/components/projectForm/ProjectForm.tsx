@@ -8,6 +8,7 @@ export default function ProjectForm({
   form,
   onSubmit,
   errorMsg,
+  displayText,
 }: ProjectFormProps) {
   const {
     register,
@@ -108,7 +109,7 @@ export default function ProjectForm({
             Back
           </Link>
           <Button
-            displayText={isSubmitting ? "Loading..." : "Save Changes"}
+            displayText={isSubmitting ? "Loading..." : displayText}
             type="submit"
             disabled={isSubmitting}
           />
