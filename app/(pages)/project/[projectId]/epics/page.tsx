@@ -1,7 +1,9 @@
 "use client";
 import Button from "@/app/components/button/Button";
 import EmptyEpic from "@/app/components/emptyEpic/EmptyEpic";
+import EpicDetailsPopup from "@/app/components/epic/EpicDetailsPopup";
 import { EpicCard } from "@/app/components/epicCard/EpicCard";
+import Modal from "@/app/components/modal/Modal";
 import ProjectEpicsSkeleton from "@/app/components/projectEpicSkeleton/ProjectEpicSkeleton";
 import { Epic } from "@/app/types/epicResponse";
 import Image from "next/image";
@@ -11,6 +13,7 @@ export default function EpicsPage() {
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
   const [epics, setEpics] = useState<Epic[] | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchEpics = async () => {
@@ -63,7 +66,11 @@ export default function EpicsPage() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
         {epics.map((epic) => (
-          <EpicCard key={epic.id} epic={epic} />
+          <EpicCard key={epic.id} epic={epic} onClick={()=>setOpen(true)} >
+            <Modal isOpen={open} onClose={()=>setOpen(false)}>
+             <EpicDetailsPopup epic={epic} onClose={()=>setOpen(false)} /> 
+            </Modal>
+          </EpicCard>
         ))}
       </div>
     </div>

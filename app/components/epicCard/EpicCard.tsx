@@ -2,16 +2,17 @@ import { getInitials } from "@/app/constant/getInitials";
 import { Epic } from "@/app/types/epicResponse";
 import Image from "next/image";
 
-export function EpicCard({ epic }: { epic: Epic }) {
+
+export function EpicCard({ epic,children, onClick }: { epic: Epic,children:React.ReactNode,onClick:()=>void }) {
   const initials = getInitials(epic.assignee.name ?? "");
   const formatted = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
   }).format(new Date(epic.created_at));
-
   return (
-    <div className="flex flex-col items-start gap-4 p-4 rounded-lg border-l-4 border-[#004E32] bg-white">
+   
+     <div className="flex flex-col items-start gap-4 p-4 rounded-lg border-l-4 border-[#004E32] bg-white" onClick={onClick}>
       <div className="flex items-center justify-between w-full">
         <p className="w-fit py-1 px-2.5 bg-[#82F9BE]">{epic.epic_id}</p>
         <Image
@@ -23,7 +24,7 @@ export function EpicCard({ epic }: { epic: Epic }) {
         />
       </div>
       <p className="font-semibold text-xl ">
-        Sustainable Materials Integration
+        {epic.title}
       </p>
       <div className="flex items-start flex-col w-full">
         <div className="flex items-start gap-2">
@@ -63,6 +64,7 @@ export function EpicCard({ epic }: { epic: Epic }) {
           </div>
         </div>
       </div>
+    {children}
     </div>
   );
 }
