@@ -23,10 +23,10 @@ export default function NavBar() {
   const collapsed = useAppSelector((state) => state.sidebar.collapsed);
 
   useEffect(() => {
-    if (status === "idle") {
+    if (!user && status === "idle") {
       dispatch(fetchCurrentUser());
     }
-  }, [dispatch, status]);
+  }, [dispatch, status, user]);
 
   const name = user?.user_metadata?.name ?? user?.email ?? "User";
   const jobTitle = user?.user_metadata?.job_title ?? "";

@@ -1,7 +1,9 @@
 "use client";
 import Button from "@/app/components/button/Button";
 import EmptyEpic from "@/app/components/emptyEpic/EmptyEpic";
+import EpicDetailsPopup from "@/app/components/epic/EpicDetailsPopup";
 import { EpicCard } from "@/app/components/epicCard/EpicCard";
+import Modal from "@/app/components/modal/Modal";
 import Pagination from "@/app/components/pagination/Paagination";
 import ProjectEpicsSkeleton from "@/app/components/projectEpicSkeleton/ProjectEpicSkeleton";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
@@ -17,6 +19,7 @@ import { useEffect, useRef, useState } from "react";
 export default function EpicsPage() {
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
+  const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
 
   const { epics, status, error, currentPage, totalCount, limit } =
