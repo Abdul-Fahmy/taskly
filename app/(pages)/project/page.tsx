@@ -217,6 +217,7 @@ export default function Project() {
             limit={limit}
             totalCount={totalCount}
             currentPage={currentPage}
+            onPageChange={(page) => dispatch(setCurrentPage(page))}
           />
         </div>
       )}

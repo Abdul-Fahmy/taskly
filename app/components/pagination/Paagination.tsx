@@ -1,6 +1,4 @@
 "use client";
-import { useAppDispatch } from "@/app/hooks/store.hooks";
-import { setCurrentPage } from "@/app/store/features/project.slice";
 import Image from "next/image";
 
 function getPagination(currentPage: number, totalPages: number) {
@@ -36,18 +34,23 @@ export default function Pagination({
   limit,
   totalCount,
   currentPage,
+  onPageChange,
+  itemLabel = "active Projects",
 }: {
   limit: number;
   totalCount: number;
   currentPage: number;
+  onPageChange: (page: number) => void;
+  itemLabel?: string;
 }) {
-  const dispatch = useAppDispatch();
-  const totalPages = Math.ceil(totalCount / limit);
+  const totalPages = Math.max(1, Math.ceil(totalCount / limit));
+  const showing = Math.min(limit, Math.max(totalCount - (currentPage - 1) * limit, 0));
+
   return (
     <div className="flex items-center justify-between text-[#434654] w-full">
       <div className="font-medium ">
         <p>
-          Showing {limit} of {totalCount} active Projects
+          Showing {showing} of {totalCount} {itemLabel}
         </p>
       </div>
       <div className="flex items-center gap-2.5 justify-between">
@@ -55,12 +58,12 @@ export default function Pagination({
           className=" flex items-center justify-center border border-[#C3C6D64D] px-1 py-2.5 w-full h-8 disabled:cursor-not-allowed "
           disabled={currentPage === 1}
           onClick={() => {
-            dispatch(setCurrentPage(currentPage - 1));
+            onPageChange(currentPage - 1);
           }}
         >
           <Image
             src={"/icons/backArrow.svg"}
-            alt="forward arrow"
+            alt="back arrow"
             width={20}
             height={20}
             style={{ width: "10px", height: "10px" }}
@@ -68,11 +71,11 @@ export default function Pagination({
         </button>
         {getPagination(currentPage, totalPages).map((item, index) =>
           item === "..." ? (
-            <span key={index}>...</span>
+            <span key={`ellipsis-${index}`}>...</span>
           ) : (
             <button
               key={item}
-              onClick={() => dispatch(setCurrentPage(item))}
+              onClick={() => onPageChange(item)}
               className={
                 currentPage === item
                   ? "bg-primary text-white w-full h-8 px-1 py-1.5"
@@ -87,7 +90,7 @@ export default function Pagination({
           className="flex items-center justify-center border border-[#C3C6D64D] px-1 py-2.5 w-full h-8  disabled:cursor-not-allowed"
           disabled={currentPage === totalPages}
           onClick={() => {
-            dispatch(setCurrentPage(currentPage + 1));
+            onPageChange(currentPage + 1);
           }}
         >
           <Image

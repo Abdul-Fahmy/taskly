@@ -55,12 +55,14 @@ export async function getEpics(projectId: string): Promise<Epic[]> {
 }
 
 export async function getEpicsPagination({
+  projectId,
   limit,
   offset,
 }: {
+  projectId: string;
   limit: number;
   offset: number;
-}): Promise<{ projects: Epic[]; contentRange: string }> {
+}): Promise<{ epics: Epic[]; contentRange: string }> {
   const { baseUrl } = getSupabaseConfig();
   const cookieStore = await cookies();
   const token = cookieStore.get("access_token")?.value;
@@ -75,7 +77,7 @@ export async function getEpicsPagination({
   }
 
   const response = await fetch(
-    `${baseUrl}/rest/v1/rpc/get_projects?limit=${limit}&offset=${offset}`,
+    `${baseUrl}/rest/v1/project_epics?project_id=eq.${projectId}&limit=${limit}&offset=${offset}`,
     {
       method: "GET",
       headers: {
@@ -96,19 +98,20 @@ export async function getEpicsPagination({
       message: (data as { message?: string })?.message || response.statusText,
     };
   }
-  const projects = Array.isArray(data) ? (data as Epic[]) : null;
-  if (!projects){
-throw new Error('an invaild pagination response')
+
+  const epics = Array.isArray(data) ? (data as Epic[]) : null;
+  if (!epics) {
+    throw new Error("an invalid pagination response");
   }
 
-  const contentRange = response.headers.get('content-range');
+  const contentRange = response.headers.get("content-range");
 
-  if(!contentRange){
-    throw new Error('response is missing the content-range header')
+  if (!contentRange) {
+    throw new Error("response is missing the content-range header");
   }
 
   return {
-    projects,
+    epics,
     contentRange,
   };
 }
