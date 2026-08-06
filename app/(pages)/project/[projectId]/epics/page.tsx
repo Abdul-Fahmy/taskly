@@ -14,6 +14,28 @@ export default function EpicsPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const [epics, setEpics] = useState<Epic[] | null>(null);
   const [open, setOpen] = useState(false);
+  const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
+
+  const handleClick = async (epicId: string) => {
+    try {
+      const res = await fetch(
+        `/api/project/${projectId}/epicDetails/${epicId}`,
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch epic details");
+      }
+      const data = await res.json();
+      // API returns an array from Supabase; use the first item
+      const epic = Array.isArray(data) ? data[0] : data;
+      if (!epic) {
+        throw new Error("Epic not found");
+      }
+      setSelectedEpic(epic);
+      setOpen(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const fetchEpics = async () => {
@@ -42,7 +64,6 @@ export default function EpicsPage() {
   return (
     <div className="pt-6">
       <div className="flex items-center justify-between px-3">
-        
         <div className="flex flex-col gap-2 ">
           <h3 className="font-semibold text-[30px] text-[#041B3C]">
             Project Epics
@@ -66,13 +87,30 @@ export default function EpicsPage() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
         {epics.map((epic) => (
-          <EpicCard key={epic.id} epic={epic} onClick={()=>setOpen(true)} >
-            <Modal isOpen={open} onClose={()=>setOpen(false)}>
-             <EpicDetailsPopup epic={epic} onClose={()=>setOpen(false)} /> 
-            </Modal>
-          </EpicCard>
+          <EpicCard
+            key={epic.id}
+            epic={epic}
+            onClick={() => handleClick(epic.id)}
+          />
         ))}
       </div>
+      <Modal
+        isOpen={open}
+        onClose={() => {
+          setOpen(false);
+          setSelectedEpic(null);
+        }}
+      >
+        {selectedEpic && (
+          <EpicDetailsPopup
+            epic={selectedEpic}
+            onClose={() => {
+              setOpen(false);
+              setSelectedEpic(null);
+            }}
+          />
+        )}
+      </Modal>
     </div>
   );
 }
