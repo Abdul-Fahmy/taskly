@@ -44,12 +44,13 @@ export default function Pagination({
   itemLabel?: string;
 }) {
   const totalPages =  Math.ceil(totalCount / limit);
+  const showing = Math.min(currentPage * limit, totalCount);
 
   return (
     <div className="flex items-center justify-between text-[#434654] w-full">
       <div className="font-medium ">
         <p>
-          Showing {limit} of {totalCount} Epics
+          Showing {showing} of {totalCount} {itemLabel}
         </p>
       </div>
       <div className="flex items-center gap-2.5 justify-between">
