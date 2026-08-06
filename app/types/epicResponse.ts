@@ -13,5 +13,5 @@ export type Epic = {
   deadline: string; // ISO date (YYYY-MM-DD)
   created_at: string; // ISO datetime
   created_by: UserInfo;
-  assignee: UserInfo;
+  assignee: UserInfo | null;
 };

@@ -4,7 +4,7 @@ import Image from "next/image";
 
 
 export function EpicCard({ epic,children, onClick }: { epic: Epic,children:React.ReactNode,onClick:()=>void }) {
-  const initials = getInitials(epic.assignee.name ?? "");
+  const initials = getInitials(epic.assignee?.name ?? "");
   const formatted = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "short",
@@ -35,7 +35,7 @@ export function EpicCard({ epic,children, onClick }: { epic: Epic,children:React
           </div>
           <div className="flex flex-col items-start">
             <p>Assignee</p>
-            <p>{epic.assignee.name ?? "Unassigned"}</p>
+            <p>{epic.assignee?.name ?? "Unassigned"}</p>
           </div>
         </div>
         <div className="w-full pt-2 border-t border-surface-low flex items-center justify-between text-surface-highest">

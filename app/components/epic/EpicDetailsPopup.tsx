@@ -5,20 +5,7 @@ import Select from 'react-select';
 import { CustomOption, CustomSingleValue } from "../customOption/CustomOption";
 import Link from "next/link";
 import Button from "../button/Button";
-const assignees = [
-    {
-      value: "1",
-      label: "Abdulrahman Fahmy",
-    },
-    {
-      value: "2",
-      label: "Ahmed Mohamed",
-    },
-    {
-      value: "3",
-      label: "Sara Ali",
-    },
-  ];
+
 
 
 export default function EpicDetailsPopup({epic, onClose}:{epic:Epic,onClose:()=>void}) {
@@ -28,6 +15,17 @@ export default function EpicDetailsPopup({epic, onClose}:{epic:Epic,onClose:()=>
         month: "short",
         year: "numeric",
       }).format(new Date(epic.created_at));
+      const unassignedOption = { value: "", label: "Unassigned" };
+      const selectedAssignee = epic.assignee
+        ? {
+            value: epic.assignee.email ?? epic.assignee.sub ?? "",
+            label:
+              epic.assignee.name ?? epic.assignee.email ?? "Unassigned",
+          }
+        : unassignedOption;
+      const assigneeOptions = [unassignedOption, selectedAssignee].filter(
+        (opt, i, arr) => arr.findIndex((o) => o.value === opt.value) === i,
+      );
 
     return(
         <div className="flex flex-col space-y-4">
@@ -62,7 +60,12 @@ export default function EpicDetailsPopup({epic, onClose}:{epic:Epic,onClose:()=>
 </div>
 <div className="flex flex-col items-start gap-2">
     <label htmlFor="assignee" className="text-[10px] font-bold text-text-shadow">Assignee</label>
-    <Select options={assignees} components={{Option:CustomOption, SingleValue:CustomSingleValue}} className="w-full" />
+    <Select
+      options={assigneeOptions}
+      value={selectedAssignee}
+      components={{ Option: CustomOption, SingleValue: CustomSingleValue }}
+      className="w-full"
+    />
 </div>
 <div className="flex flex-col items-start gap-2">
     <label htmlFor="deadline" className="text-[10px] font-bold text-text-shadow w-full">Deadline</label>
