@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import Button from "../button/Button";
 import { EpicFormProps } from "@/app/types/epicForm";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Member } from "@/app/types/members";
 
 export default function EpicForm({ form, onSubmit, errorMsg }: EpicFormProps) {
   const {
@@ -12,6 +14,23 @@ export default function EpicForm({ form, onSubmit, errorMsg }: EpicFormProps) {
     formState: { errors, isSubmitting },
   } = form;
   const { projectId } = useParams<{ projectId: string }>();
+
+  const [members,setMembers] = useState<Member[] | null> (null)
+
+
+
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      const data = await fetch(`/api/project/${projectId}/members`);
+      const result = (await data.json()) as Member[];
+      setMembers(result);
+    };
+    if (projectId) {
+      fetchMembers();
+    }
+  }, [projectId]);
+
   return (
     <div className="max-w-212 mx-auto bg-white mt-10 p-8">
       <form
@@ -67,7 +86,11 @@ export default function EpicForm({ form, onSubmit, errorMsg }: EpicFormProps) {
               <option value="" disabled>
                 Select a member...
               </option>
-              <option value="">Abdulrahman Fahmy</option>
+              {members?.map((member) => (
+                <option key={member.member_id} value={member.user_id}>
+                  {member.metadata?.name ?? member.email}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex flex-col items-start w-full gap-4">
