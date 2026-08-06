@@ -3,7 +3,7 @@ import { Epic } from "@/app/types/epicResponse";
 import Image from "next/image";
 
 
-export function EpicCard({ epic,children, onClick }: { epic: Epic,children:React.ReactNode,onClick:()=>void }) {
+export function EpicCard({ epic, children, onClick }: { epic: Epic; children?: React.ReactNode; onClick: () => void }) {
   const initials = getInitials(epic.assignee?.name ?? "");
   const formatted = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",

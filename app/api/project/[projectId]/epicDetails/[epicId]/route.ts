@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getEpics } from "@/app/services/epic.service";
+import { getEpicDetails } from "@/app/services/epic.service";
 
 export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ projectId: string }> },
+  _req: Request,
+  { params }: { params: Promise<{ projectId: string; epicId: string }> },
 ) {
-  const { projectId } = await params;
+  const { projectId, epicId } = await params;
   const token = (await cookies()).get("access_token")?.value;
 
   if (!token) {
@@ -14,11 +14,11 @@ export async function GET(
   }
 
   try {
-    const epics = await getEpics(projectId);
-    return NextResponse.json(epics);
+    const epic = await getEpicDetails(projectId, epicId);
+    return NextResponse.json(epic);
   } catch {
     return NextResponse.json(
-      { message: "Failed to fetch epics" },
+      { message: "Failed to fetch epic" },
       { status: 401 },
     );
   }

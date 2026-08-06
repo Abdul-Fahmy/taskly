@@ -12,6 +12,7 @@ import {
   resetEpicsState,
   setCurrentPage,
 } from "@/app/store/features/epics.slice";
+import { Epic } from "@/app/types/epicResponse";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -25,8 +26,30 @@ export default function EpicsPage() {
   const { epics, status, error, currentPage, totalCount, limit } =
     useAppSelector((state) => state.epics);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const hasMore = epics.length < totalCount;
+
+  const handleClick = async (epicId: string) => {
+    try {
+      const res = await fetch(
+        `/api/project/${projectId}/epicDetails/${epicId}`,
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch epic details");
+      }
+      const data = await res.json();
+      // API returns an array from Supabase; use the first item
+      const epic = Array.isArray(data) ? data[0] : data;
+      if (!epic) {
+        throw new Error("Epic not found");
+      }
+      setSelectedEpic(epic);
+      setOpen(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     dispatch(resetEpicsState());
@@ -157,11 +180,11 @@ export default function EpicsPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
             {epics.map((epic) => (
-             <EpicCard key={epic.id} epic={epic} onClick={()=>setOpen(true)} >
-             <Modal isOpen={open} onClose={()=>setOpen(false)}>
-              <EpicDetailsPopup epic={epic} onClose={()=>setOpen(false)} /> 
-             </Modal>
-           </EpicCard>
+              <EpicCard
+                key={epic.id}
+                epic={epic}
+                onClick={() => handleClick(epic.id)}
+              />
             ))}
           </div>
         </>
@@ -212,6 +235,24 @@ export default function EpicsPage() {
           </button>
         </div>
       )}
+
+      <Modal
+        isOpen={open}
+        onClose={() => {
+          setOpen(false);
+          setSelectedEpic(null);
+        }}
+      >
+        {selectedEpic && (
+          <EpicDetailsPopup
+            epic={selectedEpic}
+            onClose={() => {
+              setOpen(false);
+              setSelectedEpic(null);
+            }}
+          />
+        )}
+      </Modal>
     </div>
   );
 }
