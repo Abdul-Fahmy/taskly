@@ -1,36 +1,36 @@
-import { components, OptionProps } from "react-select";
+import { getInitials } from "@/app/constant/getInitials";
+import { components, OptionProps, SingleValueProps } from "react-select";
 
-const getInitials = (name: string) =>
-  name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase();
+type AssigneeOption = {
+  value: string;
+  label: string;
+};
 
-export const CustomOption = (props: OptionProps<any>) => {
+export const CustomOption = (props: OptionProps<AssigneeOption>) => {
+  const label = props.data.label ?? "Unassigned";
+
   return (
     <components.Option {...props}>
       <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold">
-          {getInitials(props.data.label)}
+        <div className="flex h-4 w-4 items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold">
+          {getInitials(label) || "U"}
         </div>
-
-        <span>{props.data.label}</span>
+        <span>{label}</span>
       </div>
     </components.Option>
   );
 };
-import { SingleValueProps } from "react-select";
 
-export const CustomSingleValue = (props: SingleValueProps<any>) => {
+export const CustomSingleValue = (props: SingleValueProps<AssigneeOption>) => {
+  const label = props.data.label ?? "Unassigned";
+
   return (
     <components.SingleValue {...props}>
       <div className="flex items-center gap-3">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold">
-          {getInitials(props.data.label)}
+          {getInitials(label) || "U"}
         </div>
-
-        <span>{props.data.label}</span>
+        <span>{label}</span>
       </div>
     </components.SingleValue>
   );
