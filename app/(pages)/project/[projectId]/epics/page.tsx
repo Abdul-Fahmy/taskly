@@ -108,6 +108,15 @@ export default function EpicsPage() {
               setOpen(false);
               setSelectedEpic(null);
             }}
+            onEpicUpdated={(updatedEpic) => {
+              setSelectedEpic(updatedEpic);
+              setEpics(
+                (current) =>
+                  current?.map((item) =>
+                    item.id === updatedEpic.id ? updatedEpic : item,
+                  ) ?? null,
+              );
+            }}
           />
         )}
       </Modal>
