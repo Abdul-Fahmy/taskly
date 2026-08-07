@@ -10,6 +10,13 @@ export type CreateEpicPayload = {
   deadline?: string;
 };
 
+export type UpdateEpicPayload = {
+  title?: string;
+  description?: string | null;
+  assignee_id?: string | null;
+  deadline?: string | null;
+};
+
 function getSupabaseConfig() {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -130,4 +137,22 @@ export async function getEpicDetails(projectId: string, epicId: string) {
       token,
     },
   );
+}
+
+export async function updateEpic(epicId: string, data: UpdateEpicPayload) {
+  const { baseUrl } = getSupabaseConfig();
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
+  if (!token) {
+    throw new Error("Missing access token");
+  }
+
+  return apiFetch(`${baseUrl}/rest/v1/epics?id=eq.${epicId}`, {
+    method: "PATCH",
+    token,
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: data,
+  });
 }

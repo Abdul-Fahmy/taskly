@@ -11,6 +11,7 @@ import {
   fetchEpicsPagination,
   resetEpicsState,
   setCurrentPage,
+  setEpics,
 } from "@/app/store/features/epics.slice";
 import { Epic } from "@/app/types/epicResponse";
 import Image from "next/image";
@@ -249,6 +250,16 @@ export default function EpicsPage() {
             onClose={() => {
               setOpen(false);
               setSelectedEpic(null);
+            }}
+            onEpicUpdated={(updatedEpic) => {
+              setSelectedEpic(updatedEpic);
+              dispatch(
+                setEpics(
+                  epics.map((item) =>
+                    item.id === updatedEpic.id ? updatedEpic : item,
+                  ),
+                ),
+              );
             }}
           />
         )}
