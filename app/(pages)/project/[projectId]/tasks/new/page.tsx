@@ -35,6 +35,7 @@ export default function NewTaskPage(){
           ))}
         </span>
         <h3 className="font-bold text-[36px]">Create New Task</h3>
+        <p className="text-text-secondary">Initialize a new work item within the Architectural Workspace ecosystem.</p>
       </div>
         </div>
     )
