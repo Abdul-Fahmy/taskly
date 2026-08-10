@@ -14,33 +14,37 @@ export async function refreshSessionTokens(
     return null;
   }
 
-  const response = await fetch(
-    `${supabaseUrl}/auth/v1/token?grant_type=refresh_token`,
-    {
-      method: "POST",
-      headers: {
-        apikey: anonKey,
-        "Content-Type": "application/json",
+  try {
+    const response = await fetch(
+      `${supabaseUrl}/auth/v1/token?grant_type=refresh_token`,
+      {
+        method: "POST",
+        headers: {
+          apikey: anonKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          refresh_token: refreshToken,
+        }),
       },
-      body: JSON.stringify({
-        refresh_token: refreshToken,
-      }),
-    },
-  );
+    );
 
-  if (!response.ok) {
+    if (!response.ok) {
+      return null;
+    }
+
+    const tokens = (await response.json()) as Partial<RefreshedTokens>;
+
+    if (!tokens.access_token || !tokens.refresh_token) {
+      return null;
+    }
+
+    return {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      expires_in: tokens.expires_in,
+    };
+  } catch {
     return null;
   }
-
-  const tokens = (await response.json()) as Partial<RefreshedTokens>;
-
-  if (!tokens.access_token || !tokens.refresh_token) {
-    return null;
-  }
-
-  return {
-    access_token: tokens.access_token,
-    refresh_token: tokens.refresh_token,
-    expires_in: tokens.expires_in,
-  };
 }

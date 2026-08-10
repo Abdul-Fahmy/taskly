@@ -1,10 +1,11 @@
+"use client";
+
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
-import { useParams, usePathname } from "next/navigation"
+import { useParams, usePathname } from "next/navigation";
 
-export default function NewTaskPage(){
-    const {projectId} = useParams<{projectId: string}>();
+export default function NewTaskPage() {    const {projectId} = useParams<{projectId: string}>();
     const pathname = usePathname();
     const project = useAppSelector((state) =>
         state.project.projects.find((project) => project.id === projectId),

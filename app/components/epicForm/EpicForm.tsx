@@ -22,9 +22,17 @@ export default function EpicForm({ form, onSubmit, errorMsg }: EpicFormProps) {
 
   useEffect(() => {
     const fetchMembers = async () => {
-      const data = await fetch(`/api/project/${projectId}/members`);
-      const result = (await data.json()) as Member[];
-      setMembers(result);
+      try {
+        const response = await fetch(`/api/project/${projectId}/members`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch members");
+        }
+        const result = (await response.json()) as Member[];
+        setMembers(Array.isArray(result) ? result : []);
+      } catch (error) {
+        console.error(error);
+        setMembers([]);
+      }
     };
     if (projectId) {
       fetchMembers();

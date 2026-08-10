@@ -1,4 +1,5 @@
 import {
+  clearAuthCookies,
   isRememberMeEnabled,
   setAuthCookies,
 } from "@/app/lib/auth-cookies";
@@ -42,6 +43,14 @@ async function refreshAndRedirect(request: NextRequest, path: string) {
   return response;
 }
 
+function redirectToLogin(request: NextRequest, clearCookies: boolean) {
+  const response = NextResponse.redirect(new URL("/login", request.url));
+  if (clearCookies) {
+    clearAuthCookies(response);
+  }
+  return response;
+}
+
 export async function proxy(request: NextRequest) {
   const accessToken = request.cookies.get("access_token")?.value;
   const refreshToken = request.cookies.get("refresh_token")?.value;
@@ -61,18 +70,20 @@ export async function proxy(request: NextRequest) {
     if (refreshToken) {
       const redirected = await refreshAndRedirect(request, "/project");
       if (redirected) return redirected;
+      return redirectToLogin(request, true);
     }
 
-    return NextResponse.redirect(new URL("/login", request.url));
+    return redirectToLogin(request, false);
   }
 
   if (isProtectedRoute && !accessToken) {
     if (refreshToken) {
       const refreshed = await refreshAndContinue(request);
       if (refreshed) return refreshed;
+      return redirectToLogin(request, true);
     }
 
-    return NextResponse.redirect(new URL("/login", request.url));
+    return redirectToLogin(request, false);
   }
 
   if (isAuthRoute && accessToken) {

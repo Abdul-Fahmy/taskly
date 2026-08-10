@@ -6,6 +6,8 @@ type AuthTokens = {
   expires_in?: number;
 };
 
+const DEFAULT_ACCESS_TOKEN_MAX_AGE = 60 * 60;
+
 const cookieBase = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
@@ -18,14 +20,14 @@ export function setAuthCookies(
   tokens: AuthTokens,
   rememberMe = false,
 ) {
-  const accessTokenMaxAge = tokens.expires_in;
+  const accessTokenMaxAge = tokens.expires_in ?? DEFAULT_ACCESS_TOKEN_MAX_AGE;
   const refreshTokenMaxAge = rememberMe
     ? 60 * 60 * 24 * 30
     : 60 * 60 * 24;
 
   response.cookies.set("access_token", tokens.access_token, {
     ...cookieBase,
-    ...(accessTokenMaxAge ? { maxAge: accessTokenMaxAge } : {}),
+    maxAge: accessTokenMaxAge,
   });
 
   response.cookies.set("refresh_token", tokens.refresh_token, {
@@ -39,16 +41,14 @@ export function setAuthCookies(
   });
 
   // Readable by the client so SessionKeepAlive can skip unnecessary refreshes.
-  if (accessTokenMaxAge) {
-    const expiresAt = Date.now() + accessTokenMaxAge * 1000;
-    response.cookies.set("access_expires_at", String(expiresAt), {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: accessTokenMaxAge,
-    });
-  }
+  const expiresAt = Date.now() + accessTokenMaxAge * 1000;
+  response.cookies.set("access_expires_at", String(expiresAt), {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: accessTokenMaxAge,
+  });
 }
 
 export function clearAuthCookies(response: NextResponse) {

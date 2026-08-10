@@ -4,7 +4,21 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 export const fetchCurrentUser = createAsyncThunk<User>(
   "user/fetchCurrentUser",
   async () => {
-    const response = await fetch("/api/user");
+    const loadUser = () => fetch("/api/user", { credentials: "same-origin" });
+
+    let response = await loadUser();
+
+    // Access cookie may be expired while refresh_token is still valid.
+    if (response.status === 401) {
+      const refreshResponse = await fetch("/api/auth/refresh", {
+        method: "POST",
+        credentials: "same-origin",
+      });
+
+      if (refreshResponse.ok) {
+        response = await loadUser();
+      }
+    }
 
     if (!response.ok) {
       const error = await response.json().catch(() => null);

@@ -26,12 +26,11 @@ export default function SessionKeepAlive({ enabled }: { enabled: boolean }) {
     function shouldRefreshAccessToken(): boolean {
       const expiresAt = getAccessExpiresAt();
 
-      // Older sessions may lack the readable expiry cookie — refresh once to set it.
+      // Older sessions may lack the readable expiry cookie — keep trying until set.
       if (expiresAt === null) {
         return !bootstrappedExpiry.current;
       }
 
-      bootstrappedExpiry.current = true;
       return Date.now() >= expiresAt - REFRESH_AHEAD_MS;
     }
 
@@ -44,7 +43,6 @@ export default function SessionKeepAlive({ enabled }: { enabled: boolean }) {
         return;
       }
 
-      const wasMissingExpiry = getAccessExpiresAt() === null;
       inFlight.current = true;
 
       try {
@@ -56,16 +54,20 @@ export default function SessionKeepAlive({ enabled }: { enabled: boolean }) {
         if (response.status === 401) {
           router.replace("/login");
           router.refresh();
+          return;
+        }
+
+        if (response.ok && getAccessExpiresAt() !== null) {
+          bootstrappedExpiry.current = true;
         }
       } catch {
         // Network blips — next check or focus will retry.
       } finally {
-        if (wasMissingExpiry) {
-          bootstrappedExpiry.current = true;
-        }
         inFlight.current = false;
       }
     }
+
+    void refreshSession();
 
     const intervalId = window.setInterval(refreshSession, CHECK_INTERVAL_MS);
 
