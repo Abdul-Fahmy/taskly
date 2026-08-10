@@ -424,7 +424,7 @@ export default function EpicDetailsPopup({
           <p className="text-lg font-medium">
             No tasks have been added to this epic yet
           </p>
-          <Button displayText="+ Add Tasks" />
+          <Link href={`/project/${projectId}/tasks/new`} className="bg-primary text-white px-4 py-2 rounded-md ">+ Add Tasks</Link>
         </div>
       </div>
     </div>

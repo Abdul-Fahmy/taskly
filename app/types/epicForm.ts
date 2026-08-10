@@ -1,8 +1,9 @@
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
 import { epicFormData } from "../schemas/addEpicSchema";
+import { tasksFormData } from "../schemas/newTasksSchema";
 
-export interface EpicFormProps {
-  form: UseFormReturn<epicFormData>;
-  onSubmit: SubmitHandler<epicFormData>;
+export interface FormProps {
+  form: UseFormReturn<epicFormData | tasksFormData>;
+  onSubmit: SubmitHandler<epicFormData | tasksFormData>;
   errorMsg: string | null;
 }
