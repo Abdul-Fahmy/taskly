@@ -9,7 +9,7 @@ export default function EmptyEpic() {
       <div className="grid grid-cols-2 gap-2 bg-white p-6 rounded-md">
         <div className="bg-[#0052CC33] w-16 h-16">
           <Image
-            src={"icons/rocket.svg"}
+            src={"/icons/rocket.svg"}
             alt="no epics found"
             width={25}
             height={25}
@@ -18,7 +18,7 @@ export default function EmptyEpic() {
         </div>
         <div className="bg-[#0052CC33] w-16 h-16">
           <Image
-            src={"icons/cut.svg"}
+            src={"/icons/cut.svg"}
             alt="cut"
             width={25}
             height={25}
@@ -27,7 +27,7 @@ export default function EmptyEpic() {
         </div>
         <div className="bg-[#0052CC33] w-16 h-16">
           <Image
-            src={"icons/track.svg"}
+            src={"/icons/track.svg"}
             alt="dots"
             width={25}
             height={25}
@@ -36,7 +36,7 @@ export default function EmptyEpic() {
         </div>
         <div className="bg-[#003D9B33] w-16 h-16 border border-dashed border-primary-container">
           <Image
-            src={"icons/plusEpic.svg"}
+            src={"/icons/plusEpic.svg"}
             alt="plus"
             width={25}
             height={25}
