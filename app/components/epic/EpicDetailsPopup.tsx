@@ -399,7 +399,7 @@ export default function EpicDetailsPopup({
       <div className="mt-2">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold">Tasks</p>
-          <Link href={"/"} className="text-primary text-[14px] font-semibold">
+          <Link href={`/project/${projectId}/tasks/new`} className="text-primary text-[14px] font-semibold">
             + Add Task
           </Link>
         </div>

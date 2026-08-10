@@ -3,4 +3,6 @@ export const breadcrumbMap: Record<string, string> = {
   edit: "Edit",
   add: "Add",
   members: "Members",
+  tasks:"Tasks",
+  new:"New"
 };
