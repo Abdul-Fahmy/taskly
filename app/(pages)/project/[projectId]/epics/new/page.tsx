@@ -40,7 +40,7 @@ export default function NewEpicPage() {
     setErrorMsg(null);
     const toastId = toast.loading("Creating epic...");
     try {
-      const response = await fetch(`/api/project/${projectId}/epics/new`, {
+      const response = await fetch(`/api/project/${projectId}/epics`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

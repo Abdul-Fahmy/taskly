@@ -3,6 +3,7 @@ import Button from "@/app/components/button/Button";
 import EmptyEpic from "@/app/components/emptyEpic/EmptyEpic";
 import EpicDetailsPopup from "@/app/components/epic/EpicDetailsPopup";
 import { EpicCard } from "@/app/components/epicCard/EpicCard";
+import Input from "@/app/components/input/Input";
 import Modal from "@/app/components/modal/Modal";
 import Pagination from "@/app/components/pagination/Paagination";
 import ProjectEpicsSkeleton from "@/app/components/projectEpicSkeleton/ProjectEpicSkeleton";
@@ -163,12 +164,14 @@ export default function EpicsPage() {
                 Project Epics
               </h3>
             </div>
+            <div className="flex gap-4 "> 
+              <Input type="search" placeholder="Search Epics" />
             <Button
               onClick={() => {
                 router.push(`/project/${projectId}/epics/new`);
               }}
               displayText="Create New Epic"
-              className="hidden md:flex items-center gap-2 btn-primary w-fit "
+              className="hidden md:flex items-center gap-2 btn-primary w-full "
             >
               <Image
                 src={"/icons/plusIcon.svg"}
@@ -178,6 +181,7 @@ export default function EpicsPage() {
                 style={{ width: "11px", height: "11px" }}
               />
             </Button>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
             {epics.map((epic) => (

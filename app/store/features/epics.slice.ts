@@ -9,7 +9,7 @@ export const fetchEpicsPagination = createAsyncThunk<
   async ({ projectId, limit, page }, { signal }) => {
     const offset = (page - 1) * limit;
     const response = await fetch(
-      `/api/project/${projectId}/epics/pagination?limit=${limit}&offset=${offset}`,
+      `/api/project/${projectId}/epics?limit=${limit}&offset=${offset}`,
       { signal },
     );
 
