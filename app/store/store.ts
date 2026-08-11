@@ -3,6 +3,8 @@ import { userReducer } from "./features/user.slice";
 import { sidebarReducer } from "./features/sidebar.slice";
 import { projectReducer } from "./features/project.slice";
 import { epicsReducer } from "./features/epics.slice";
+import { membersReducer } from "./features/members.slice";
+import { tasksReducer } from "./features/tasks.slice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
     sidebar: sidebarReducer,
     project: projectReducer,
     epics:epicsReducer,
+    members:membersReducer,
+    tasks:tasksReducer,
   },
 });
 

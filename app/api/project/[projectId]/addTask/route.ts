@@ -1,4 +1,5 @@
 import { createTask } from "@/app/services/tasks.services";
+import { getApiErrorMessage, getApiErrorStatus } from "@/app/lib/api";
 import { tasksSchema } from "@/app/schemas/newTasksSchema";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -10,7 +11,7 @@ export async function POST(
   try {
     const { projectId } = await params;
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get("sb-access-token")?.value;
+    const accessToken = cookieStore.get("access_token")?.value;
 
     if (!accessToken) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -35,8 +36,9 @@ export async function POST(
     const task = await createTask(accessToken, parsed.data);
     return NextResponse.json(task, { status: 201 });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Failed to create task";
-    return NextResponse.json({ message }, { status: 500 });
+    return NextResponse.json(
+      { message: getApiErrorMessage(error, "Failed to create task") },
+      { status: getApiErrorStatus(error, 500) },
+    );
   }
 }

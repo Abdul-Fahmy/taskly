@@ -3,16 +3,21 @@
 import TaskForm from "@/app/components/tasks/TaskForm";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
+import { getApiErrorMessage } from "@/app/lib/api";
 import { tasksFormData, tasksSchema } from "@/app/schemas/newTasksSchema";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { fetchProjects } from "@/app/store/features/project.slice";
+import { clearSelectedEpicId } from "@/app/store/features/tasks.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 export default function NewTaskPage() {
     const dispatch = useAppDispatch();
+    const selectedEpicId = useAppSelector((state)=>state.tasks.selectedEpicId)
+    const router = useRouter();
     const { projectId } = useParams<{ projectId: string }>();
     const pathname = usePathname();
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -25,24 +30,72 @@ export default function NewTaskPage() {
             [projectId]: project?.name || 'projectId',
         });
 
-        const form = useForm<tasksFormData>({
-            resolver:zodResolver(tasksSchema),
-            defaultValues:{
-                title:'',
-                description:'',
-                assignee_id:'',
-                due_date:'',
-                status:'',
-                epic_id:'',
-                project_id:projectId
-            }
-        })
+    const form = useForm<tasksFormData>({
+        mode: 'onChange',
+        resolver: zodResolver(tasksSchema),
+        defaultValues: {
+            title: '',
+            description: '',
+            assignee_id: '',
+            due_date: '',
+            status: "TO_DO",
+            epic_id: selectedEpicId ?? '',
+            project_id: projectId
+        }
+    })
 
-        useEffect(()=>{
-            dispatch(fetchProjects())
-        },[
-            projectId
-        ])
+    useEffect(() => {
+        dispatch(fetchProjects())
+    }, [
+        projectId
+    ])
+    useEffect(() => {
+        if (selectedEpicId) {
+          form.setValue("epic_id", selectedEpicId);
+        }
+      }, [selectedEpicId, form]);
+
+    const onSubmit = async (data: tasksFormData) => {
+        setErrorMsg(null);
+        const toastId = toast.loading("Creating task...");
+        try {
+            const response = await fetch(`/api/project/${projectId}/addTask`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...data,
+                    project_id: projectId,
+                }),
+            });
+
+            const result = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const message = result?.message || "Failed to create task";
+                setErrorMsg(message);
+                toast.error(message, { id: toastId });
+                return;
+            }
+
+            form.reset({
+                title: '',
+                description: '',
+                assignee_id: '',
+                due_date: '',
+                status: "TO_DO",
+                epic_id: '',
+                project_id: projectId,
+            });
+            toast.success("Task created successfully", { id: toastId });
+            router.push(`/project/${projectId}/tasks`);
+            router.refresh();
+            dispatch(clearSelectedEpicId());
+        } catch (error) {
+            const message = getApiErrorMessage(error, "Failed to create task");
+            setErrorMsg(message);
+            toast.error(message, { id: toastId });
+        }
+    };
 
     return (
         <div className="">
@@ -68,7 +121,7 @@ export default function NewTaskPage() {
                 <p className="text-text-secondary text-[14px]">Initialize a new work item within the Architectural Workspace ecosystem.</p>
             </div>
             <div className="mx-auto mt-8 max-w-2xl">
-                <TaskForm  form={form} onSubmit={()=>{}} errorMsg={errorMsg}/>
+                <TaskForm form={form} onSubmit={onSubmit} errorMsg={errorMsg} />
             </div>
         </div>
     )

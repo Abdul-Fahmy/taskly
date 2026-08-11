@@ -1,5 +1,14 @@
 import { z } from "zod";
-
+const statusSchema = z.enum([
+  "TO_DO",
+  "IN_PROGRESS",
+  "BLOCKED",
+  "IN_REVIEW",
+  "READY_FOR_QA",
+  "REOPENED",
+  "READY_FOR_PRODUCTION",
+  "DONE",
+]);
 export const tasksSchema = z.object({
     title: z
     .string()
@@ -15,7 +24,7 @@ export const tasksSchema = z.object({
   due_date: z.string().optional().or(z.literal("")),
   project_id: z.string(),
   epic_id:z.string().optional().or(z.literal('')),
-  status:z.string().optional().or(z.literal('todo | in_progress | in_review | done'))
+  status: statusSchema,
 });
 
 export type tasksFormData = z.infer<typeof tasksSchema>;

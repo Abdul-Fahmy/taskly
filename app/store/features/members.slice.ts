@@ -1,4 +1,4 @@
-import { Member, MemberstState } from "@/app/types/members";
+import { Member, MembersState } from "@/app/types/members";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export const fetchMembers = createAsyncThunk<
@@ -18,7 +18,7 @@ export const fetchMembers = createAsyncThunk<
   return Array.isArray(members) ? members : [];
 });
 
-const initialState: MemberstState = {
+const initialState: MembersState = {
   members: [],
   status: "idle",
   error: null,
@@ -30,7 +30,7 @@ const membersSlice = createSlice({
   reducers: {
     setMembers(state, action: PayloadAction<Member[]>) {
       state.members = action.payload;
-      state.status = "succeeded";
+      state.status = "success";
       state.error = null;
     },
     resetMembersState() {
@@ -44,7 +44,7 @@ const membersSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchMembers.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.status = "success";
         state.members = action.payload;
         state.error = null;
       })
@@ -52,7 +52,7 @@ const membersSlice = createSlice({
         if (action.meta.aborted) {
           return;
         }
-        state.status = "failed";
+        state.status = "error";
         state.error = action.error.message ?? "Failed to fetch members";
         state.members = [];
       });
