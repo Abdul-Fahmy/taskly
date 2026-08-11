@@ -32,7 +32,7 @@ export default function SideBar() {
             src: "/icons/tasksIcon.svg",
             width: 20,
             height: 16,
-            href: `/project/${projectId}/tasks`,
+            href: `/project/${projectId}/tasks?view=board`,
           },
           {
             label: "Members",
