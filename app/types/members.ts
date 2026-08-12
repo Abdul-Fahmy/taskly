@@ -17,3 +17,9 @@ export interface Member {
   email: string;
   metadata: MemberMetadata;
 }
+
+export interface MembersState {
+  members: Member[];
+  status: "idle" | "loading" | "success" | "error";
+  error: string | null;
+}

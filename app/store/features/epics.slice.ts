@@ -1,6 +1,23 @@
 import { Epic, EpicState, PaginationResponse } from "@/app/types/epicResponse";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export const fetchEpics = createAsyncThunk<
+  Epic[],
+  { projectId: string }
+>("epics/fetchEpics", async ({ projectId }, { signal }) => {
+  const response = await fetch(`/api/project/${projectId}/epics`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    throw new Error(error?.message ?? "Failed to fetch epics");
+  }
+
+  const epics = (await response.json()) as Epic[];
+  return Array.isArray(epics) ? epics : [];
+});
+
 export const fetchEpicsPagination = createAsyncThunk<
   PaginationResponse,
   { projectId: string; limit: number; page: number; append?: boolean }
@@ -62,6 +79,24 @@ const epicsSlice = createSlice({
   },
   extraReducers(builder) {
     builder
+      .addCase(fetchEpics.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchEpics.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.epics = action.payload;
+        state.totalCount = action.payload.length;
+        state.error = null;
+      })
+      .addCase(fetchEpics.rejected, (state, action) => {
+        if (action.meta.aborted) {
+          return;
+        }
+        state.status = "failed";
+        state.error = action.error.message ?? "Failed to fetch epics";
+        state.epics = [];
+      })
       .addCase(fetchEpicsPagination.pending, (state) => {
         state.status = "loading";
       })

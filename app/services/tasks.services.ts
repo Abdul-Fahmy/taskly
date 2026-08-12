@@ -1,3 +1,4 @@
+import { apiFetch } from "@/app/lib/api";
 import { tasksFormData } from "@/app/schemas/newTasksSchema";
 
 type CreateTaskPayload = {
@@ -31,7 +32,7 @@ export function buildCreateTaskPayload(
     payload.status = data.status;
   }
   if (data.due_date) {
-    payload.due_date = data.due_date;
+    payload.due_date = new Date(data.due_date).toISOString();
   }
 
   return payload;
@@ -41,26 +42,19 @@ export async function createTask(
   accessToken: string,
   data: tasksFormData,
 ) {
-  const payload = buildCreateTaskPayload(data);
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/tasks`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        Prefer: "return=representation",
-      },
-      body: JSON.stringify(payload),
-    },
-  );
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    throw new Error(error?.message ?? "Failed to create task");
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!baseUrl) {
+    throw new Error("Missing Supabase environment variables");
   }
 
-  return response.json();
+  const payload = buildCreateTaskPayload(data);
+
+  return apiFetch(`${baseUrl}/rest/v1/tasks`, {
+    method: "POST",
+    token: accessToken,
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: payload,
+  });
 }

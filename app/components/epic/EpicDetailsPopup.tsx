@@ -10,7 +10,7 @@ import { Member } from "@/app/types/members";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -18,6 +18,8 @@ import Select from "react-select";
 import Button from "../button/Button";
 import { CustomOption, CustomSingleValue } from "../customOption/CustomOption";
 import Input from "../input/Input";
+import { useAppDispatch } from "@/app/hooks/store.hooks";
+import { setSelectedEpicId } from "@/app/store/features/tasks.slice";
 
 type AssigneeOption = {
   value: string;
@@ -54,6 +56,13 @@ export default function EpicDetailsPopup({
   const localEpicRef = useRef(epic);
   const [members, setMembers] = useState<Member[] | null>(null);
   const [isEditingAssignee, setIsEditingAssignee] = useState(false);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+const handleAddTask = () => {
+  dispatch(setSelectedEpicId(epic.id));
+  router.push(`/project/${projectId}/tasks/new`);
+};
 
   const form = useForm<updateEpicFormData>({
     defaultValues: {
@@ -407,9 +416,9 @@ export default function EpicDetailsPopup({
       <div className="mt-2">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold">Tasks</p>
-          <Link href={`/project/${projectId}/tasks/new`} className="text-primary text-[14px] font-semibold">
+          <button onClick={handleAddTask} className="text-primary text-[14px] font-semibold">
             + Add Task
-          </Link>
+          </button>
         </div>
         <div className="mt-2 w-full bg-surface-low rounded-sm p-4 flex flex-col items-center justify-center gap-4">
           <span className="p-4 bg-[#D7E2FF] rounded-sm">
@@ -424,7 +433,7 @@ export default function EpicDetailsPopup({
           <p className="text-lg font-medium">
             No tasks have been added to this epic yet
           </p>
-          <Button displayText="+ Add Tasks" />
+          <button onClick={handleAddTask}  className="bg-primary text-white px-4 py-2 rounded-md ">+ Add Tasks</button>
         </div>
       </div>
     </div>

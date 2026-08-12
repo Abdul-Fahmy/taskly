@@ -2,12 +2,13 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Button from "../button/Button";
-import { EpicFormProps } from "@/app/types/epicForm";
+import { FormProps } from "@/app/types/epicForm";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Member } from "@/app/types/members";
+import { epicFormData } from "@/app/schemas/addEpicSchema";
 
-export default function EpicForm({ form, onSubmit, errorMsg }: EpicFormProps) {
+export default function EpicForm({ form, onSubmit, errorMsg }: FormProps<epicFormData>) {
   const {
     register,
     handleSubmit,

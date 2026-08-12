@@ -56,7 +56,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
 
-        {error && <p className="text-neutral-300 text-sm">{error}</p>}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
       </div>
     );
   },
