@@ -9,13 +9,11 @@ import { Epic, UserInfo } from "@/app/types/epicResponse";
 import { Member } from "@/app/types/members";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Select from "react-select";
-import Button from "../button/Button";
 import { CustomOption, CustomSingleValue } from "../customOption/CustomOption";
 import Input from "../input/Input";
 import { useAppDispatch } from "@/app/hooks/store.hooks";
@@ -53,16 +51,17 @@ export default function EpicDetailsPopup({
 }) {
   const { projectId } = useParams<{ projectId: string }>();
   const [localEpic, setLocalEpic] = useState(epic);
+  const [prevEpic, setPrevEpic] = useState(epic);
   const localEpicRef = useRef(epic);
   const [members, setMembers] = useState<Member[] | null>(null);
   const [isEditingAssignee, setIsEditingAssignee] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-const handleAddTask = () => {
-  dispatch(setSelectedEpicId(epic.id));
-  router.push(`/project/${projectId}/tasks/new`);
-};
+  const handleAddTask = () => {
+    dispatch(setSelectedEpicId(epic.id));
+    router.push(`/project/${projectId}/tasks/new`);
+  };
 
   const form = useForm<updateEpicFormData>({
     defaultValues: {
@@ -85,37 +84,9 @@ const handleAddTask = () => {
     formState: { errors },
   } = form;
 
-  const createdByInitials = getInitials(localEpic.created_by.name ?? "");
-  const formatted = new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(localEpic.created_at));
-
-  const assigneeOptions: AssigneeOption[] = [
-    { value: "", label: "Unassigned" },
-    ...(members?.map((member) => ({
-      value: member.user_id,
-      label: member.metadata?.name ?? member.email,
-    })) ?? []),
-  ];
-
-  const selectedAssignee =
-    assigneeOptions.find(
-      (option) => option.value === (localEpic.assignee?.sub ?? ""),
-    ) ?? assigneeOptions[0];
-
   useEffect(() => {
-    localEpicRef.current = epic;
-    setLocalEpic(epic);
-    reset({
-      title: epic.title,
-      description: epic.description ?? "",
-      assignee_id: epic.assignee?.sub ?? "",
-      deadline: epic.deadline ?? "",
-    });
-    setIsEditingAssignee(false);
-  }, [epic, reset]);
+    localEpicRef.current = localEpic;
+  }, [localEpic]);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -135,6 +106,38 @@ const handleAddTask = () => {
       fetchMembers();
     }
   }, [projectId]);
+
+  if (epic !== prevEpic) {
+    setPrevEpic(epic);
+    setLocalEpic(epic);
+    setIsEditingAssignee(false);
+    reset({
+      title: epic.title,
+      description: epic.description ?? "",
+      assignee_id: epic.assignee?.sub ?? "",
+      deadline: epic.deadline ?? "",
+    });
+  }
+
+  const createdByInitials = getInitials(localEpic.created_by.name ?? "");
+  const formatted = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(localEpic.created_at));
+
+  const assigneeOptions: AssigneeOption[] = [
+    { value: "", label: "Unassigned" },
+    ...(members?.map((member) => ({
+      value: member.user_id,
+      label: member.metadata?.name ?? member.email,
+    })) ?? []),
+  ];
+
+  const selectedAssignee =
+    assigneeOptions.find(
+      (option) => option.value === (localEpic.assignee?.sub ?? ""),
+    ) ?? assigneeOptions[0];
 
   const commitEpic = (partial: Partial<Epic>) => {
     const next = { ...localEpicRef.current, ...partial };
@@ -252,10 +255,8 @@ const handleAddTask = () => {
     });
   };
 
-  const titleRegister = register("title", { onBlur: handleTitleBlur });
-  const descriptionRegister = register("description", {
-    onBlur: handleDescriptionBlur,
-  });
+  const titleRegister = register("title");
+  const descriptionRegister = register("description");
   const deadlineRegister = register("deadline");
 
   return (
@@ -283,6 +284,10 @@ const handleAddTask = () => {
             className="rounded-sm bg-surface-highest py-4 px-2 w-full"
             placeholder="e.g. Structural Foundation Phase"
             {...titleRegister}
+            onBlur={(event) => {
+              void titleRegister.onBlur(event);
+              void handleTitleBlur();
+            }}
           />
           {errors.title && (
             <div className="flex items-center gap-1 mt-1">
@@ -306,6 +311,10 @@ const handleAddTask = () => {
           rows={5}
           placeholder="No description provided"
           {...descriptionRegister}
+          onBlur={(event) => {
+            void descriptionRegister.onBlur(event);
+            void handleDescriptionBlur();
+          }}
         />
         {errors.description && (
           <p className="text-[12px] text-[#BA1A1A]">
@@ -416,7 +425,10 @@ const handleAddTask = () => {
       <div className="mt-2">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold">Tasks</p>
-          <button onClick={handleAddTask} className="text-primary text-[14px] font-semibold">
+          <button
+            onClick={handleAddTask}
+            className="text-primary text-[14px] font-semibold"
+          >
             + Add Task
           </button>
         </div>
@@ -433,7 +445,12 @@ const handleAddTask = () => {
           <p className="text-lg font-medium">
             No tasks have been added to this epic yet
           </p>
-          <button onClick={handleAddTask}  className="bg-primary text-white px-4 py-2 rounded-md ">+ Add Tasks</button>
+          <button
+            onClick={handleAddTask}
+            className="bg-primary text-white px-4 py-2 rounded-md "
+          >
+            + Add Tasks
+          </button>
         </div>
       </div>
     </div>

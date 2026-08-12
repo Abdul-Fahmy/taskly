@@ -1,53 +1,50 @@
 import { Epic, EpicState, PaginationResponse } from "@/app/types/epicResponse";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export const fetchEpics = createAsyncThunk<
-  Epic[],
-  { projectId: string }
->("epics/fetchEpics", async ({ projectId }, { signal }) => {
-  const response = await fetch(`/api/project/${projectId}/epics`, {
-    signal,
-  });
+export const fetchEpics = createAsyncThunk<Epic[], { projectId: string }>(
+  "epics/fetchEpics",
+  async ({ projectId }, { signal }) => {
+    const response = await fetch(`/api/project/${projectId}/epics`, {
+      signal,
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    throw new Error(error?.message ?? "Failed to fetch epics");
-  }
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+      throw new Error(error?.message ?? "Failed to fetch epics");
+    }
 
-  const epics = (await response.json()) as Epic[];
-  return Array.isArray(epics) ? epics : [];
-});
+    const epics = (await response.json()) as Epic[];
+    return Array.isArray(epics) ? epics : [];
+  },
+);
 
 export const fetchEpicsPagination = createAsyncThunk<
   PaginationResponse,
   { projectId: string; limit: number; page: number; append?: boolean }
->(
-  "epics/fetchPagination",
-  async ({ projectId, limit, page }, { signal }) => {
-    const offset = (page - 1) * limit;
-    const response = await fetch(
-      `/api/project/${projectId}/epics?limit=${limit}&offset=${offset}`,
-      { signal },
-    );
+>("epics/fetchPagination", async ({ projectId, limit, page }, { signal }) => {
+  const offset = (page - 1) * limit;
+  const response = await fetch(
+    `/api/project/${projectId}/epics?limit=${limit}&offset=${offset}`,
+    { signal },
+  );
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => null);
-      throw new Error(error?.message ?? "Failed to fetch pagination");
-    }
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    throw new Error(error?.message ?? "Failed to fetch pagination");
+  }
 
-    const contentRange = response.headers.get("content-range");
-    const totalPart = contentRange?.split("/")[1];
-    const totalCount = totalPart ? Number(totalPart) : Number.NaN;
+  const contentRange = response.headers.get("content-range");
+  const totalPart = contentRange?.split("/")[1];
+  const totalCount = totalPart ? Number(totalPart) : Number.NaN;
 
-    if (!Number.isFinite(totalCount)) {
-      throw new Error("Pagination response is missing a valid total count");
-    }
+  if (!Number.isFinite(totalCount)) {
+    throw new Error("Pagination response is missing a valid total count");
+  }
 
-    const epics = (await response.json()) as Epic[];
+  const epics = (await response.json()) as Epic[];
 
-    return { epics, totalCount };
-  },
-);
+  return { epics, totalCount };
+});
 
 const initialState: EpicState = {
   epics: [],
@@ -105,9 +102,7 @@ const epicsSlice = createSlice({
         if (action.meta.arg.append) {
           const existingIds = new Set(state.epics.map((epic) => epic.id));
           state.epics.push(
-            ...action.payload.epics.filter(
-              (epic) => !existingIds.has(epic.id),
-            ),
+            ...action.payload.epics.filter((epic) => !existingIds.has(epic.id)),
           );
         } else {
           state.epics = action.payload.epics;

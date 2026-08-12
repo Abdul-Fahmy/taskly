@@ -43,7 +43,7 @@ export default function Pagination({
   onPageChange: (page: number) => void;
   itemLabel?: string;
 }) {
-  const totalPages =  Math.ceil(totalCount / limit);
+  const totalPages = Math.ceil(totalCount / limit);
   const showing = Math.min(currentPage * limit, totalCount);
 
   return (

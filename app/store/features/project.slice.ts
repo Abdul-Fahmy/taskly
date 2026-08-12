@@ -87,7 +87,9 @@ const projectSlice = createSlice({
       .addCase(fetchPagination.fulfilled, (state, action) => {
         state.status = "succeeded";
         if (action.meta.arg.append) {
-          const existingIds = new Set(state.projects.map((project) => project.id));
+          const existingIds = new Set(
+            state.projects.map((project) => project.id),
+          );
           state.projects.push(
             ...action.payload.projects.filter(
               (project) => !existingIds.has(project.id),

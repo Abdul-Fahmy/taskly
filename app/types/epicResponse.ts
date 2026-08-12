@@ -20,12 +20,11 @@ export type EpicState = {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   currentPage: number;
-  limit:number;
-  totalCount:number;
-
+  limit: number;
+  totalCount: number;
 };
 
 export type PaginationResponse = {
-  epics:Epic[];
-  totalCount:number;
-}
+  epics: Epic[];
+  totalCount: number;
+};

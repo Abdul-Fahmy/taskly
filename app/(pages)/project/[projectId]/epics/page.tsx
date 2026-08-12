@@ -164,23 +164,23 @@ export default function EpicsPage() {
                 Project Epics
               </h3>
             </div>
-            <div className="flex gap-4 "> 
+            <div className="flex gap-4 ">
               <Input type="search" placeholder="Search Epics" />
-            <Button
-              onClick={() => {
-                router.push(`/project/${projectId}/epics/new`);
-              }}
-              displayText="Create New Epic"
-              className="hidden md:flex items-center gap-2 btn-primary w-full "
-            >
-              <Image
-                src={"/icons/plusIcon.svg"}
-                alt="plus Icon"
-                width={11}
-                height={11}
-                style={{ width: "11px", height: "11px" }}
-              />
-            </Button>
+              <Button
+                onClick={() => {
+                  router.push(`/project/${projectId}/epics/new`);
+                }}
+                displayText="Create New Epic"
+                className="hidden md:flex items-center gap-2 btn-primary w-full "
+              >
+                <Image
+                  src={"/icons/plusIcon.svg"}
+                  alt="plus Icon"
+                  width={11}
+                  height={11}
+                  style={{ width: "11px", height: "11px" }}
+                />
+              </Button>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">

@@ -8,7 +8,11 @@ import { useEffect, useState } from "react";
 import { Member } from "@/app/types/members";
 import { epicFormData } from "@/app/schemas/addEpicSchema";
 
-export default function EpicForm({ form, onSubmit, errorMsg }: FormProps<epicFormData>) {
+export default function EpicForm({
+  form,
+  onSubmit,
+  errorMsg,
+}: FormProps<epicFormData>) {
   const {
     register,
     handleSubmit,
@@ -16,10 +20,7 @@ export default function EpicForm({ form, onSubmit, errorMsg }: FormProps<epicFor
   } = form;
   const { projectId } = useParams<{ projectId: string }>();
 
-  const [members,setMembers] = useState<Member[] | null> (null)
-
-
-
+  const [members, setMembers] = useState<Member[] | null>(null);
 
   useEffect(() => {
     const fetchMembers = async () => {

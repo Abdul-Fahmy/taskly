@@ -11,9 +11,9 @@ export const store = configureStore({
     user: userReducer,
     sidebar: sidebarReducer,
     project: projectReducer,
-    epics:epicsReducer,
-    members:membersReducer,
-    tasks:tasksReducer,
+    epics: epicsReducer,
+    members: membersReducer,
+    tasks: tasksReducer,
   },
 });
 

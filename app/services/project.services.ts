@@ -109,14 +109,14 @@ export async function getProjectsPagination({
     };
   }
   const projects = Array.isArray(data) ? (data as Project[]) : null;
-  if (!projects){
-throw new Error('an invaild pagination response')
+  if (!projects) {
+    throw new Error("an invaild pagination response");
   }
 
-  const contentRange = response.headers.get('content-range');
+  const contentRange = response.headers.get("content-range");
 
-  if(!contentRange){
-    throw new Error('response is missing the content-range header')
+  if (!contentRange) {
+    throw new Error("response is missing the content-range header");
   }
 
   return {

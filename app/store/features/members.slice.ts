@@ -1,22 +1,22 @@
 import { Member, MembersState } from "@/app/types/members";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export const fetchMembers = createAsyncThunk<
-  Member[],
-  { projectId: string }
->("members/fetchMembers", async ({ projectId }, { signal }) => {
-  const response = await fetch(`/api/project/${projectId}/members`, {
-    signal,
-  });
+export const fetchMembers = createAsyncThunk<Member[], { projectId: string }>(
+  "members/fetchMembers",
+  async ({ projectId }, { signal }) => {
+    const response = await fetch(`/api/project/${projectId}/members`, {
+      signal,
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    throw new Error(error?.message ?? "Failed to fetch members");
-  }
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+      throw new Error(error?.message ?? "Failed to fetch members");
+    }
 
-  const members = (await response.json()) as Member[];
-  return Array.isArray(members) ? members : [];
-});
+    const members = (await response.json()) as Member[];
+    return Array.isArray(members) ? members : [];
+  },
+);
 
 const initialState: MembersState = {
   members: [],

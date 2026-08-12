@@ -41,7 +41,9 @@ export default async function RootLayout({
           <RecoveryHashRedirect />
           <SessionKeepAlive enabled={hasAccessToken || hasRefreshToken} />
 
-          <DashboardLayout hasToken={hasAccessToken}>{children}</DashboardLayout>
+          <DashboardLayout hasToken={hasAccessToken}>
+            {children}
+          </DashboardLayout>
           <Toaster />
         </ReduxProvider>
       </body>

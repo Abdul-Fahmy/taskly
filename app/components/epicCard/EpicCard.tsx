@@ -2,8 +2,15 @@ import { getInitials } from "@/app/constant/getInitials";
 import { Epic } from "@/app/types/epicResponse";
 import Image from "next/image";
 
-
-export function EpicCard({ epic, children, onClick }: { epic: Epic; children?: React.ReactNode; onClick: () => void }) {
+export function EpicCard({
+  epic,
+  children,
+  onClick,
+}: {
+  epic: Epic;
+  children?: React.ReactNode;
+  onClick: () => void;
+}) {
   const initials = getInitials(epic.assignee?.name ?? "");
   const formatted = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
@@ -11,8 +18,10 @@ export function EpicCard({ epic, children, onClick }: { epic: Epic; children?: R
     year: "numeric",
   }).format(new Date(epic.created_at));
   return (
-   
-     <div className="flex flex-col items-start gap-4 p-4 rounded-lg border-l-4 border-[#004E32] bg-white" onClick={onClick}>
+    <div
+      className="flex flex-col items-start gap-4 p-4 rounded-lg border-l-4 border-[#004E32] bg-white"
+      onClick={onClick}
+    >
       <div className="flex items-center justify-between w-full">
         <p className="w-fit py-1 px-2.5 bg-[#82F9BE]">{epic.epic_id}</p>
         <Image
@@ -23,9 +32,7 @@ export function EpicCard({ epic, children, onClick }: { epic: Epic; children?: R
           style={{ width: "4px", height: "16px" }}
         />
       </div>
-      <p className="font-semibold text-xl ">
-        {epic.title}
-      </p>
+      <p className="font-semibold text-xl ">{epic.title}</p>
       <div className="flex items-start flex-col w-full">
         <div className="flex items-start gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary-container text-white">
@@ -64,7 +71,7 @@ export function EpicCard({ epic, children, onClick }: { epic: Epic; children?: R
           </div>
         </div>
       </div>
-    {children}
+      {children}
     </div>
   );
 }

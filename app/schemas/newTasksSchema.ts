@@ -10,7 +10,7 @@ const statusSchema = z.enum([
   "DONE",
 ]);
 export const tasksSchema = z.object({
-    title: z
+  title: z
     .string()
     .min(3, "Title is required (minimum 3 characters)")
     .max(100, "Title must be less than 100 characters"),
@@ -23,7 +23,7 @@ export const tasksSchema = z.object({
   assignee_id: z.string().optional().or(z.literal("")),
   due_date: z.string().optional().or(z.literal("")),
   project_id: z.string(),
-  epic_id:z.string().optional().or(z.literal('')),
+  epic_id: z.string().optional().or(z.literal("")),
   status: statusSchema,
 });
 

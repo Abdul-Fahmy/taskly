@@ -11,12 +11,11 @@ export type ProjectState = {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   currentPage: number;
-  limit:number;
-  totalCount:number;
-
+  limit: number;
+  totalCount: number;
 };
 
 export type PaginationResponse = {
-  projects:Project[];
-  totalCount:number;
-}
+  projects: Project[];
+  totalCount: number;
+};

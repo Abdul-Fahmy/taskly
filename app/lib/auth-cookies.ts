@@ -21,9 +21,7 @@ export function setAuthCookies(
   rememberMe = false,
 ) {
   const accessTokenMaxAge = tokens.expires_in ?? DEFAULT_ACCESS_TOKEN_MAX_AGE;
-  const refreshTokenMaxAge = rememberMe
-    ? 60 * 60 * 24 * 30
-    : 60 * 60 * 24;
+  const refreshTokenMaxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24;
 
   response.cookies.set("access_token", tokens.access_token, {
     ...cookieBase,

@@ -1,5 +1,9 @@
 import { getApiErrorMessage, getApiErrorStatus } from "@/app/lib/api";
-import { addEpic, getEpics, getEpicsPagination } from "@/app/services/epic.service";
+import {
+  addEpic,
+  getEpics,
+  getEpicsPagination,
+} from "@/app/services/epic.service";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -99,8 +103,7 @@ export async function POST(
       typeof description === "string" ? description.trim() : "";
     const trimmedAssigneeId =
       typeof assignee_id === "string" ? assignee_id.trim() : "";
-    const trimmedDeadline =
-      typeof deadline === "string" ? deadline.trim() : "";
+    const trimmedDeadline = typeof deadline === "string" ? deadline.trim() : "";
 
     const epic = await addEpic({
       title: title.trim(),

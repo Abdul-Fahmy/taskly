@@ -91,7 +91,12 @@ export default function EditPage() {
         <h3 className="font-bold text-[36px]">Edit Project</h3>
       </div>
 
-      <ProjectForm form={form} onSubmit={onSubmit} errorMsg={errorMsg} displayText="Save changes" />
+      <ProjectForm
+        form={form}
+        onSubmit={onSubmit}
+        errorMsg={errorMsg}
+        displayText="Save changes"
+      />
       <div className="md:w-2xl mx-auto pb-8 flex items-center justify-center gap-2 mt-8 px-3">
         <Image
           src={"/icons/tip.svg"}

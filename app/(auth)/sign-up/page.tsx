@@ -163,7 +163,6 @@ export default function SignupPage() {
                         style={{ width: "12px", height: "12px" }}
                       />
                     )}
-                   
                   </span>
                   {rule.message}
                 </li>

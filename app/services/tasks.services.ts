@@ -11,9 +11,7 @@ type CreateTaskPayload = {
   due_date?: string;
 };
 
-export function buildCreateTaskPayload(
-  data: tasksFormData,
-): CreateTaskPayload {
+export function buildCreateTaskPayload(data: tasksFormData): CreateTaskPayload {
   const payload: CreateTaskPayload = {
     title: data.title.trim(),
     project_id: data.project_id,
@@ -38,10 +36,7 @@ export function buildCreateTaskPayload(
   return payload;
 }
 
-export async function createTask(
-  accessToken: string,
-  data: tasksFormData,
-) {
+export async function createTask(accessToken: string, data: tasksFormData) {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!baseUrl) {
     throw new Error("Missing Supabase environment variables");
