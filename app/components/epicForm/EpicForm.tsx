@@ -6,8 +6,9 @@ import { FormProps } from "@/app/types/epicForm";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Member } from "@/app/types/members";
+import { epicFormData } from "@/app/schemas/addEpicSchema";
 
-export default function EpicForm({ form, onSubmit, errorMsg }: FormProps) {
+export default function EpicForm({ form, onSubmit, errorMsg }: FormProps<epicFormData>) {
   const {
     register,
     handleSubmit,
