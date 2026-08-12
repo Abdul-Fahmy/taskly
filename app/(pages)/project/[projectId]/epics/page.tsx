@@ -41,9 +41,11 @@ export default function EpicsPage() {
         throw new Error("Failed to fetch epic details");
       }
       const data = await res.json();
-      // API returns an array from Supabase; use the first item
-      const epic = Array.isArray(data) ? data[0] : data;
-      if (!epic) {
+      // API returns { epic, tasks }; fall back to legacy array/object shapes
+      const epic = Array.isArray(data)
+        ? data[0]
+        : (data?.epic ?? data);
+      if (!epic?.id) {
         throw new Error("Epic not found");
       }
       setSelectedEpic(epic);

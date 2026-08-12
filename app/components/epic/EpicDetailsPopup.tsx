@@ -16,8 +16,9 @@ import toast from "react-hot-toast";
 import Select from "react-select";
 import { CustomOption, CustomSingleValue } from "../customOption/CustomOption";
 import Input from "../input/Input";
-import { useAppDispatch } from "@/app/hooks/store.hooks";
-import { setSelectedEpicId } from "@/app/store/features/tasks.slice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
+import { fetchTasksForEpic, setSelectedEpicId } from "@/app/store/features/tasks.slice";
+import TaskCardEpic from "../tasks/TaskCardEpic";
 
 type AssigneeOption = {
   value: string;
@@ -57,6 +58,8 @@ export default function EpicDetailsPopup({
   const [isEditingAssignee, setIsEditingAssignee] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const tasks = useAppSelector((state)=> state.tasks.tasks)
+  
 
   const handleAddTask = () => {
     dispatch(setSelectedEpicId(epic.id));
@@ -89,6 +92,10 @@ export default function EpicDetailsPopup({
   }, [localEpic]);
 
   useEffect(() => {
+    dispatch(fetchTasksForEpic({ projectId: projectId, epicId: epic.id }));
+  }, [epic.id,dispatch,projectId]);
+
+  useEffect(() => {
     const fetchMembers = async () => {
       try {
         const response = await fetch(`/api/project/${projectId}/members`);
@@ -119,7 +126,7 @@ export default function EpicDetailsPopup({
     });
   }
 
-  const createdByInitials = getInitials(localEpic.created_by.name ?? "");
+  const createdByInitials = getInitials(localEpic.created_by?.name ?? "");
   const formatted = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
     month: "short",
@@ -334,7 +341,7 @@ export default function EpicDetailsPopup({
                 {createdByInitials || "UN"}
               </span>
             </div>
-            <p>{localEpic.created_by.name}</p>
+            <p>{localEpic.created_by?.name ?? "Unknown"}</p>
           </div>
         </div>
 
@@ -432,26 +439,34 @@ export default function EpicDetailsPopup({
             + Add Task
           </button>
         </div>
-        <div className="mt-2 w-full bg-surface-low rounded-sm p-4 flex flex-col items-center justify-center gap-4">
-          <span className="p-4 bg-[#D7E2FF] rounded-sm">
-            <Image
-              src={"/icons/epicsTasks.svg"}
-              alt="tasks"
-              width={18}
-              height={16}
-              style={{ width: "18px", height: "16px" }}
-            />
-          </span>
-          <p className="text-lg font-medium">
-            No tasks have been added to this epic yet
-          </p>
-          <button
-            onClick={handleAddTask}
-            className="bg-primary text-white px-4 py-2 rounded-md "
-          >
-            + Add Tasks
-          </button>
-        </div>
+        {tasks.length === 0 ? (
+          <div className="mt-2 w-full bg-surface-low rounded-sm p-4 flex flex-col items-center justify-center gap-4">
+            <span className="p-4 bg-[#D7E2FF] rounded-sm">
+              <Image
+                src={"/icons/epicsTasks.svg"}
+                alt="tasks"
+                width={18}
+                height={16}
+                style={{ width: "18px", height: "16px" }}
+              />
+            </span>
+            <p className="text-lg font-medium">
+              No tasks have been added to this epic yet
+            </p>
+            <button
+              onClick={handleAddTask}
+              className="bg-primary text-white px-4 py-2 rounded-md "
+            >
+              + Add Tasks
+            </button>
+          </div>
+        ) : (
+          tasks.map((task) => (
+            
+              <TaskCardEpic key={task.id} task={task}  />
+            
+          ))
+        )}
       </div>
     </div>
   );

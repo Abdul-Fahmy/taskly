@@ -25,7 +25,25 @@ export const fetchTasks = createAsyncThunk<Task[], { projectId: string }>('tasks
     throw new Error(error?.message ?? "Failed to fetch tasks");
   }
 
-  const tasks = (await response.json()) as Task[];
+  const data = await response.json();
+  const tasks = Array.isArray(data) ? data : data?.tasks;
+  
+  return Array.isArray(tasks) ? tasks : [];
+})
+
+export const fetchTasksForEpic = createAsyncThunk<Task[], { projectId: string, epicId: string }>('tasks/fetchTasksForEpic', async({ projectId, epicId }, { signal })=>{
+
+  const response = await fetch(`/api/project/${projectId}/epicDetails/${epicId}`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    throw new Error(error?.message ?? "Failed to fetch tasks");
+  }
+
+  const data = await response.json();
+  const tasks = Array.isArray(data) ? data : data?.tasks;
   
   return Array.isArray(tasks) ? tasks : [];
 })
@@ -54,6 +72,12 @@ const taskSlice = createSlice({
       state.status = "loading";
     });
     builder.addCase(fetchTasks.fulfilled, (state, action) => {
+      state.tasks = action.payload;
+    });
+    builder.addCase(fetchTasksForEpic.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(fetchTasksForEpic.fulfilled, (state, action) => {
       state.tasks = action.payload;
     });
   },

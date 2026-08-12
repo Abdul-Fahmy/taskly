@@ -67,7 +67,7 @@ const token = cookiesStore.get('access_token')?.value;
     throw new Error("Missing access token");
   }
 
-  return apiFetch(`${baseUrl}/rest/v1/tasks?project_id=eq.${projectId}`, {
+  return apiFetch(`${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}`, {
     method: "GET",
     token,
   });
@@ -75,5 +75,17 @@ const token = cookiesStore.get('access_token')?.value;
 
 export async function getTasksForEpic(epicId:string){
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  
+  const cookiesStore = await cookies();
+  const token = cookiesStore.get('access_token')?.value;
+  if (!baseUrl) {
+    throw new Error("Missing Supabase environment variables");
+  }
+  if (!token) {
+    throw new Error("Missing access token");
+  }
+
+  return apiFetch(`${baseUrl}/rest/v1/project_tasks?epic_id=eq.${epicId}`, {
+    method: "GET",
+    token,
+  });
 }

@@ -6,7 +6,7 @@ import Calendar from'@/app/assets/icons/date.svg';
 
 export default function TaskCard({task}:{task:Task}){
     
-   const initials= getInitials(task.created_by.id || 'U')
+   const initials= getInitials(task.created_by.name || 'U')
     const createdAt = task.created_at ? new Date(task.created_at).toLocaleDateString('en-US', {  month: 'short', day: 'numeric' }) : 'No created date';
     return (
         <div className="flex flex-col gap-4">

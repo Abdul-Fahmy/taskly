@@ -6,6 +6,7 @@ import {
   UpdateEpicPayload,
   updateEpic,
 } from "@/app/services/epic.service";
+import { getTasksForEpic } from "@/app/services/tasks.services";
 
 export async function GET(
   _req: Request,
@@ -19,8 +20,14 @@ export async function GET(
   }
 
   try {
-    const epic = await getEpicDetails(projectId, epicId);
-    return NextResponse.json(epic);
+    const epicResult = await getEpicDetails(projectId, epicId);
+    const epic = Array.isArray(epicResult) ? epicResult[0] : epicResult;
+    if (!epic) {
+      return NextResponse.json({ message: "Epic not found" }, { status: 404 });
+    }
+    const tasksResult = await getTasksForEpic(epicId);
+    const tasks = Array.isArray(tasksResult) ? tasksResult : [];
+    return NextResponse.json({ epic, tasks });
   } catch {
     return NextResponse.json(
       { message: "Failed to fetch epic" },
