@@ -32,7 +32,7 @@ export function buildCreateTaskPayload(
     payload.status = data.status;
   }
   if (data.due_date) {
-    payload.due_date = data.due_date;
+    payload.due_date = new Date(data.due_date).toISOString();
   }
 
   return payload;

@@ -1,3 +1,5 @@
+"use client";
+
 import { FormProps } from "@/app/types/epicForm";
 import Input from "../input/Input";
 import Select from "react-select";
@@ -7,8 +9,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Button from "../button/Button";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
-import { useEffect } from "react";
-import { fetchEpicsPagination } from "@/app/store/features/epics.slice";
+import { useEffect, useState } from "react";
+import { fetchEpics } from "@/app/store/features/epics.slice";
 import { fetchMembers } from "@/app/store/features/members.slice";
 
 const statusOptions = [
@@ -22,21 +24,44 @@ const statusOptions = [
     { value: "DONE", label: "Done" },
 ];
 
+const selectClassNames = {
+    control: () => "input  w-full cursor-pointer",
+    valueContainer: () => "p-0",
+    input: () => "m-0 p-0",
+    indicatorsContainer: () => "p-0",
+    dropdownIndicator: () => "p-0",
+    clearIndicator: () => "p-0",
+    menu: () =>
+        "mt-1 rounded-md border border-gray-200 bg-white shadow-lg",
+    option: ({ isFocused, isSelected }: { isFocused: boolean; isSelected: boolean }) =>
+        `cursor-pointer px-3 py-2 ${isSelected
+            ? "bg-blue-500 text-white"
+            : isFocused
+                ? "bg-gray-100"
+                : "bg-white"
+        }`,
+};
+
 export default function TaskForm({ form, onSubmit, errorMsg }: FormProps<tasksFormData>) {
     const { projectId } = useParams<{ projectId: string }>();
     const { register, handleSubmit, formState: { errors, isSubmitting } } = form
+    const [isMounted, setIsMounted] = useState(false);
 
     const dispatch = useAppDispatch();
     const epics = useAppSelector((state) => state.epics.epics);
     const members = useAppSelector((state) => state.members.members)
+    const truncate = (s: string, max = 100) => (s.length > max ? `${s.slice(0, max)}...` : s);
+
 
     const memberOptions = members.map((member) => ({ value: member.user_id, label: member.metadata.name }))
-    const epicsOptions = epics.map((epic) => ({ value: epic.id, label: epic.epic_id }))
-
-
+    const epicsOptions = epics.map((epic) => ({ value: epic.id, label: truncate(epic.title) }))
 
     useEffect(() => {
-        dispatch(fetchEpicsPagination({ projectId, limit: 100, page: 1 }))
+        setIsMounted(true);
+    }, []);
+
+    useEffect(() => {
+        dispatch(fetchEpics({projectId}))
     }, [dispatch, projectId])
 
     useEffect(() => {
@@ -57,40 +82,28 @@ export default function TaskForm({ form, onSubmit, errorMsg }: FormProps<tasksFo
                             control={form.control}
                             name="status"
                             render={({ field }) => (
-                                <Select
-                                    unstyled
-                                    isClearable
-                                    
-                                    classNames={{
-                                        control: () => "input  w-full cursor-pointer",
-                                        valueContainer: () => "p-0",
-                                        input: () => "m-0 p-0",
-                                        indicatorsContainer: () => "p-0",
-                                        dropdownIndicator: () => "p-0",
-                                        clearIndicator: () => "p-0",
-                                        menu: () =>
-                                            "mt-1 rounded-md border border-gray-200 bg-white shadow-lg",
-                                        option: ({ isFocused, isSelected }) =>
-                                            `cursor-pointer px-3 py-2 ${isSelected
-                                                ? "bg-blue-500 text-white"
-                                                : isFocused
-                                                    ? "bg-gray-100"
-                                                    : "bg-white"
-                                            }`,
-                                    }}
-                                    options={statusOptions}
-                                    value={
-                                        statusOptions.find(
-                                            (option) => option.value === field.value,
-                                        ) ?? statusOptions[0]
-                                    }
-                                    onBlur={field.onBlur}
-                                    name={field.name}
-                                    ref={field.ref}
-                                    onChange={(selectedOption) => {
-                                        field.onChange(selectedOption?.value ?? "");
-                                    }}
-                                />
+                                isMounted ? (
+                                    <Select
+                                        instanceId="task-status"
+                                        unstyled
+                                        isClearable
+                                        classNames={selectClassNames}
+                                        options={statusOptions}
+                                        value={
+                                            statusOptions.find(
+                                                (option) => option.value === field.value,
+                                            ) ?? statusOptions[0]
+                                        }
+                                        onBlur={field.onBlur}
+                                        name={field.name}
+                                        ref={field.ref}
+                                        onChange={(selectedOption) => {
+                                            field.onChange(selectedOption?.value ?? "");
+                                        }}
+                                    />
+                                ) : (
+                                    <div className="input w-full" />
+                                )
                             )}
                         />
                     </div>
@@ -101,39 +114,28 @@ export default function TaskForm({ form, onSubmit, errorMsg }: FormProps<tasksFo
                             name="assignee_id"
                             render={({ field }) =>
                             (
-                                <Select
-                                    unstyled
-                                    isClearable
-                                    options={memberOptions}
-                                    value={
-                                        memberOptions.find(
-                                            (option) => option.value === field.value,
-                                        ) ?? null
-                                    }
-                                    onBlur={field.onBlur}
-                                    name={field.name}
-                                    ref={field.ref}
-                                    onChange={(selectedOption) => {
-                                        field.onChange(selectedOption?.value ?? "");
-                                    }}
-                                   
-                                    classNames={{
-                                        control: () => "input  w-full cursor-pointer",
-                                        valueContainer: () => "p-0",
-                                        input: () => "m-0 p-0",
-                                        indicatorsContainer: () => "p-0",
-                                        dropdownIndicator: () => "p-0",
-                                        clearIndicator: () => "p-0",
-                                        menu: () =>
-                                            "mt-1 rounded-md border border-gray-200 bg-white shadow-lg",
-                                        option: ({ isFocused, isSelected }) =>
-                                            `cursor-pointer px-3 py-2 ${isSelected
-                                                ? "bg-blue-500 text-white"
-                                                : isFocused
-                                                    ? "bg-gray-100"
-                                                    : "bg-white"
-                                            }`,
-                                    }} />
+                                isMounted ? (
+                                    <Select
+                                        instanceId="task-assignee"
+                                        unstyled
+                                        isClearable
+                                        options={memberOptions}
+                                        value={
+                                            memberOptions.find(
+                                                (option) => option.value === field.value,
+                                            ) ?? null
+                                        }
+                                        onBlur={field.onBlur}
+                                        name={field.name}
+                                        ref={field.ref}
+                                        onChange={(selectedOption) => {
+                                            field.onChange(selectedOption?.value ?? "");
+                                        }}
+                                        classNames={selectClassNames}
+                                    />
+                                ) : (
+                                    <div className="input w-full" />
+                                )
                             )
                             }
 
@@ -147,38 +149,25 @@ export default function TaskForm({ form, onSubmit, errorMsg }: FormProps<tasksFo
                         control={form.control}
                         name="epic_id"
                         render={({ field }) => (
-                            <Select
-                                isClearable
-
-                                unstyled
-                                options={epicsOptions}
-                                value={
-                                    epicsOptions.find(
-                                        (option) => option.value === field.value,
-                                    ) ?? null
-                                }
-                                onChange={(selectedOption) => {
-                                    field.onChange(selectedOption?.value ?? "");
-                                }}
-
-                                classNames={{
-                                    control: () => "input  w-full cursor-pointer",
-                                    valueContainer: () => "p-0",
-                                    input: () => "m-0 p-0",
-                                    indicatorsContainer: () => "p-0",
-                                    dropdownIndicator: () => "p-0",
-                                    clearIndicator: () => "p-0",
-                                    menu: () =>
-                                        "mt-1 rounded-md border border-gray-200 bg-white shadow-lg",
-                                    option: ({ isFocused, isSelected }) =>
-                                        `cursor-pointer px-3 py-2 ${isSelected
-                                            ? "bg-blue-500 text-white"
-                                            : isFocused
-                                                ? "bg-gray-100"
-                                                : "bg-white"
-                                        }`,
-                                }}
-                            />
+                            isMounted ? (
+                                <Select
+                                    instanceId="task-epic"
+                                    isClearable
+                                    unstyled
+                                    options={epicsOptions}
+                                    value={
+                                        epicsOptions.find(
+                                            (option) => option.value === field.value,
+                                        ) ?? null
+                                    }
+                                    onChange={(selectedOption) => {
+                                        field.onChange(selectedOption?.value ?? "");
+                                    }}
+                                    classNames={selectClassNames}
+                                />
+                            ) : (
+                                <div className="input w-full" />
+                            )
                         )}
 
 
@@ -186,7 +175,7 @@ export default function TaskForm({ form, onSubmit, errorMsg }: FormProps<tasksFo
                 </div>
                 <div className="flex flex-col gap-2">
                     <label htmlFor="due_date">Due Date</label>
-                    <input type="date" id="due_date" {...register('due_date')} className="input" />
+                    <input type="datetime-local" id="due_date" {...register('due_date')} className="input " />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label htmlFor="description">Description</label>
