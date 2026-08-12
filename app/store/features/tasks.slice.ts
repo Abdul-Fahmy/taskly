@@ -1,12 +1,42 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+import { Task } from "@/app/types/task";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface TaskState {
   selectedEpicId: string | null;
+  tasks:Task[]
+  status: 'idle' | 'loading' | 'succeeded' | 'failed'
 }
 
 const initialState: TaskState = {
   selectedEpicId: null,
+  tasks:[],
+  status:'idle'
 };
+
+export const fetchTasks = createAsyncThunk<Task[], { projectId: string }>('tasks/fetchTasks', async({ projectId }, { signal })=>{
+
+  const response = await fetch(`/api/project/${projectId}/tasks`, {
+    signal,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    throw new Error(error?.message ?? "Failed to fetch tasks");
+  }
+
+  const tasks = (await response.json()) as Task[];
+  
+  return Array.isArray(tasks) ? tasks : [];
+})
+
+
+
+
+
+
+
+
 
 const taskSlice = createSlice({
   name: "task",
@@ -19,8 +49,16 @@ const taskSlice = createSlice({
       state.selectedEpicId = null;
     },
   },
+  extraReducers(builder) {
+    builder.addCase(fetchTasks.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(fetchTasks.fulfilled, (state, action) => {
+      state.tasks = action.payload;
+    });
+  },
 });
 
-export const { setSelectedEpicId, clearSelectedEpicId } = taskSlice.actions;
+export const { setSelectedEpicId, clearSelectedEpicId, } = taskSlice.actions;
 
 export const tasksReducer = taskSlice.reducer;

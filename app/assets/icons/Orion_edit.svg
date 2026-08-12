@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-labelledby="title"
+aria-describedby="desc" role="img" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <title>Edit</title>
+  <desc>A solid styled icon from Orion Icon Library.</desc>
+  <path data-name="layer1"
+  fill="#202020" d="M7.9 46.1L0 64l17.9-7.9-10-10z"></path>
+  <path data-name="layer2" fill="#202020" d="M46.899 6.274l6.293-6.293 10.854 10.854-6.293 6.293z"></path>
+  <path data-name="layer1" fill="#202020" d="M10.31 42.807l33.73-33.73 10.853 10.855L21.164 53.66z"></path>
+</svg>

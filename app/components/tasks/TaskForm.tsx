@@ -12,17 +12,9 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { useEffect, useSyncExternalStore } from "react";
 import { fetchEpics } from "@/app/store/features/epics.slice";
 import { fetchMembers } from "@/app/store/features/members.slice";
+import { statusOptions } from "@/app/constant/taskStatus";
 
-const statusOptions = [
-  { value: "TO_DO", label: "To Do" },
-  { value: "IN_PROGRESS", label: "In Progress" },
-  { value: "BLOCKED", label: "Blocked" },
-  { value: "IN_REVIEW", label: "In Review" },
-  { value: "READY_FOR_QA", label: "Ready for QA" },
-  { value: "REOPENED", label: "Reopened" },
-  { value: "READY_FOR_PRODUCTION", label: "Ready for Production" },
-  { value: "DONE", label: "Done" },
-];
+
 
 const selectClassNames = {
   control: () => "input  w-full cursor-pointer",

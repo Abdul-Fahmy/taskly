@@ -1,11 +1,43 @@
 "use client";
 import Input from "@/app/components/input/Input";
+import { CustomOption, CustomSingleValue, viewOptions } from "@/app/components/tasks/CustomOptions";
+import { TaskColumn } from "@/app/components/tasks/TaskColumn";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
+import { statusOptions } from "@/app/constant/taskStatus";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { fetchProjects } from "@/app/store/features/project.slice";
+import { fetchTasks } from "@/app/store/features/tasks.slice";
 import { useParams, usePathname } from "next/navigation";
 import { useEffect } from "react";
+import Select from "react-select";
+
+
+
+
+const selectClassNames = {
+  control: () => "bg-white  w-full cursor-pointer",
+  valueContainer: () => "px-2 py-4",
+  input: () => "m-0 p-0",
+  indicatorsContainer: () => "p-0",
+  dropdownIndicator: () => "px-2 py-4",
+  clearIndicator: () => "p-0",
+  menu: () => "mt-1 rounded-md border border-gray-200 bg-white shadow-lg w-full px-2 py-4",
+  option: ({
+    isFocused,
+    isSelected,
+  }: {
+    isFocused: boolean;
+    isSelected: boolean;
+  }) =>
+    `cursor-pointer px-2 py-4 ${
+      isSelected
+        ? "bg-blue-500 text-white"
+        : isFocused
+          ? "bg-gray-100"
+          : "bg-white"
+    }`,
+};
 
 export default function TasksPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -14,6 +46,10 @@ export default function TasksPage() {
   const project = useAppSelector((state) =>
     state.project.projects.find((project) => project.id === projectId),
   );
+
+  const tasks = useAppSelector((state)=>state.tasks.tasks)
+
+
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
   });
@@ -21,6 +57,11 @@ export default function TasksPage() {
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch, projectId]);
+
+  useEffect(()=>{
+    dispatch(fetchTasks({projectId}))
+    
+  },[dispatch,projectId])
 
   return (
     <div className="">
@@ -42,20 +83,48 @@ export default function TasksPage() {
             </span>
           ))}
         </span>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full mx-auto">
           <div className="flex flex-col gap-2">
             <h3 className="font-bold text-[36px]">Active Workboard</h3>
             <p className="text-text-secondary text-[14px]">
-              Curating Project Alpha`&apos;`s production pipeline and
+              Curating Project Alpha&apos;s production pipeline and
               milestones.
             </p>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-2 w-1/2 px-4 ">
             <Input type="search" placeholder="Search tasks..." />
-            <button></button>
+           <div className="w-1/2">
+           <Select
+            classNames={selectClassNames}
+            unstyled
+            options={viewOptions} components={{
+              Option: CustomOption,
+              SingleValue:CustomSingleValue
+            }}
+            value={viewOptions.find((option)=> option.value === 'board')}
+            
+            name="view"
+            />
+           </div>
           </div>
         </div>
       </div>
+     <div className="flex gap-4 overflow-x-scroll">
+     {statusOptions.map((status) => {
+    const statusTasks = tasks.filter(
+      (task) => task.status === status.value
+    );
+
+    return (
+      <TaskColumn
+        key={status.value}
+        status={status}
+        tasks={statusTasks}
+        onAddTask={() => {}}
+      />
+    );
+  })}
+     </div>
     </div>
   );
 }
