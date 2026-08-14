@@ -2,8 +2,8 @@
 
 import Button from "@/app/components/button/Button";
 import ProjectCardSkeleton from "@/app/components/cardSkeleton/CardSkeleton";
-import Pagination from "@/app/components/pagination/Paagination";
-import ProjectCard from "@/app/components/projectCard/ProjectCard";
+import Pagination from "@/app/components/pagination/Pagination";
+import ProjectCard from "@/app/components/project/projectCard/ProjectCard";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import {
   fetchPagination,

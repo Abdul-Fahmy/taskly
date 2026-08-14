@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Input from "../input/Input";
+import Input from "../../input/Input";
 import Link from "next/link";
-import Button from "../button/Button";
+import Button from "../../button/Button";
 import { ProjectFormProps } from "@/app/types/projectFormCompnent";
 
 export default function ProjectForm({

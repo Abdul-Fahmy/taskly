@@ -17,7 +17,10 @@ import Select from "react-select";
 import { CustomOption, CustomSingleValue } from "../customOption/CustomOption";
 import Input from "../input/Input";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
-import { fetchTasksForEpic, setSelectedEpicId } from "@/app/store/features/tasks.slice";
+import {
+  fetchTasksForEpic,
+  setSelectedEpicId,
+} from "@/app/store/features/tasks.slice";
 import TaskCardEpic from "../tasks/TaskCardEpic";
 import { fetchMembers } from "@/app/store/features/members.slice";
 
@@ -55,12 +58,11 @@ export default function EpicDetailsPopup({
   const [localEpic, setLocalEpic] = useState(epic);
   const [prevEpic, setPrevEpic] = useState(epic);
   const localEpicRef = useRef(epic);
-  const members = useAppSelector((state)=> state.members.members)
+  const members = useAppSelector((state) => state.members.members);
   const [isEditingAssignee, setIsEditingAssignee] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const tasks = useAppSelector((state)=> state.tasks.tasks)
-  
+  const tasks = useAppSelector((state) => state.tasks.tasks);
 
   const handleAddTask = () => {
     dispatch(setSelectedEpicId(epic.id));
@@ -94,12 +96,11 @@ export default function EpicDetailsPopup({
 
   useEffect(() => {
     dispatch(fetchTasksForEpic({ projectId: projectId, epicId: epic.id }));
-  }, [epic.id,dispatch,projectId]);
+  }, [epic.id, dispatch, projectId]);
 
   useEffect(() => {
-    dispatch(fetchMembers({projectId}))
-  
-  }, [projectId,dispatch]);
+    dispatch(fetchMembers({ projectId }));
+  }, [projectId, dispatch]);
 
   if (epic !== prevEpic) {
     setPrevEpic(epic);
@@ -448,11 +449,7 @@ export default function EpicDetailsPopup({
             </button>
           </div>
         ) : (
-          tasks.map((task) => (
-            
-              <TaskCardEpic key={task.id} task={task}  />
-            
-          ))
+          tasks.map((task) => <TaskCardEpic key={task.id} task={task} />)
         )}
       </div>
     </div>

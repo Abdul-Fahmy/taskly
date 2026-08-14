@@ -1,12 +1,12 @@
 "use client";
 import Button from "@/app/components/button/Button";
-import EmptyEpic from "@/app/components/emptyEpic/EmptyEpic";
+import EmptyEpic from "@/app/components/epic/emptyEpic/EmptyEpic";
 import EpicDetailsPopup from "@/app/components/epic/EpicDetailsPopup";
-import { EpicCard } from "@/app/components/epicCard/EpicCard";
+import { EpicCard } from "@/app/components/epic/epicCard/EpicCard";
 import Input from "@/app/components/input/Input";
 import Modal from "@/app/components/modal/Modal";
-import Pagination from "@/app/components/pagination/Paagination";
-import ProjectEpicsSkeleton from "@/app/components/projectEpicSkeleton/ProjectEpicSkeleton";
+import Pagination from "@/app/components/pagination/Pagination";
+import ProjectEpicsSkeleton from "@/app/components/project/projectEpicSkeleton/ProjectEpicSkeleton";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import {
   fetchEpicsPagination,
@@ -41,9 +41,7 @@ export default function EpicsPage() {
         throw new Error("Failed to fetch epic details");
       }
       const data = await res.json();
-      const epic = Array.isArray(data)
-        ? data[0]
-        : (data?.epic ?? data);
+      const epic = Array.isArray(data) ? data[0] : (data?.epic ?? data);
       if (!epic?.id) {
         throw new Error("Epic not found");
       }

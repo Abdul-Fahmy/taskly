@@ -1,5 +1,5 @@
 "use client";
-import ProjectForm from "@/app/components/projectForm/ProjectForm";
+import ProjectForm from "@/app/components/project/projectForm/ProjectForm";
 import { projectFormData, projectSchema } from "@/app/schemas/addProjectSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";

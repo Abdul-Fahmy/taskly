@@ -1,5 +1,5 @@
 "use client";
-import EpicForm from "@/app/components/epicForm/EpicForm";
+import EpicForm from "@/app/components/epic/epicForm/EpicForm";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { useAppSelector } from "@/app/hooks/store.hooks";
 import { getApiErrorMessage } from "@/app/lib/api";

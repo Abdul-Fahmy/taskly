@@ -1,7 +1,7 @@
 "use client";
 import Button from "@/app/components/button/Button";
-import { MemberCard } from "@/app/components/memberCard/MemberCard";
-import MemberSkeleton from "@/app/components/memberSkeleton/MemberSkeleton";
+import { MemberCard } from "@/app/components/members/memberCard/MemberCard";
+import MemberSkeleton from "@/app/components/members/memberSkeleton/MemberSkeleton";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { fetchMembers } from "@/app/store/features/members.slice";
 import Image from "next/image";
@@ -9,14 +9,13 @@ import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function MembersPage() {
-  const { projectId } = useParams<{projectId: string}>();
-  const dispatch = useAppDispatch()
-  const members = useAppSelector((state) => state.members.members)
+  const { projectId } = useParams<{ projectId: string }>();
+  const dispatch = useAppDispatch();
+  const members = useAppSelector((state) => state.members.members);
 
   useEffect(() => {
-    dispatch(fetchMembers({projectId}))
-    
-  }, [projectId,dispatch]);
+    dispatch(fetchMembers({ projectId }));
+  }, [projectId, dispatch]);
 
   return (
     <section className="w-full p-2">

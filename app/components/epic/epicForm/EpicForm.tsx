@@ -1,11 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import Button from "../button/Button";
+import Button from "../../button/Button";
 import { FormProps } from "@/app/types/epicForm";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { Member } from "@/app/types/members";
+import { useEffect } from "react";
 import { epicFormData } from "@/app/schemas/addEpicSchema";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { fetchMembers } from "@/app/store/features/members.slice";
@@ -20,13 +19,13 @@ export default function EpicForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const { projectId } = useParams<{ projectId: string }>();
 
-const members = useAppSelector((state)=> state.members.members)
+  const members = useAppSelector((state) => state.members.members);
   useEffect(() => {
-   dispatch(fetchMembers({projectId}))
-  }, [projectId,dispatch]);
+    dispatch(fetchMembers({ projectId }));
+  }, [projectId, dispatch]);
 
   return (
     <div className="max-w-212 mx-auto bg-white mt-10 p-8">

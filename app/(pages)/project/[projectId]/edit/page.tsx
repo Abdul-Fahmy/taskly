@@ -1,5 +1,5 @@
 "use client";
-import ProjectForm from "@/app/components/projectForm/ProjectForm";
+import ProjectForm from "@/app/components/project/projectForm/ProjectForm";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { useAppSelector } from "@/app/hooks/store.hooks";
 import { projectFormData, projectSchema } from "@/app/schemas/addProjectSchema";

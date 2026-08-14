@@ -14,8 +14,6 @@ import { fetchEpics } from "@/app/store/features/epics.slice";
 import { fetchMembers } from "@/app/store/features/members.slice";
 import { statusOptions } from "@/app/constant/taskStatus";
 
-
-
 const selectClassNames = {
   control: () => "input  w-full cursor-pointer",
   valueContainer: () => "p-0",
@@ -115,7 +113,7 @@ export default function TaskForm({
                     value={
                       statusOptions.find(
                         (option) => option.value === field.value,
-                      )   ?? statusOptions[0]
+                      ) ?? statusOptions[0]
                     }
                     onBlur={field.onBlur}
                     name={field.name}
