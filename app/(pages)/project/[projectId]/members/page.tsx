@@ -2,24 +2,55 @@
 import Button from "@/app/components/button/Button";
 import { MemberCard } from "@/app/components/members/memberCard/MemberCard";
 import MemberSkeleton from "@/app/components/members/memberSkeleton/MemberSkeleton";
+import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
+import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { fetchMembers } from "@/app/store/features/members.slice";
+import { fetchProjects } from "@/app/store/features/project.slice";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 export default function MembersPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useAppDispatch();
   const members = useAppSelector((state) => state.members.members);
+  const pathname = usePathname()
+  const project = useAppSelector((state) =>
+    state.project.projects.find((project) => project.id === projectId),
+  );
+  const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
+    [projectId]: project?.name || "projectId",
+  });
 
   useEffect(() => {
     dispatch(fetchMembers({ projectId }));
   }, [projectId, dispatch]);
+  useEffect(() => {
+    dispatch(fetchProjects());
+  }, [projectId, dispatch]);
 
   return (
     <section className="w-full p-2">
+      <span className="hidden md:block font-bold uppercase text-[12px] flex items-center gap-1 ">
+          {breadcrumbs.map((item, index) => (
+            <span key={item}>
+              {index > 0 && <span className="mx-2 text-neutral-400">&gt;</span>}
+
+              <span
+                className={
+                  index === breadcrumbs.length - 1
+                    ? "text-primary"
+                    : "text-[#43465499]"
+                }
+              >
+                {item}
+              </span>
+            </span>
+          ))}
+        </span>
       <div className="flex items-center justify-between px-3">
+      
         <div className="flex flex-col gap-2">
           <h3 className="font-semibold text-[30px] text-[#041B3C]">
             Project Members

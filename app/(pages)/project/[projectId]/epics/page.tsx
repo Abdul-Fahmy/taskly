@@ -16,14 +16,22 @@ import {
 } from "@/app/store/features/epics.slice";
 import { Epic } from "@/app/types/epicResponse";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { generateBreadcrumbs } from "@/app/services/breadcrum";
+import { breadcrumbMap } from "@/app/constant/breadcrumbs";
+import { fetchProjects } from "@/app/store/features/project.slice";
+import ApiError from "@/app/components/apiError/ApiError";
 
 export default function EpicsPage() {
   const router = useRouter();
+  const pathname = usePathname()
   const { projectId } = useParams<{ projectId: string }>();
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const project = useAppSelector((state) =>
+    state.project.projects.find((project) => project.id === projectId),
+  );
 
   const { epics, status, error, currentPage, totalCount, limit } =
     useAppSelector((state) => state.epics);
@@ -31,6 +39,9 @@ export default function EpicsPage() {
   const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const hasMore = epics.length < totalCount;
+  const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
+    [projectId]: project?.name || "projectId",
+  });
 
   const handleClick = async (epicId: string) => {
     try {
@@ -51,6 +62,10 @@ export default function EpicsPage() {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    dispatch(fetchProjects());
+  }, [dispatch, projectId]);
 
   useEffect(() => {
     dispatch(resetEpicsState());
@@ -132,29 +147,31 @@ export default function EpicsPage() {
 
   if (status === "failed" && epics.length === 0) {
     return (
-      <section className="w-full p-6">
-        <div className="rounded-lg bg-red-50 p-4 text-red-700">
-          <p>{error ?? "Failed to load epics."}</p>
-          <Button
-            displayText="Try Again"
-            className="mt-4 w-fit"
-            onClick={() =>
-              dispatch(
-                fetchEpicsPagination({
-                  projectId,
-                  limit,
-                  page: currentPage,
-                }),
-              )
-            }
-          />
-        </div>
-      </section>
+     <ApiError error={error ?? 'Something went wrong'} projectId={projectId} limit={limit} currentPage={currentPage}/>
     );
   }
 
   return (
     <div className="pt-6">
+      <div className="hidden md:flex">
+      <span className="font-bold uppercase text-[12px] flex items-center gap-1 ">
+          {breadcrumbs.map((item, index) => (
+            <span key={item}>
+              {index > 0 && <span className="mx-2 text-neutral-400">&gt;</span>}
+
+              <span
+                className={
+                  index === breadcrumbs.length - 1
+                    ? "text-primary"
+                    : "text-[#43465499]"
+                }
+              >
+                {item}
+              </span>
+            </span>
+          ))}
+        </span>
+      </div>
       {epics.length > 0 ? (
         <>
           <div className="flex items-center justify-between px-3">

@@ -417,7 +417,7 @@ export default function EpicDetailsPopup({
         </div>
       </div>
 
-      <div className="mt-2">
+      <div className="mt-2 ">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold">Tasks</p>
           <button
@@ -449,8 +449,13 @@ export default function EpicDetailsPopup({
             </button>
           </div>
         ) : (
-          tasks.map((task) => <TaskCardEpic key={task.id} task={task} />)
-        )}
+                      <div className="overflow-y-scroll h-[180px]">
+                        {tasks.map((task) => <TaskCardEpic key={task.id} task={task} />)}
+                      </div>
+
+          
+
+)}
       </div>
     </div>
   );
