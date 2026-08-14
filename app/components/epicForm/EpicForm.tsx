@@ -7,6 +7,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Member } from "@/app/types/members";
 import { epicFormData } from "@/app/schemas/addEpicSchema";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
+import { fetchMembers } from "@/app/store/features/members.slice";
 
 export default function EpicForm({
   form,
@@ -18,28 +20,13 @@ export default function EpicForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
+  const dispatch = useAppDispatch()
   const { projectId } = useParams<{ projectId: string }>();
 
-  const [members, setMembers] = useState<Member[] | null>(null);
-
+const members = useAppSelector((state)=> state.members.members)
   useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const response = await fetch(`/api/project/${projectId}/members`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch members");
-        }
-        const result = (await response.json()) as Member[];
-        setMembers(Array.isArray(result) ? result : []);
-      } catch (error) {
-        console.error(error);
-        setMembers([]);
-      }
-    };
-    if (projectId) {
-      fetchMembers();
-    }
-  }, [projectId]);
+   dispatch(fetchMembers({projectId}))
+  }, [projectId,dispatch]);
 
   return (
     <div className="max-w-212 mx-auto bg-white mt-10 p-8">

@@ -2,33 +2,21 @@
 import Button from "@/app/components/button/Button";
 import { MemberCard } from "@/app/components/memberCard/MemberCard";
 import MemberSkeleton from "@/app/components/memberSkeleton/MemberSkeleton";
-import { Member } from "@/app/types/members";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
+import { fetchMembers } from "@/app/store/features/members.slice";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function MembersPage() {
-  const { projectId } = useParams();
-  const [members, setMembers] = useState<Member[] | null>(null);
+  const { projectId } = useParams<{projectId: string}>();
+  const dispatch = useAppDispatch()
+  const members = useAppSelector((state) => state.members.members)
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const response = await fetch(`/api/project/${projectId}/members`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch members");
-        }
-        const result = (await response.json()) as Member[];
-        setMembers(Array.isArray(result) ? result : []);
-      } catch (error) {
-        console.error(error);
-        setMembers([]);
-      }
-    };
-    if (projectId) {
-      fetchMembers();
-    }
-  }, [projectId]);
+    dispatch(fetchMembers({projectId}))
+    
+  }, [projectId,dispatch]);
 
   return (
     <section className="w-full p-2">

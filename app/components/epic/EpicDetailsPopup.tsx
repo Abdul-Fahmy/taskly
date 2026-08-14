@@ -19,6 +19,7 @@ import Input from "../input/Input";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { fetchTasksForEpic, setSelectedEpicId } from "@/app/store/features/tasks.slice";
 import TaskCardEpic from "../tasks/TaskCardEpic";
+import { fetchMembers } from "@/app/store/features/members.slice";
 
 type AssigneeOption = {
   value: string;
@@ -54,7 +55,7 @@ export default function EpicDetailsPopup({
   const [localEpic, setLocalEpic] = useState(epic);
   const [prevEpic, setPrevEpic] = useState(epic);
   const localEpicRef = useRef(epic);
-  const [members, setMembers] = useState<Member[] | null>(null);
+  const members = useAppSelector((state)=> state.members.members)
   const [isEditingAssignee, setIsEditingAssignee] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -96,23 +97,9 @@ export default function EpicDetailsPopup({
   }, [epic.id,dispatch,projectId]);
 
   useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const response = await fetch(`/api/project/${projectId}/members`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch members");
-        }
-        const result = (await response.json()) as Member[];
-        setMembers(Array.isArray(result) ? result : []);
-      } catch (error) {
-        console.error(error);
-        setMembers([]);
-      }
-    };
-    if (projectId) {
-      fetchMembers();
-    }
-  }, [projectId]);
+    dispatch(fetchMembers({projectId}))
+  
+  }, [projectId,dispatch]);
 
   if (epic !== prevEpic) {
     setPrevEpic(epic);
