@@ -62,7 +62,6 @@ export default function TaskForm({
     formState: { errors, isSubmitting },
   } = form;
   const isClient = useIsClient();
-
   const dispatch = useAppDispatch();
   const epics = useAppSelector((state) => state.epics.epics);
   const members = useAppSelector((state) => state.members.members);
@@ -116,7 +115,7 @@ export default function TaskForm({
                     value={
                       statusOptions.find(
                         (option) => option.value === field.value,
-                      ) ?? statusOptions[0]
+                      )   ?? statusOptions[0]
                     }
                     onBlur={field.onBlur}
                     name={field.name}

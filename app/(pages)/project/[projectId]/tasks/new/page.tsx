@@ -17,6 +17,8 @@ import toast from "react-hot-toast";
 export default function NewTaskPage() {
   const dispatch = useAppDispatch();
   const selectedEpicId = useAppSelector((state) => state.tasks.selectedEpicId);
+  const selectedTaskStatus = useAppSelector((state)=>state.tasks.selectedTaskStatus)
+
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
   const pathname = usePathname();
@@ -50,7 +52,11 @@ export default function NewTaskPage() {
     if (selectedEpicId) {
       form.setValue("epic_id", selectedEpicId);
     }
-  }, [selectedEpicId, form]);
+    if (selectedTaskStatus) {
+      form.setValue('status',selectedTaskStatus)
+    }
+
+  }, [selectedEpicId, selectedTaskStatus, form]);
 
   const onSubmit = async (data: tasksFormData) => {
     setErrorMsg(null);

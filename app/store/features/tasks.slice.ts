@@ -1,17 +1,19 @@
 
-import { Task } from "@/app/types/task";
+import { Task, TaskStatus } from "@/app/types/task";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface TaskState {
   selectedEpicId: string | null;
   tasks:Task[]
-  status: 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: 'idle' | 'loading' | 'succeeded' | 'failed',
+  selectedTaskStatus: TaskStatus | null
 }
 
 const initialState: TaskState = {
   selectedEpicId: null,
   tasks:[],
-  status:'idle'
+  status:'idle',
+  selectedTaskStatus: null
 };
 
 export const fetchTasks = createAsyncThunk<Task[], { projectId: string }>('tasks/fetchTasks', async({ projectId }, { signal })=>{
@@ -66,6 +68,12 @@ const taskSlice = createSlice({
     clearSelectedEpicId: (state) => {
       state.selectedEpicId = null;
     },
+    setSelectedTaskStatus:(state, action: PayloadAction<TaskStatus | null>)=>{
+state.selectedTaskStatus = action.payload
+    },
+    clearSelectedTaskStatus:(state)=>{
+      state.selectedTaskStatus = null
+    }
   },
   extraReducers(builder) {
     builder.addCase(fetchTasks.pending, (state) => {
@@ -83,6 +91,6 @@ const taskSlice = createSlice({
   },
 });
 
-export const { setSelectedEpicId, clearSelectedEpicId, } = taskSlice.actions;
+export const { setSelectedEpicId, clearSelectedEpicId,setSelectedTaskStatus,clearSelectedTaskStatus } = taskSlice.actions;
 
 export const tasksReducer = taskSlice.reducer;

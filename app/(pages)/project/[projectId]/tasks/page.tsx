@@ -7,8 +7,8 @@ import { statusOptions } from "@/app/constant/taskStatus";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { fetchProjects } from "@/app/store/features/project.slice";
-import { fetchTasks } from "@/app/store/features/tasks.slice";
-import { useParams, usePathname } from "next/navigation";
+import { fetchTasks, setSelectedTaskStatus } from "@/app/store/features/tasks.slice";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Select from "react-select";
 
@@ -42,6 +42,7 @@ const selectClassNames = {
 export default function TasksPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const pathname = usePathname();
+  const router = useRouter()
   const dispatch = useAppDispatch();
   const project = useAppSelector((state) =>
     state.project.projects.find((project) => project.id === projectId),
@@ -120,7 +121,10 @@ export default function TasksPage() {
         key={status.value}
         status={status}
         tasks={statusTasks}
-        onAddTask={() => {}}
+        onAddTask={() => {
+          dispatch(setSelectedTaskStatus(status.value))
+          router.push(`/project/${projectId}/tasks/new`)
+        }}
       />
     );
   })}

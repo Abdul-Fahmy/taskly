@@ -41,7 +41,6 @@ export default function EpicsPage() {
         throw new Error("Failed to fetch epic details");
       }
       const data = await res.json();
-      // API returns { epic, tasks }; fall back to legacy array/object shapes
       const epic = Array.isArray(data)
         ? data[0]
         : (data?.epic ?? data);

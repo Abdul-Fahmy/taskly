@@ -1,4 +1,6 @@
-export const statusOptions = [
+import { TaskStatus } from "@/app/types/task";
+
+export const statusOptions: { value: TaskStatus; label: string }[] = [
     { value: "TO_DO", label: "To Do" },
     { value: "IN_PROGRESS", label: "In Progress" },
     { value: "BLOCKED", label: "Blocked" },
