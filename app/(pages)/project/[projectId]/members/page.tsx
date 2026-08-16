@@ -6,7 +6,6 @@ import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { fetchMembers } from "@/app/store/features/members.slice";
-import { fetchProjects } from "@/app/store/features/project.slice";
 import Image from "next/image";
 import { useParams, usePathname } from "next/navigation";
 import { useEffect } from "react";
@@ -16,18 +15,13 @@ export default function MembersPage() {
   const dispatch = useAppDispatch();
   const members = useAppSelector((state) => state.members.members);
   const pathname = usePathname()
-  const project = useAppSelector((state) =>
-    state.project.projects.find((project) => project.id === projectId),
-  );
+  const project = useAppSelector((state) => state.project.project);
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
   });
 
   useEffect(() => {
     dispatch(fetchMembers({ projectId }));
-  }, [projectId, dispatch]);
-  useEffect(() => {
-    dispatch(fetchProjects());
   }, [projectId, dispatch]);
 
   return (

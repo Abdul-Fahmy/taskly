@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { getApiErrorMessage } from "@/app/lib/api";
 import { tasksFormData, tasksSchema } from "@/app/schemas/newTasksSchema";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
-import { fetchProjects } from "@/app/store/features/project.slice";
 import { clearSelectedEpicId } from "@/app/store/features/tasks.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -26,9 +25,7 @@ export default function NewTaskPage() {
   const pathname = usePathname();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const project = useAppSelector((state) =>
-    state.project.projects.find((project) => project.id === projectId),
-  );
+  const project = useAppSelector((state) => state.project.project);
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
   });
@@ -47,9 +44,6 @@ export default function NewTaskPage() {
     },
   });
 
-  useEffect(() => {
-    dispatch(fetchProjects());
-  }, [projectId, dispatch]);
   useEffect(() => {
     if (selectedEpicId) {
       form.setValue("epic_id", selectedEpicId);

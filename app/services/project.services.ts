@@ -124,3 +124,33 @@ export async function getProjectsPagination({
     contentRange,
   };
 }
+
+
+export async function getProjectDetails(projectId: string): Promise<Project> {
+  const { baseUrl } = getSupabaseConfig();
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
+
+  if (!token) {
+    throw new Error("Missing access token");
+  }
+  if (!projectId) {
+    throw new Error("Project id is required");
+  }
+
+  const rows = await apiFetch<Project[]>(
+    `${baseUrl}/rest/v1/projects?id=eq.${projectId}&select=id,name,description,created_by,created_at`,
+    {
+      method: "GET",
+      token,
+    },
+  );
+
+  const project = rows.find((row) => row.id === projectId);
+
+  if (!project) {
+    throw new Error("Project not found");
+  }
+
+  return project;
+}

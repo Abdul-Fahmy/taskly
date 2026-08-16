@@ -20,7 +20,6 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
-import { fetchProjects } from "@/app/store/features/project.slice";
 import ApiError from "@/app/components/apiError/ApiError";
 
 export default function EpicsPage() {
@@ -29,9 +28,7 @@ export default function EpicsPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
-  const project = useAppSelector((state) =>
-    state.project.projects.find((project) => project.id === projectId),
-  );
+  const project = useAppSelector((state) => state.project.project);
 
   const { epics, status, error, currentPage, totalCount, limit } =
     useAppSelector((state) => state.epics);
@@ -62,10 +59,6 @@ export default function EpicsPage() {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    dispatch(fetchProjects());
-  }, [dispatch, projectId]);
 
   useEffect(() => {
     dispatch(resetEpicsState());

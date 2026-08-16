@@ -10,7 +10,6 @@ import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { statusOptions } from "@/app/constant/taskStatus";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
-import { fetchProjects } from "@/app/store/features/project.slice";
 import {
   fetchTasks,
   setSelectedTaskStatus,
@@ -49,19 +48,13 @@ export default function TasksPage() {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const project = useAppSelector((state) =>
-    state.project.projects.find((project) => project.id === projectId),
-  );
+  const project = useAppSelector((state) => state.project.project);
 
   const tasks = useAppSelector((state) => state.tasks.tasks);
 
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
   });
-
-  useEffect(() => {
-    dispatch(fetchProjects());
-  }, [dispatch, projectId]);
 
   useEffect(() => {
     dispatch(fetchTasks({ projectId }));

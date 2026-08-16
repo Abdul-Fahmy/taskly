@@ -13,6 +13,10 @@ export type ProjectState = {
   currentPage: number;
   limit: number;
   totalCount: number;
+  isFetched: boolean;
+  project: Project | null;
+  detailsStatus: "idle" | "loading" | "succeeded" | "failed";
+  detailsProjectId: string | null;
 };
 
 export type PaginationResponse = {

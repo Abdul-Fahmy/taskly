@@ -15,9 +15,7 @@ export default function NewEpicPage() {
   const pathname = usePathname();
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
-  const project = useAppSelector((state) =>
-    state.project.projects.find((project) => project.id === projectId),
-  );
+  const project = useAppSelector((state) => state.project.project);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
