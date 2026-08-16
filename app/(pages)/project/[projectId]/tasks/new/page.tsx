@@ -6,20 +6,18 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { getApiErrorMessage } from "@/app/lib/api";
 import { tasksFormData, tasksSchema } from "@/app/schemas/newTasksSchema";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
-import { clearSelectedEpicId } from "@/app/store/features/tasks.slice";
+import { TaskStatus } from "@/app/types/task";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function NewTaskPage() {
   const dispatch = useAppDispatch();
-  const selectedEpicId = useAppSelector((state) => state.tasks.selectedEpicId);
-  const selectedTaskStatus = useAppSelector(
-    (state) => state.tasks.selectedTaskStatus,
-  );
-
+  const searchParams = useSearchParams();
+  const selectedEpicId = searchParams.get("epicId");
+  const selectedTaskStatus = searchParams.get("status");
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
   const pathname = usePathname();
@@ -49,7 +47,7 @@ export default function NewTaskPage() {
       form.setValue("epic_id", selectedEpicId);
     }
     if (selectedTaskStatus) {
-      form.setValue("status", selectedTaskStatus);
+      form.setValue("status", selectedTaskStatus as TaskStatus);
     }
   }, [selectedEpicId, selectedTaskStatus, form]);
 
@@ -87,7 +85,6 @@ export default function NewTaskPage() {
       toast.success("Task created successfully", { id: toastId });
       router.push(`/project/${projectId}/tasks`);
       router.refresh();
-      dispatch(clearSelectedEpicId());
     } catch (error) {
       const message = getApiErrorMessage(error, "Failed to create task");
       setErrorMsg(message);
@@ -106,7 +103,7 @@ export default function NewTaskPage() {
               <span
                 className={
                   index === breadcrumbs.length - 1
-                    ? "text-primary"
+                    ? "text-black"
                     : "text-[#43465499]"
                 }
               >

@@ -19,7 +19,7 @@ import Input from "../input/Input";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import {
   fetchTasksForEpic,
-  setSelectedEpicId,
+  
 } from "@/app/store/features/tasks.slice";
 import TaskCardEpic from "../tasks/TaskCardEpic";
 import { fetchMembers } from "@/app/store/features/members.slice";
@@ -65,8 +65,7 @@ export default function EpicDetailsPopup({
   const tasks = useAppSelector((state) => state.tasks.tasks);
 
   const handleAddTask = () => {
-    dispatch(setSelectedEpicId(epic.id));
-    router.push(`/project/${projectId}/tasks/new`);
+    router.push(`/project/${projectId}/tasks/new?epicId=${epic.id}`);
   };
 
   const form = useForm<updateEpicFormData>({

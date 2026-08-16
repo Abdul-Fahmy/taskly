@@ -77,7 +77,7 @@ export default function AddProject() {
               <span
                 className={
                   index === breadcrumbs.length - 1
-                    ? "text-primary"
+                    ? "text-black"
                     : "text-[#43465499]"
                 }
               >

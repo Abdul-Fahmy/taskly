@@ -4,10 +4,10 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ projectId: string }> },
+  _request: Request,
+  { params }: { params: Promise<{ projectId: string; status: string }> },
 ) {
-  const { projectId } = await params;
+  const { projectId, status } = await params;
   const token = (await cookies()).get("access_token")?.value;
 
   if (!token) {
@@ -20,9 +20,15 @@ export async function GET(
       { status: 400 },
     );
   }
+  if (!status) {
+    return NextResponse.json(
+      { message: "status is required" },
+      { status: 400 },
+    );
+  }
 
   try {
-    const result = await getTasks(projectId);
+    const result = await getTasks(projectId, status);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

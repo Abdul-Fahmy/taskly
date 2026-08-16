@@ -10,12 +10,7 @@ import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { statusOptions } from "@/app/constant/taskStatus";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
-import {
-  fetchTasks,
-  setSelectedTaskStatus,
-} from "@/app/store/features/tasks.slice";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
 import Select from "react-select";
 
 const selectClassNames = {
@@ -50,15 +45,12 @@ export default function TasksPage() {
   const dispatch = useAppDispatch();
   const project = useAppSelector((state) => state.project.project);
 
-  const tasks = useAppSelector((state) => state.tasks.tasks);
 
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
   });
 
-  useEffect(() => {
-    dispatch(fetchTasks({ projectId }));
-  }, [dispatch, projectId]);
+ 
 
   return (
     <div className="">
@@ -71,7 +63,7 @@ export default function TasksPage() {
               <span
                 className={
                   index === breadcrumbs.length - 1
-                    ? "text-primary"
+                    ? "text-black"
                     : "text-[#43465499]"
                 }
               >
@@ -108,18 +100,13 @@ export default function TasksPage() {
       </div>
       <div className="flex gap-4 overflow-x-scroll">
         {statusOptions.map((status) => {
-          const statusTasks = tasks.filter(
-            (task) => task.status === status.value,
-          );
-
+         
           return (
             <TaskColumn
               key={status.value}
               status={status}
-              tasks={statusTasks}
               onAddTask={() => {
-                dispatch(setSelectedTaskStatus(status.value));
-                router.push(`/project/${projectId}/tasks/new`);
+                router.push(`/project/${projectId}/tasks/new?status=${status.value}`);
               }}
             />
           );

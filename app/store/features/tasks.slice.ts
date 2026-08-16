@@ -2,37 +2,35 @@ import { Task, TaskStatus } from "@/app/types/task";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface TaskState {
-  selectedEpicId: string | null;
   tasks: Task[];
+  tasksByStatus: Partial<Record<TaskStatus, Task[]>>;
   status: "idle" | "loading" | "succeeded" | "failed";
-  selectedTaskStatus: TaskStatus | null;
 }
 
 const initialState: TaskState = {
-  selectedEpicId: null,
   tasks: [],
+  tasksByStatus: {},
   status: "idle",
-  selectedTaskStatus: null,
 };
 
-export const fetchTasks = createAsyncThunk<Task[], { projectId: string }>(
-  "tasks/fetchTasks",
-  async ({ projectId }, { signal }) => {
-    const response = await fetch(`/api/project/${projectId}/tasks`, {
-      signal,
-    });
+export const fetchTasks = createAsyncThunk<
+  Task[],
+  { projectId: string; status: TaskStatus }
+>("tasks/fetchTasks", async ({ projectId, status }, { signal }) => {
+  const response = await fetch(`/api/project/${projectId}/tasks/${status}`, {
+    signal,
+  });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => null);
-      throw new Error(error?.message ?? "Failed to fetch tasks");
-    }
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    throw new Error(error?.message ?? "Failed to fetch tasks");
+  }
 
-    const data = await response.json();
-    const tasks = Array.isArray(data) ? data : data?.tasks;
+  const data = await response.json();
+  const tasks = Array.isArray(data) ? data : data?.tasks;
 
-    return Array.isArray(tasks) ? tasks : [];
-  },
-);
+  return Array.isArray(tasks) ? tasks : [];
+});
 
 export const fetchTasksForEpic = createAsyncThunk<
   Task[],
@@ -60,28 +58,14 @@ const taskSlice = createSlice({
   name: "task",
   initialState,
   reducers: {
-    setSelectedEpicId: (state, action: PayloadAction<string | null>) => {
-      state.selectedEpicId = action.payload;
-    },
-    clearSelectedEpicId: (state) => {
-      state.selectedEpicId = null;
-    },
-    setSelectedTaskStatus: (
-      state,
-      action: PayloadAction<TaskStatus | null>,
-    ) => {
-      state.selectedTaskStatus = action.payload;
-    },
-    clearSelectedTaskStatus: (state) => {
-      state.selectedTaskStatus = null;
-    },
+ 
   },
   extraReducers(builder) {
     builder.addCase(fetchTasks.pending, (state) => {
       state.status = "loading";
     });
     builder.addCase(fetchTasks.fulfilled, (state, action) => {
-      state.tasks = action.payload;
+      state.tasksByStatus[action.meta.arg.status] = action.payload;
     });
     builder.addCase(fetchTasksForEpic.pending, (state) => {
       state.status = "loading";
@@ -92,11 +76,5 @@ const taskSlice = createSlice({
   },
 });
 
-export const {
-  setSelectedEpicId,
-  clearSelectedEpicId,
-  setSelectedTaskStatus,
-  clearSelectedTaskStatus,
-} = taskSlice.actions;
 
 export const tasksReducer = taskSlice.reducer;

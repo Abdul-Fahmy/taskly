@@ -55,7 +55,7 @@ export async function createTask(accessToken: string, data: tasksFormData) {
   });
 }
 
-export async function getTasks(projectId: string) {
+export async function getTasks(projectId: string, status:string) {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const cookiesStore = await cookies();
   const token = cookiesStore.get("access_token")?.value;
@@ -67,7 +67,7 @@ export async function getTasks(projectId: string) {
   }
 
   return apiFetch(
-    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}`,
+    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}`,
     {
       method: "GET",
       token,
