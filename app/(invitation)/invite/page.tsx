@@ -11,6 +11,7 @@ import {
 } from "@/app/schemas/acceptInvitationSchema";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/app/lib/api";
 
 export default function InvitePage() {
   const searchParams = useSearchParams();
@@ -36,8 +37,9 @@ export default function InvitePage() {
       }
       toast.success("Invitation accepted", { id: toastId });
       router.push("/project");
-    } catch {
-      toast.error("Failed to accept invitation");
+    } catch(error) {
+        const message = getApiErrorMessage(error, "Failed to accept invitation");
+      toast.error(message,{id:toastId});
     }
   };
   return (
