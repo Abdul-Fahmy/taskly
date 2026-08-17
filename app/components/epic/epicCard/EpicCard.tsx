@@ -19,7 +19,8 @@ export function EpicCard({
   }).format(new Date(epic.created_at));
   return (
     <div
-      className="flex flex-col items-start gap-4 p-4 rounded-lg border-l-4 border-[#004E32] bg-white"
+    role="button"
+      className="flex flex-col items-start gap-4 p-4 rounded-lg border-l-4 border-[#004E32] bg-white cursor-pointer"
       onClick={onClick}
     >
       <div className="flex items-center justify-between w-full">
@@ -54,7 +55,7 @@ export function EpicCard({
               height={10}
               style={{ width: "11px", height: "10px" }}
             />
-            <p>
+            <p className="text-[#434654CC]">
               Created by:{" "}
               <span className="text-black">{epic.created_by.name}</span>
             </p>
@@ -67,7 +68,7 @@ export function EpicCard({
               height={12}
               style={{ width: "10.5px", height: "12px" }}
             />
-            <p>{formatted}</p>
+            <p className="text-[#434654CC]">{formatted}</p>
           </div>
         </div>
       </div>

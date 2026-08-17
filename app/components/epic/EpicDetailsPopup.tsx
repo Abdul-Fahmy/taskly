@@ -23,6 +23,8 @@ import {
 } from "@/app/store/features/tasks.slice";
 import TaskCardEpic from "../tasks/TaskCardEpic";
 import { fetchMembers } from "@/app/store/features/members.slice";
+import CopyIcon from'@/app/assets/icons/copy.svg'
+import CloseModal from'@/app/assets/icons/closeModal.svg'
 
 type AssigneeOption = {
   value: string;
@@ -253,6 +255,11 @@ export default function EpicDetailsPopup({
   const descriptionRegister = register("description");
   const deadlineRegister = register("deadline");
 
+  const handleCopyLink = async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    toast.success('Link copied to clipboard')
+  };
+
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex items-center justify-between">
@@ -266,9 +273,18 @@ export default function EpicDetailsPopup({
           />
           <p>{localEpic.epic_id}</p>
         </div>
-        <button onClick={onClose} className="text-xl font-bold" type="button">
-          ×
+       <div className="flex items-center gap-2">
+        <button
+        onClick={handleCopyLink}
+         className="flex items-center gap-2 text-[#434654] text-[14px]">
+          <CopyIcon />
+          <p>Copy link</p>
+
         </button>
+       <button onClick={onClose} className="text-xl font-bold text-[#041B3C99] " type="button">
+          <CloseModal />
+        </button>
+       </div>
       </div>
 
       <div className="w-full flex flex-col items-start justify-between gap-8">
