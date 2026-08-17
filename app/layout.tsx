@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import "./globals.css";
 import ReduxProvider from "./components/reduxProvider/ReduxProvider";
-import DashboardLayout from "./components/dashboardLayout/DashboardLayout";
 import { Toaster } from "react-hot-toast";
 import RecoveryHashRedirect from "./components/RecoveryHashRedirect";
 import SessionKeepAlive from "./components/SessionKeepAlive";
@@ -40,10 +39,7 @@ export default async function RootLayout({
         <ReduxProvider>
           <RecoveryHashRedirect />
           <SessionKeepAlive enabled={hasAccessToken || hasRefreshToken} />
-
-          <DashboardLayout hasToken={hasAccessToken}>
-            {children}
-          </DashboardLayout>
+          {children}
           <Toaster />
         </ReduxProvider>
       </body>

@@ -64,7 +64,7 @@ export async function acceptInvitation(invitationToken: string) {
     method: "POST",
     token,
     body: {
-      invitation_token: invitationToken,
+      p_token: invitationToken,
     },
   });
 }
