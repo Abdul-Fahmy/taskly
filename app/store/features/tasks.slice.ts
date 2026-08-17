@@ -1,5 +1,5 @@
 import { Task, TaskStatus } from "@/app/types/task";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface TaskState {
   tasks: Task[];
@@ -57,9 +57,7 @@ export const fetchTasksForEpic = createAsyncThunk<
 const taskSlice = createSlice({
   name: "task",
   initialState,
-  reducers: {
- 
-  },
+  reducers: {},
   extraReducers(builder) {
     builder.addCase(fetchTasks.pending, (state) => {
       state.status = "loading";
@@ -75,6 +73,5 @@ const taskSlice = createSlice({
     });
   },
 });
-
 
 export const tasksReducer = taskSlice.reducer;

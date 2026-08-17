@@ -53,7 +53,9 @@ export default function MembersPage() {
           </h3>
         </div>
         <Button
-          onClick={() => {setOpen(true)}}
+          onClick={() => {
+            setOpen(true);
+          }}
           displayText="Invite Members"
           className="hidden md:flex items-center gap-2 btn-primary w-fit "
         >
@@ -88,18 +90,20 @@ export default function MembersPage() {
           <MemberCard members={members} />
         )}
       </div>
-      
-        <Modal
-          isOpen={open}
+
+      <Modal
+        isOpen={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+        width="448px"
+      >
+        <InviteMemberPopup
           onClose={() => {
             setOpen(false);
           }}
-          width="448px"
-        >
-          <InviteMemberPopup onClose={()=>{setOpen(false)}} />
-
-        </Modal>
-    
+        />
+      </Modal>
     </section>
   );
 }

@@ -46,7 +46,7 @@ export default function InviteMemberPopup({
       toast.success("Invitation sent successfully", { id: toastId });
       onClose();
       form.reset();
-    } catch (error) {
+    } catch {
       const message = "Failed to send invitation";
       toast.error(message, { id: toastId });
       return;

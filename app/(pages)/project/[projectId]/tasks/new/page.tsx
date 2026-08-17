@@ -2,19 +2,23 @@
 
 import TaskForm from "@/app/components/tasks/TaskForm";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
-import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
+import { useAppSelector } from "@/app/hooks/store.hooks";
 import { getApiErrorMessage } from "@/app/lib/api";
 import { tasksFormData, tasksSchema } from "@/app/schemas/newTasksSchema";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { TaskStatus } from "@/app/types/task";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function NewTaskPage() {
-  const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const selectedEpicId = searchParams.get("epicId");
   const selectedTaskStatus = searchParams.get("status");

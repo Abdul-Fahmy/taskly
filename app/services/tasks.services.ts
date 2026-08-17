@@ -55,7 +55,7 @@ export async function createTask(accessToken: string, data: tasksFormData) {
   });
 }
 
-export async function getTasks(projectId: string, status:string) {
+export async function getTasks(projectId: string, status: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const cookiesStore = await cookies();
   const token = cookiesStore.get("access_token")?.value;

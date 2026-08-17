@@ -8,7 +8,7 @@ import {
 import { TaskColumn } from "@/app/components/tasks/TaskColumn";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import { statusOptions } from "@/app/constant/taskStatus";
-import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
+import { useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import Select from "react-select";
@@ -42,15 +42,11 @@ export default function TasksPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const pathname = usePathname();
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const project = useAppSelector((state) => state.project.project);
-
 
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
   });
-
- 
 
   return (
     <div className="">
@@ -100,13 +96,14 @@ export default function TasksPage() {
       </div>
       <div className="flex gap-4 overflow-x-scroll">
         {statusOptions.map((status) => {
-         
           return (
             <TaskColumn
               key={status.value}
               status={status}
               onAddTask={() => {
-                router.push(`/project/${projectId}/tasks/new?status=${status.value}`);
+                router.push(
+                  `/project/${projectId}/tasks/new?status=${status.value}`,
+                );
               }}
             />
           );

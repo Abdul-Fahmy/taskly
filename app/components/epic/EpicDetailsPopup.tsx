@@ -17,14 +17,11 @@ import Select from "react-select";
 import { CustomOption, CustomSingleValue } from "../customOption/CustomOption";
 import Input from "../input/Input";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
-import {
-  fetchTasksForEpic,
-  
-} from "@/app/store/features/tasks.slice";
+import { fetchTasksForEpic } from "@/app/store/features/tasks.slice";
 import TaskCardEpic from "../tasks/TaskCardEpic";
 import { fetchMembers } from "@/app/store/features/members.slice";
-import CopyIcon from'@/app/assets/icons/copy.svg'
-import CloseModal from'@/app/assets/icons/closeModal.svg'
+import CopyIcon from "@/app/assets/icons/copy.svg";
+import CloseModal from "@/app/assets/icons/closeModal.svg";
 
 type AssigneeOption = {
   value: string;
@@ -257,7 +254,7 @@ export default function EpicDetailsPopup({
 
   const handleCopyLink = async () => {
     await navigator.clipboard.writeText(window.location.href);
-    toast.success('Link copied to clipboard')
+    toast.success("Link copied to clipboard");
   };
 
   return (
@@ -273,18 +270,22 @@ export default function EpicDetailsPopup({
           />
           <p>{localEpic.epic_id}</p>
         </div>
-       <div className="flex items-center gap-2">
-        <button
-        onClick={handleCopyLink}
-         className="flex items-center gap-2 text-[#434654] text-[14px]">
-          <CopyIcon />
-          <p>Copy link</p>
-
-        </button>
-       <button onClick={onClose} className="text-xl font-bold text-[#041B3C99] " type="button">
-          <CloseModal />
-        </button>
-       </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleCopyLink}
+            className="flex items-center gap-2 text-[#434654] text-[14px]"
+          >
+            <CopyIcon />
+            <p>Copy link</p>
+          </button>
+          <button
+            onClick={onClose}
+            className="text-xl font-bold text-[#041B3C99] "
+            type="button"
+          >
+            <CloseModal />
+          </button>
+        </div>
       </div>
 
       <div className="w-full flex flex-col items-start justify-between gap-8">
@@ -464,13 +465,12 @@ export default function EpicDetailsPopup({
             </button>
           </div>
         ) : (
-                      <div className="overflow-y-scroll h-[180px]">
-                        {tasks.map((task) => <TaskCardEpic key={task.id} task={task} />)}
-                      </div>
-
-          
-
-)}
+          <div className="overflow-y-scroll h-[180px]">
+            {tasks.map((task) => (
+              <TaskCardEpic key={task.id} task={task} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

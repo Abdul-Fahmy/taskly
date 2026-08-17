@@ -7,7 +7,7 @@ interface ModalProps {
   onClose: () => void;
   title?: string;
   children: ReactNode;
-  width?: string
+  width?: string;
 }
 
 export default function Modal({
@@ -25,7 +25,7 @@ export default function Modal({
       onClick={onClose}
     >
       <div
-      style={{ maxWidth: width }}
+        style={{ maxWidth: width }}
         className={`w-full  rounded-lg bg-white p-6 shadow-lg`}
         onClick={(e) => e.stopPropagation()}
       >

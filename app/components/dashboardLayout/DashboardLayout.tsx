@@ -53,7 +53,7 @@ export default function DashboardLayout({
     currentProjectId,
     detailsStatus,
     detailsProjectId,
-    currentProject
+    currentProject,
   ]);
 
   if (!hasToken) {

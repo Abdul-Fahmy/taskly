@@ -19,7 +19,7 @@ export function EpicCard({
   }).format(new Date(epic.created_at));
   return (
     <div
-    role="button"
+      role="button"
       className="flex flex-col items-start gap-4 p-4 rounded-lg border-l-4 border-[#004E32] bg-white cursor-pointer"
       onClick={onClick}
     >

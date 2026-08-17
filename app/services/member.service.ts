@@ -11,13 +11,11 @@ function getSupabaseConfig() {
   return { baseUrl };
 }
 export type InvitationBody = {
-  
-    p_email: string,
-    p_project_id: string,
-    "p_app_url": string,
-    "p_base_url": string
-  
-}
+  p_email: string;
+  p_project_id: string;
+  p_app_url: string;
+  p_base_url: string;
+};
 
 export async function getMembers(projectId: string): Promise<Member[]> {
   const { baseUrl } = getSupabaseConfig();
@@ -38,44 +36,35 @@ export async function getMembers(projectId: string): Promise<Member[]> {
 }
 
 export async function sendInvitation(data: InvitationBody) {
-  const {baseUrl} = getSupabaseConfig();
+  const { baseUrl } = getSupabaseConfig();
   const cookiesStore = await cookies();
-  const token = cookiesStore.get('access_token')?.value
+  const token = cookiesStore.get("access_token")?.value;
 
   if (!token) {
-    throw new Error ('Missing access token')
+    throw new Error("Missing access token");
   }
 
-  return apiFetch(`${baseUrl}/rest/v1/rpc/invite_member`,
-    {
-      method:"POST",
-      token,
-      body:data
-    }
-    
-  )
-  
+  return apiFetch(`${baseUrl}/rest/v1/rpc/invite_member`, {
+    method: "POST",
+    token,
+    body: data,
+  });
 }
 
-
-
-export async function acceptInvitation(invitationToken:string) {
-  const {baseUrl} = getSupabaseConfig();
+export async function acceptInvitation(invitationToken: string) {
+  const { baseUrl } = getSupabaseConfig();
   const cookiesStore = await cookies();
-  const token = cookiesStore.get('access_token')?.value
+  const token = cookiesStore.get("access_token")?.value;
 
   if (!token) {
-    throw new Error ('Missing access token')
+    throw new Error("Missing access token");
   }
 
-  return apiFetch(`${baseUrl}/rest/v1/rpc/accept_invitation`,
-    {
-      method:"POST",
-      token,
-      body:{
-        invitation_token:invitationToken
-      }
-    }
-  )
-  
+  return apiFetch(`${baseUrl}/rest/v1/rpc/accept_invitation`, {
+    method: "POST",
+    token,
+    body: {
+      invitation_token: invitationToken,
+    },
+  });
 }

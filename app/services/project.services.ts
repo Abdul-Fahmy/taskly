@@ -125,7 +125,6 @@ export async function getProjectsPagination({
   };
 }
 
-
 export async function getProjectDetails(projectId: string): Promise<Project> {
   const { baseUrl } = getSupabaseConfig();
   const cookieStore = await cookies();
