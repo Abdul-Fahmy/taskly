@@ -4,12 +4,8 @@ import { acceptInvitation } from "@/app/services/member.service";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ invitationToken: string }> },
-) {
+export async function POST(request: NextRequest) {
   try {
-    const { invitationToken } = await params;
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("access_token")?.value;
 
@@ -18,9 +14,10 @@ export async function POST(
     }
 
     const body = await request.json();
+    const tokenFromQuery = request.nextUrl.searchParams.get("token");
     const parsed = acceptMemberSchema.safeParse({
       ...body,
-      p_token: body.p_token || invitationToken,
+      p_token: body.p_token || tokenFromQuery,
     });
 
     if (!parsed.success) {
