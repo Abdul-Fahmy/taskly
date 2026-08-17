@@ -8,7 +8,7 @@ import { setUser } from "@/app/store/features/user.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -16,6 +16,8 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
   const dispatch = useAppDispatch();
 
   const {
@@ -47,7 +49,12 @@ export default function LoginPage() {
         dispatch(setUser(result.user));
       }
 
-      router.push("/project");
+      const destination =
+        redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+          ? redirectTo
+          : "/project";
+
+      router.push(destination);
       router.refresh();
     } catch {
       setErrorMessage("Something went wrong. Please try again.");

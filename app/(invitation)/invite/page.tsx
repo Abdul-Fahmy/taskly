@@ -11,7 +11,6 @@ import {
 } from "@/app/schemas/acceptInvitationSchema";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { getApiErrorMessage } from "@/app/lib/api";
 
 export default function InvitePage() {
   const searchParams = useSearchParams();
@@ -22,29 +21,45 @@ export default function InvitePage() {
   const form = useForm<AcceptMemberFormData>({
     resolver: zodResolver(acceptMemberSchema),
     defaultValues: {
-      p_token: token!,
+      p_token: token ?? "",
     },
   });
+
   const onSubmit = async (data: AcceptMemberFormData) => {
+    if (!token) {
+      toast.error("Invalid invitation link");
+      return;
+    }
+
     const toastId = toast.loading("Accepting invitation...");
+    const loginRedirect = `/login?redirect=${encodeURIComponent(`/invite?token=${encodeURIComponent(token)}`)}`;
+
     try {
       const response = await fetch(`/api/acceptInvitation?token=${token}`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!response.ok) {
-        throw new Error("Failed to accept invitation");
+
+      const result = await response.json().catch(() => null);
+
+      if (response.status === 401) {
+        toast.error("Please log in to accept this invitation", { id: toastId });
+        router.push(loginRedirect);
+        return;
       }
+
+      if (!response.ok) {
+        toast.error(result?.message ?? "Failed to accept invitation", {
+          id: toastId,
+        });
+        return;
+      }
+
       toast.success("Invitation accepted", { id: toastId });
       router.push("/project");
-    } catch(error) {
-        const message = getApiErrorMessage(error, "Failed to accept invitation");
-      toast.error(message,{id:toastId});
-      if (message === "Unauthorized") {
-        router.push("/login");
-      } else {
-        toast.error(message, { id: toastId });
-      }
+    } catch {
+      toast.error("Failed to accept invitation", { id: toastId });
     }
   };
   return (
