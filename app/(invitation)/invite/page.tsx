@@ -42,14 +42,14 @@ export default function InvitePage() {
   };
   return (
     <div className="w-full h-screen flex items-center justify-center">
-      <div className="flex flex-col items center">
+      <div className="flex flex-col items-center">
         <div className="flex items-center gap-2">
           <LogoTaskly />
           <h2 className="uppercase text-[24px] font-bold text-[#041B3C]">
             TASKLY
           </h2>
         </div>
-        <div className="bg-white border-t border-[#003D9B] rounded-md p-12 flex flex-col items-center ">
+        <div className="bg-white border-t-2 border-[#003D9B] rounded-md p-12 flex flex-col items-center ">
           <div className="bg-[#E0E8FF] rounded-full py-1 px-3 flex items-center ">
             <UserInvitation />
             <p className="uppercase text-[11px] font-bold text-[#434654]">
