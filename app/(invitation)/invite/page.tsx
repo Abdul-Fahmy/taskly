@@ -40,6 +40,11 @@ export default function InvitePage() {
     } catch(error) {
         const message = getApiErrorMessage(error, "Failed to accept invitation");
       toast.error(message,{id:toastId});
+      if (message === "Unauthorized") {
+        router.push("/login");
+      } else {
+        toast.error(message, { id: toastId });
+      }
     }
   };
   return (
