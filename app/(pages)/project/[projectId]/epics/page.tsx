@@ -250,12 +250,15 @@ export default function EpicsPage() {
         </div>
       )}
 
+      <div className="max-w-2xl">
       <Modal
         isOpen={open}
         onClose={() => {
           setOpen(false);
           setSelectedEpic(null);
+          
         }}
+        width="672px"
       >
         {selectedEpic && (
           <EpicDetailsPopup
@@ -277,6 +280,7 @@ export default function EpicsPage() {
           />
         )}
       </Modal>
+      </div>
     </div>
   );
 }
