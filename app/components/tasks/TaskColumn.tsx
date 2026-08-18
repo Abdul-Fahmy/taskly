@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { fetchTasks } from "@/app/store/features/tasks.slice";
+import TaskColumnSkeleton from "./Skeleton/TaskColumnSkeleton";
 type TaskColumnProps = {
   status: {
     value: TaskStatus;
@@ -29,10 +30,17 @@ export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
   const tasks = useAppSelector(
     (state) => state.tasks.tasksByStatus[status.value] ?? [],
   );
+  const columnStatus = useAppSelector(
+    (state) => state.tasks.statusByColumn[status.value] ?? "idle",
+  );
 
   useEffect(() => {
     dispatch(fetchTasks({ projectId, status: status.value }));
   }, [dispatch, projectId, status.value]);
+
+  if (columnStatus === "loading" || columnStatus === "idle") {
+    return <TaskColumnSkeleton />;
+  }
 
   return (
     <div className="flex min-w-72 shrink-0 flex-col">
@@ -66,9 +74,11 @@ export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
 
           <p className="uppercase text-[12px] font-bold">Add new task</p>
         </button>
+        <div className="overflow-y-scroll max-h-96">
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} />
         ))}
+        </div>
       </div>
     </div>
   );

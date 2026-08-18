@@ -1,7 +1,7 @@
 import { apiFetch } from "@/app/lib/api";
 import { tasksFormData } from "@/app/schemas/newTasksSchema";
+import { Task } from "@/app/types/task";
 import { cookies } from "next/headers";
-
 type CreateTaskPayload = {
   title: string;
   project_id: string;
@@ -75,6 +75,70 @@ export async function getTasks(projectId: string, status: string) {
   );
 }
 
+export async function getAllTasksPagination({
+  projectId,
+  limit,
+  offset,
+}: {
+  projectId: string;
+  limit: number;
+  offset: number;
+}): Promise<{ tasks: Task[]; contentRange: string }> {
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const cookiesStore = await cookies();
+  const token = cookiesStore.get("access_token")?.value;
+
+  if (!baseUrl) {
+    throw new Error("Missing Supabase environment variables");
+  }
+  if (!token) {
+    throw new Error("Missing access token");
+  }
+
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!apiKey) {
+    throw new Error("missing supabase api key");
+  }
+
+  const response = await fetch(
+    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&limit=${limit}&offset=${offset}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        Prefer: "count=exact",
+      },
+    },
+  );
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      data,
+      message: (data as { message?: string })?.message || response.statusText,
+    };
+  }
+
+  const tasks = Array.isArray(data) ? (data as Task[]) : null;
+  if (!tasks) {
+    throw new Error("an invalid pagination response");
+  }
+
+  const contentRange = response.headers.get("content-range");
+
+  if (!contentRange) {
+    throw new Error("response is missing the content-range header");
+  }
+
+  return {
+    tasks,
+    contentRange,
+  };
+}
 export async function getTasksForEpic(epicId: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const cookiesStore = await cookies();

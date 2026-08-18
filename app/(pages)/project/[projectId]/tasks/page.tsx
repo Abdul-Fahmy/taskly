@@ -3,15 +3,17 @@ import Input from "@/app/components/input/Input";
 import {
   CustomOption,
   CustomSingleValue,
+  ViewOption,
   viewOptions,
 } from "@/app/components/tasks/CustomOptions";
-import { TaskColumn } from "@/app/components/tasks/TaskColumn";
+import { ListView } from "@/app/components/tasks/ListView";
+import ViewBoard from "@/app/components/tasks/ViewBoard";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
-import { statusOptions } from "@/app/constant/taskStatus";
 import { useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import Select from "react-select";
+import { useParams, usePathname } from "next/navigation";
+import { useState } from "react";
+import Select, { SingleValue } from "react-select";
 
 const selectClassNames = {
   control: () => "bg-white  w-full cursor-pointer",
@@ -41,8 +43,8 @@ const selectClassNames = {
 export default function TasksPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const pathname = usePathname();
-  const router = useRouter();
   const project = useAppSelector((state) => state.project.project);
+  const [view, setView] = useState<"board" | "list">("board");
 
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
@@ -78,7 +80,8 @@ export default function TasksPage() {
           <div className="flex items-center gap-2 w-1/2 px-4 ">
             <Input type="search" placeholder="Search tasks..." />
             <div className="w-1/2">
-              <Select
+              <Select<ViewOption, false>
+                instanceId="tasks-view"
                 classNames={selectClassNames}
                 unstyled
                 options={viewOptions}
@@ -86,29 +89,20 @@ export default function TasksPage() {
                   Option: CustomOption,
                   SingleValue: CustomSingleValue,
                 }}
-                value={viewOptions.find((option) => option.value === "board")}
-
+                value={viewOptions.find((option) => option.value === view)}
+                onChange={(option: SingleValue<ViewOption>) => {
+                  if (option) {
+                    setView(option.value);
+                  }
+                }}
                 name="view"
               />
             </div>
           </div>
         </div>
       </div>
-      <div className="flex gap-4 overflow-x-scroll">
-        {statusOptions.map((status) => {
-          return (
-            <TaskColumn
-              key={status.value}
-              status={status}
-              onAddTask={() => {
-                router.push(
-                  `/project/${projectId}/tasks/new?status=${status.value}`,
-                );
-              }}
-            />
-          );
-        })}
-      </div>
+      {view === "board" && <ViewBoard key={projectId} />}
+      {view === "list" && <ListView />}
     </div>
   );
 }
