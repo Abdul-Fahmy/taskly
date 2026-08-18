@@ -75,9 +75,11 @@ export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
 
           <p className="uppercase text-[12px] font-bold">Add new task</p>
         </button>
+        <div className="overflow-y-scroll max-h-96">
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} />
         ))}
+        </div>
       </div>
     </div>
   );
