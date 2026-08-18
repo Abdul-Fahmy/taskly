@@ -103,7 +103,7 @@ export default function TasksPage() {
             </div>
           </div>
         </div>
-       {view === 'board' && <ViewBoard />}
+       {view === "board" && <ViewBoard key={projectId} />}
        {view === 'list' && <ListView />}
       </div>
     );

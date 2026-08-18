@@ -13,7 +13,9 @@ interface TaskState {
   allTasks: Task[];
   tasksByStatus: Partial<Record<TaskStatus, Task[]>>;
   statusByColumn: Partial<Record<TaskStatus, FetchStatus>>;
+  boardProjectId: string | null;
   allTasksStatus: FetchStatus;
+  allTasksProjectId: string | null;
   allTasksCurrentPage: number;
   allTasksLimit: number;
   allTasksTotalCount: number;
@@ -24,7 +26,9 @@ const initialState: TaskState = {
   allTasks: [],
   tasksByStatus: {},
   statusByColumn: {},
+  boardProjectId: null,
   allTasksStatus: "idle",
+  allTasksProjectId: null,
   allTasksCurrentPage: 1,
   allTasksLimit: 5,
   allTasksTotalCount: 0,
@@ -112,13 +116,27 @@ const taskSlice = createSlice({
     setAllTasksCurrentPage(state, action: PayloadAction<number>) {
       state.allTasksCurrentPage = action.payload;
     },
+    resetBoardTasksState(state) {
+      state.tasksByStatus = {};
+      state.statusByColumn = {};
+      state.boardProjectId = null;
+    },
   },
   extraReducers(builder) {
     builder
       .addCase(fetchTasks.pending, (state, action) => {
-        state.statusByColumn[action.meta.arg.status] = "loading";
+        const { projectId, status } = action.meta.arg;
+
+        if (state.boardProjectId && state.boardProjectId !== projectId) {
+          state.tasksByStatus = {};
+          state.statusByColumn = {};
+        }
+
+        state.boardProjectId = projectId;
+        state.statusByColumn[status] = "loading";
       })
       .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.boardProjectId = action.meta.arg.projectId;
         state.statusByColumn[action.meta.arg.status] = "succeeded";
         state.tasksByStatus[action.meta.arg.status] = action.payload;
       })
@@ -132,10 +150,20 @@ const taskSlice = createSlice({
       .addCase(fetchTasksForEpic.fulfilled, (state, action) => {
         state.tasks = action.payload;
       })
-      .addCase(fetchAllTasks.pending, (state) => {
+      .addCase(fetchAllTasks.pending, (state, action) => {
+        const { projectId } = action.meta.arg;
+
+        if (state.allTasksProjectId && state.allTasksProjectId !== projectId) {
+          state.allTasks = [];
+          state.allTasksTotalCount = 0;
+          state.allTasksCurrentPage = 1;
+        }
+
+        state.allTasksProjectId = projectId;
         state.allTasksStatus = "loading";
       })
       .addCase(fetchAllTasks.fulfilled, (state, action) => {
+        state.allTasksProjectId = action.meta.arg.projectId;
         state.allTasksStatus = "succeeded";
         state.allTasks = action.payload.tasks;
         state.allTasksTotalCount = action.payload.totalCount;
@@ -153,5 +181,6 @@ const taskSlice = createSlice({
   },
 });
 
-export const { setAllTasksCurrentPage } = taskSlice.actions;
+export const { setAllTasksCurrentPage, resetBoardTasksState } =
+  taskSlice.actions;
 export const tasksReducer = taskSlice.reducer;

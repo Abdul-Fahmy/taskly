@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import PaginationForTasks from "./PaginationForTasks";
 import TaskListSkeleton from "./Skeleton/TaskListSkeleton";
+import Link from "next/link";
 
 export function ListView() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -56,6 +57,14 @@ export function ListView() {
   };
   if (allTasksStatus === "loading") {
     return <TaskListSkeleton />;
+  }
+
+  if (tasks.length === 0) {
+    return <div className="flex flex-col items-center justify-center gap-2 p-3 pt-4">
+      <Link href={`/project/${projectId}/tasks/new`} className="btn-primary text-white py-2 px-4 rounded-md mr-6 mt-4">Create Task</Link>
+      <p className="  text-2xl font-semibold">No tasks found</p>
+      <p className="text-sm text-gray-500">Create a task to get started on this list.</p>
+    </div>
   }
 
   return (
@@ -118,7 +127,9 @@ export function ListView() {
         
       )}
  </div>
-    
+    <div className="flex items-center justify-end">
+      <Link href={`/project/${projectId}/tasks/new`} className="btn-primary text-white py-2 px-4 rounded-md mr-6 mt-4">+</Link>
+    </div>
     </div>
   );
 }
