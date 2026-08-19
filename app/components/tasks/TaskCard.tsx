@@ -2,8 +2,13 @@
 import { getInitials } from "@/app/constant/getInitials";
 import { Task } from "@/app/types/task";
 import Calendar from "@/app/assets/icons/date.svg";
+import { useState } from "react";
+import Modal from "../modal/Modal";
+import TaskDetailsPopup from "./TaskDetailsPopup";
 
 export default function TaskCard({ task }: { task: Task }) {
+  const [open, setOpen] = useState(false)
+
   const initials = getInitials(task.created_by.name || "U");
   const createdAt = task.created_at
     ? new Date(task.created_at).toLocaleDateString("en-US", {
@@ -38,7 +43,7 @@ export default function TaskCard({ task }: { task: Task }) {
   // };
 
   return (
-    <div className="flex flex-col gap-4 shadow-black/5 shadow-sm">
+    <div className="flex flex-col gap-4 shadow-black/5 shadow-sm cursor-pointer" role="button" onClick={()=>setOpen(true)}>
       <div className="bg-white flex flex-col items-start p-4 gap-4 rounded-md">
         <p>{task.title}</p>
         <div className="flex items-center justify-between w-full">
@@ -52,6 +57,9 @@ export default function TaskCard({ task }: { task: Task }) {
           </div>
         </div>
       </div>
+      <Modal isOpen={open} onClose={()=>setOpen(false)} width='896px'>
+              <TaskDetailsPopup taskId={task.id} onClose={()=>setOpen(false)} />
+            </Modal>
     </div>
   );
 }

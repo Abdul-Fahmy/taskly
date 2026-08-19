@@ -155,3 +155,36 @@ export async function getTasksForEpic(epicId: string) {
     token,
   });
 }
+
+
+export async function getTaskDetails({
+  projectId,
+  taskId,
+}: {
+  projectId: string;
+  taskId: string;
+}): Promise<Task> {
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  if (!baseUrl) {
+    throw new Error("Missing Supabase environment variables");
+  }
+
+  const result = await apiFetch<Task[]>(
+    `${baseUrl}/rest/v1/project_tasks?id=eq.${taskId}&project_id=eq.${projectId}`,
+    {
+      method: "GET",
+    },
+  );
+
+  const task = Array.isArray(result) ? result[0] : result;
+  if (!task) {
+    throw {
+      status: 404,
+      data: null,
+      message: "Task not found",
+    };
+  }
+
+  return task;
+}

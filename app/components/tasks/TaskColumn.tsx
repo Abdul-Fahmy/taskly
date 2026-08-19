@@ -1,11 +1,16 @@
 "use client";
-import { TaskStatus } from "@/app/types/task";
+import { Task, TaskStatus } from "@/app/types/task";
 import TaskCard from "./TaskCard";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { fetchTasks } from "@/app/store/features/tasks.slice";
 import TaskColumnSkeleton from "./Skeleton/TaskColumnSkeleton";
+
+import { statusColors } from "@/app/constant/taskStatusColor";
+
+const EMPTY_TASKS: Task[] = [];
+
 type TaskColumnProps = {
   status: {
     value: TaskStatus;
@@ -15,20 +20,11 @@ type TaskColumnProps = {
 };
 
 export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
-  const statusColors = {
-    TO_DO: "bg-[#94A3B8]",
-    IN_PROGRESS: "bg-[#0052CC]",
-    BLOCKED: "bg-[#BA1A1A]",
-    IN_REVIEW: "bg-[#4F5F7B]",
-    READY_FOR_QA: "bg-purple-500",
-    REOPENED: "bg-orange-500",
-    READY_FOR_PRODUCTION: "bg-pink-500",
-    DONE: "bg-gray-500",
-  };
+
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useAppDispatch();
   const tasks = useAppSelector(
-    (state) => state.tasks.tasksByStatus[status.value] ?? [],
+    (state) => state.tasks.tasksByStatus[status.value] ?? EMPTY_TASKS,
   );
   const columnStatus = useAppSelector(
     (state) => state.tasks.statusByColumn[status.value] ?? "idle",
@@ -76,7 +72,8 @@ export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
         </button>
         <div className="overflow-y-scroll max-h-96">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+                     <TaskCard key={task.id} task={task} />
+
         ))}
         </div>
       </div>

@@ -1,11 +1,10 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
   children: ReactNode;
   width?: string;
 }
@@ -13,25 +12,38 @@ interface ModalProps {
 export default function Modal({
   isOpen,
   onClose,
-  title,
   children,
   width,
 }: ModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/10"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 cursor-default"
+      onMouseDown={onClose}
     >
       <div
         style={{ maxWidth: width }}
-        className={`w-full  rounded-lg bg-white p-6 shadow-lg`}
+        className={`w-full  rounded-lg bg-white  shadow-lg`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">{title}</h2>
-        </div>
+        
 
         {children}
       </div>

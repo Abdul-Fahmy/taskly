@@ -9,36 +9,13 @@ import {
 import { ListView } from "@/app/components/tasks/ListView";
 import ViewBoard from "@/app/components/tasks/ViewBoard";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
+import { selectClassNames } from "@/app/constant/classesForSelect";
 import { useAppSelector } from "@/app/hooks/store.hooks";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { useParams, usePathname } from "next/navigation";
 import { useState } from "react";
 import Select, { SingleValue } from "react-select";
 
-const selectClassNames = {
-  control: () => "bg-white  w-full cursor-pointer",
-  valueContainer: () => "px-2 py-4",
-  input: () => "m-0 p-0",
-  indicatorsContainer: () => "p-0",
-  dropdownIndicator: () => "px-2 py-4",
-  clearIndicator: () => "p-0",
-  menu: () =>
-    "mt-1 rounded-md border border-gray-200 bg-white shadow-lg w-full px-2 py-4",
-  option: ({
-    isFocused,
-    isSelected,
-  }: {
-    isFocused: boolean;
-    isSelected: boolean;
-  }) =>
-    `cursor-pointer px-2 py-4 ${
-      isSelected
-        ? "bg-blue-500 text-white"
-        : isFocused
-          ? "bg-gray-100"
-          : "bg-white"
-    }`,
-};
 
 export default function TasksPage() {
   const { projectId } = useParams<{ projectId: string }>();
