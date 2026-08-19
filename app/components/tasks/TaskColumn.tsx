@@ -42,7 +42,6 @@ export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
     return <TaskColumnSkeleton />;
   }
 
-
   return (
     <div className="flex min-w-72 shrink-0 flex-col">
       <div className="flex items-center justify-between p-3">

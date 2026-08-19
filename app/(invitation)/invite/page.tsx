@@ -1,0 +1,92 @@
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
+import LogoTaskly from "@/app/assets/icons/logoTaskly.svg";
+import UserInvitation from "@/app/assets/icons/userInvitation.svg";
+import Button from "@/app/components/button/Button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  AcceptMemberFormData,
+  acceptMemberSchema,
+} from "@/app/schemas/acceptInvitationSchema";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+
+export default function InvitePage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const token = searchParams.get("token");
+
+  const form = useForm<AcceptMemberFormData>({
+    resolver: zodResolver(acceptMemberSchema),
+    defaultValues: {
+      p_token: token ?? "",
+    },
+  });
+
+  const onSubmit = async (data: AcceptMemberFormData) => {
+    if (!token) {
+      toast.error("Invalid invitation link");
+      return;
+    }
+
+    const toastId = toast.loading("Accepting invitation...");
+    const loginRedirect = `/login?redirect=${encodeURIComponent(`/invite?token=${encodeURIComponent(token)}`)}`;
+
+    try {
+      const response = await fetch(`/api/acceptInvitation?token=${token}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json().catch(() => null);
+
+      if (response.status === 401) {
+        toast.error("Please log in to accept this invitation", { id: toastId });
+        router.push(loginRedirect);
+        return;
+      }
+
+      if (!response.ok) {
+        toast.error(result?.message ?? "Failed to accept invitation", {
+          id: toastId,
+        });
+        return;
+      }
+
+      toast.success("Invitation accepted", { id: toastId });
+      router.push("/project");
+    } catch {
+      toast.error("Failed to accept invitation", { id: toastId });
+    }
+  };
+  return (
+    <div className="w-full h-screen flex items-center justify-center">
+      <div className="flex flex-col items-center">
+        <div className="flex items-center gap-2">
+          <LogoTaskly />
+          <h2 className="uppercase text-[24px] font-bold text-[#041B3C]">
+            TASKLY
+          </h2>
+        </div>
+        <div className="bg-white border-t-2 border-[#003D9B] rounded-md p-12 flex flex-col items-center ">
+          <div className="bg-[#E0E8FF] rounded-full py-1 px-3 flex items-center ">
+            <UserInvitation />
+            <p className="uppercase text-[11px] font-bold text-[#434654]">
+              New Project Invitation
+            </p>
+          </div>
+          <p className="text-[30px] font-semibold text-[#041B3C] ">
+            You&apos;ve been invited to join new project
+          </p>
+          <Button
+            displayText="Accept Invitation"
+            onClick={form.handleSubmit(onSubmit)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

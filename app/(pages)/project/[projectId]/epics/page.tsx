@@ -24,7 +24,7 @@ import ApiError from "@/app/components/apiError/ApiError";
 
 export default function EpicsPage() {
   const router = useRouter();
-  const pathname = usePathname()
+  const pathname = usePathname();
   const { projectId } = useParams<{ projectId: string }>();
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
@@ -140,14 +140,19 @@ export default function EpicsPage() {
 
   if (status === "failed" && epics.length === 0) {
     return (
-     <ApiError error={error ?? 'Something went wrong'} projectId={projectId} limit={limit} currentPage={currentPage}/>
+      <ApiError
+        error={error ?? "Something went wrong"}
+        projectId={projectId}
+        limit={limit}
+        currentPage={currentPage}
+      />
     );
   }
 
   return (
     <div className="pt-6">
       <div className="hidden md:flex">
-      <span className="font-bold uppercase text-[12px] flex items-center gap-1 ">
+        <span className="font-bold uppercase text-[12px] flex items-center gap-1 ">
           {breadcrumbs.map((item, index) => (
             <span key={item}>
               {index > 0 && <span className="mx-2 text-neutral-400">&gt;</span>}
@@ -250,33 +255,36 @@ export default function EpicsPage() {
         </div>
       )}
 
-      <Modal
-        isOpen={open}
-        onClose={() => {
-          setOpen(false);
-          setSelectedEpic(null);
-        }}
-      >
-        {selectedEpic && (
-          <EpicDetailsPopup
-            epic={selectedEpic}
-            onClose={() => {
-              setOpen(false);
-              setSelectedEpic(null);
-            }}
-            onEpicUpdated={(updatedEpic) => {
-              setSelectedEpic(updatedEpic);
-              dispatch(
-                setEpics(
-                  epics.map((item) =>
-                    item.id === updatedEpic.id ? updatedEpic : item,
+      <div className="max-w-2xl">
+        <Modal
+          isOpen={open}
+          onClose={() => {
+            setOpen(false);
+            setSelectedEpic(null);
+          }}
+          width="672px"
+        >
+          {selectedEpic && (
+            <EpicDetailsPopup
+              epic={selectedEpic}
+              onClose={() => {
+                setOpen(false);
+                setSelectedEpic(null);
+              }}
+              onEpicUpdated={(updatedEpic) => {
+                setSelectedEpic(updatedEpic);
+                dispatch(
+                  setEpics(
+                    epics.map((item) =>
+                      item.id === updatedEpic.id ? updatedEpic : item,
+                    ),
                   ),
-                ),
-              );
-            }}
-          />
-        )}
-      </Modal>
+                );
+              }}
+            />
+          )}
+        </Modal>
+      </div>
     </div>
   );
 }
