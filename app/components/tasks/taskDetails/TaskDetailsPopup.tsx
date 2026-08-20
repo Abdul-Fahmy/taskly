@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { statusOptions } from "@/app/constant/taskStatus";
 import { statusColors } from "@/app/constant/taskStatusColor";
 import { getInitials } from "@/app/constant/getInitials";
-import TaskDetailsPopupSkeleton from "./Skeleton/TaskDetailsSkeleton";
+import TaskDetailsPopupSkeleton from "../Skeleton/TaskDetailsSkeleton";
 
 function formatDisplayDate(value: string | null | undefined) {
   if (!value) {
@@ -85,10 +85,10 @@ export default function TaskDetailsPopup({
   const formattedCreatedAt = formatDisplayDate(task?.created_at);
   const [isLoading, setIsLoading] = useState(false);
 
-
   useEffect(() => {
     dispatch(fetchEpics({ projectId }));
   }, [dispatch, projectId]);
+
   useEffect(() => {
     const fetchTask = async () => {
       if (!projectId || !taskId) {

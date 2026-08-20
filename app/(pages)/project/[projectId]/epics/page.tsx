@@ -22,7 +22,7 @@ import { useEffect, useRef, useState } from "react";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import ApiError from "@/app/components/apiError/ApiError";
-import TaskDetailsPopup from "@/app/components/tasks/TaskDetailsPopup";
+import TaskDetailsModal from "@/app/components/tasks/taskDetails/TaskDetailsModal";
 
 export default function EpicsPage() {
   const router = useRouter();
@@ -365,24 +365,16 @@ export default function EpicsPage() {
         </Modal>
       </div>
 
-      <Modal
-        isOpen={taskModalOpen}
-        onClose={() => {
-          setTaskModalOpen(false);
-          setSelectedTaskId(null);
-        }}
-        width="896px"
-      >
-        {selectedTaskId && (
-          <TaskDetailsPopup
-            taskId={selectedTaskId}
-            onClose={() => {
-              setTaskModalOpen(false);
-              setSelectedTaskId(null);
-            }}
-          />
-        )}
-      </Modal>
+      {selectedTaskId && (
+        <TaskDetailsModal
+          taskId={selectedTaskId}
+          isOpen={taskModalOpen}
+          onClose={() => {
+            setTaskModalOpen(false);
+            setSelectedTaskId(null);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -3,8 +3,7 @@ import { getInitials } from "@/app/constant/getInitials";
 import { Task } from "@/app/types/task";
 import Calendar from "@/app/assets/icons/date.svg";
 import { useState } from "react";
-import Modal from "../modal/Modal";
-import TaskDetailsPopup from "./TaskDetailsPopup";
+import TaskDetailsModal from "./taskDetails/TaskDetailsModal";
 
 export default function TaskCard({ task }: { task: Task }) {
   const [open, setOpen] = useState(false)
@@ -57,9 +56,11 @@ export default function TaskCard({ task }: { task: Task }) {
           </div>
         </div>
       </div>
-      <Modal isOpen={open} onClose={()=>setOpen(false)} width='896px'>
-              <TaskDetailsPopup taskId={task.id} onClose={()=>setOpen(false)} />
-            </Modal>
+      <TaskDetailsModal
+        taskId={task.id}
+        isOpen={open}
+        onClose={() => setOpen(false)}
+      />
     </div>
   );
 }

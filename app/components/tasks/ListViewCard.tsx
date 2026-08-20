@@ -2,8 +2,7 @@
 import { getInitials } from "@/app/constant/getInitials";
 import { Task, TaskStatus } from "@/app/types/task";
 import { useState } from "react";
-import Modal from "../modal/Modal";
-import TaskDetailsPopup from "./TaskDetailsPopup";
+import TaskDetailsModal from "./taskDetails/TaskDetailsModal";
 
 export default function ListViewCard({ task }: { task: Task }) {
   const [open, setOpen] = useState(false);
@@ -62,7 +61,11 @@ export default function ListViewCard({ task }: { task: Task }) {
           <span className="text-gray-400">Unassigned</span>
         )}
       </div>
-      <Modal isOpen={open} onClose={()=>setOpen(false)} width='896px'><TaskDetailsPopup taskId={task.id} onClose={()=>setOpen(false)} /></Modal>
+      <TaskDetailsModal
+        taskId={task.id}
+        isOpen={open}
+        onClose={() => setOpen(false)}
+      />
 
     </div>
   );

@@ -1,8 +1,7 @@
 "use client";
 import { getInitials } from "@/app/constant/getInitials";
 import { Task } from "@/app/types/task";
-import Modal from "../modal/Modal";
-import TaskDetailsPopup from "./TaskDetailsPopup";
+import TaskDetailsModal from "./taskDetails/TaskDetailsModal";
 import { useState } from "react";
 
 type TaskCardEpicProps = {
@@ -53,9 +52,11 @@ export default function TaskCardEpic({ task, onTaskClick }: TaskCardEpicProps) {
       </div>
 
       {!onTaskClick && (
-        <Modal isOpen={open} onClose={() => setOpen(false)} width="896px">
-          <TaskDetailsPopup taskId={task.id} onClose={() => setOpen(false)} />
-        </Modal>
+        <TaskDetailsModal
+          taskId={task.id}
+          isOpen={open}
+          onClose={() => setOpen(false)}
+        />
       )}
     </>
   );
