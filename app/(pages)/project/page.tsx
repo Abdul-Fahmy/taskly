@@ -1,5 +1,6 @@
 "use client";
 
+import ApiError from "@/app/components/apiError/ApiError";
 import Button from "@/app/components/button/Button";
 import ProjectCardSkeleton from "@/app/components/cardSkeleton/CardSkeleton";
 import Pagination from "@/app/components/pagination/Pagination";
@@ -94,18 +95,12 @@ export default function Project() {
 
   if (status === "failed" && projects.length === 0) {
     return (
-      <section className="w-full p-6">
-        <div className="rounded-lg bg-red-50 p-4 text-red-700">
-          <p>{error ?? "Failed to load projects."}</p>
-          <Button
-            displayText="Try Again"
-            className="mt-4 w-fit"
-            onClick={() =>
-              dispatch(fetchPagination({ limit, page: currentPage }))
-            }
-          />
-        </div>
-      </section>
+      
+        <ApiError 
+          error={error ?? "Failed to load projects."}
+          onRetry={() => dispatch(fetchPagination({ limit, page: currentPage }))}
+        />
+        
     );
   }
 

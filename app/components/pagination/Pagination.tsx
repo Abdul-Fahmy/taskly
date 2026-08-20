@@ -47,7 +47,7 @@ export default function Pagination({
   const showing = Math.min(currentPage * limit, totalCount);
 
   return (
-    <div className="flex items-center justify-between text-[#434654] w-full">
+    <div className="flex items-center justify-between text-[#434654] w-full pb-10">
       <div className="font-medium ">
         <p>
           Showing {showing} of {totalCount} {itemLabel}

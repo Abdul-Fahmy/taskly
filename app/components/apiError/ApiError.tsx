@@ -8,11 +8,13 @@ export default function ApiError({
   projectId,
   limit,
   currentPage,
+  onRetry,
 }: {
   error: string;
-  projectId: string;
+  projectId?: string;
   limit?: number;
   currentPage?: number;
+  onRetry: () => void;
 }) {
   const dispatch = useAppDispatch();
 
@@ -34,13 +36,8 @@ export default function ApiError({
           displayText="Retry Connection"
           className="mt-4 w-fit"
           onClick={() =>
-            dispatch(
-              fetchEpicsPagination({
-                projectId,
-                limit,
-                page: currentPage,
-              }),
-            )
+            onRetry()
+           
           }
         />
       </div>

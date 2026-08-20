@@ -9,6 +9,7 @@ import Pagination from "@/app/components/pagination/Pagination";
 import ProjectEpicsSkeleton from "@/app/components/project/projectEpicSkeleton/ProjectEpicSkeleton";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import {
+  fetchEpicsBySearchTerm,
   fetchEpicsPagination,
   resetEpicsState,
   setCurrentPage,
@@ -29,6 +30,8 @@ export default function EpicsPage() {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const project = useAppSelector((state) => state.project.project);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   const { epics, status, error, currentPage, totalCount, limit } =
     useAppSelector((state) => state.epics);
@@ -62,7 +65,21 @@ export default function EpicsPage() {
 
   useEffect(() => {
     dispatch(resetEpicsState());
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
   }, [dispatch, projectId]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm.trim());
+    }, 300);
+
+    return () => window.clearTimeout(timer);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    dispatch(setCurrentPage(1));
+  }, [debouncedSearchTerm, dispatch]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -79,7 +96,7 @@ export default function EpicsPage() {
   }, [dispatch, projectId]);
 
   useEffect(() => {
-    if (isMobile === null || !projectId) {
+    if (isMobile === null || !projectId || debouncedSearchTerm.length > 0) {
       return;
     }
 
@@ -95,7 +112,14 @@ export default function EpicsPage() {
     return () => {
       promise.abort();
     };
-  }, [dispatch, currentPage, limit, isMobile, projectId]);
+  }, [
+    dispatch,
+    currentPage,
+    limit,
+    isMobile,
+    projectId,
+    debouncedSearchTerm,
+  ]);
 
   useEffect(() => {
     const target = loadMoreRef.current;
@@ -104,6 +128,7 @@ export default function EpicsPage() {
       !isMobile ||
       !target ||
       !hasMore ||
+      debouncedSearchTerm.length > 0 ||
       status === "loading" ||
       status === "failed"
     ) {
@@ -121,12 +146,34 @@ export default function EpicsPage() {
 
     observer.observe(target);
     return () => observer.disconnect();
-  }, [currentPage, dispatch, hasMore, isMobile, status]);
+  }, [currentPage, debouncedSearchTerm, dispatch, hasMore, isMobile, status]);
 
-  if (
+  useEffect(() => {
+    if (!projectId || debouncedSearchTerm.length === 0) {
+      return;
+    }
+
+    const promise = dispatch(
+      fetchEpicsBySearchTerm({
+        projectId,
+        searchTerm: debouncedSearchTerm,
+      }),
+    );
+
+    return () => {
+      promise.abort();
+    };
+  }, [debouncedSearchTerm, dispatch, projectId]);
+
+  const isSearching = debouncedSearchTerm.length > 0;
+  const isSearchLoading = isSearching && status === "loading";
+  const showInitialEmptyState =
+    !isSearching && status === "succeeded" && epics.length === 0;
+  const showPageSkeleton =
     isMobile === null ||
-    (status === "loading" && (!isMobile || epics.length === 0))
-  ) {
+    (status === "loading" && !isSearching && epics.length === 0);
+
+  if (showPageSkeleton) {
     return (
       <section className="w-full p-2">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -141,6 +188,7 @@ export default function EpicsPage() {
   if (status === "failed" && epics.length === 0) {
     return (
       <ApiError
+        onRetry={() => dispatch(fetchEpicsPagination({ projectId, limit, page: currentPage }))}
         error={error ?? "Something went wrong"}
         projectId={projectId}
         limit={limit}
@@ -170,7 +218,9 @@ export default function EpicsPage() {
           ))}
         </span>
       </div>
-      {epics.length > 0 ? (
+      {showInitialEmptyState ? (
+        <EmptyEpic />
+      ) : (
         <>
           <div className="flex items-center justify-between px-3">
             <div className="flex flex-col gap-2 ">
@@ -179,7 +229,12 @@ export default function EpicsPage() {
               </h3>
             </div>
             <div className="flex gap-4 ">
-              <Input type="search" placeholder="Search Epics" />
+              <Input
+                type="search"
+                placeholder="Search Epics"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               <Button
                 onClick={() => {
                   router.push(`/project/${projectId}/epics/new`);
@@ -197,21 +252,34 @@ export default function EpicsPage() {
               </Button>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
-            {epics.map((epic) => (
-              <EpicCard
-                key={epic.id}
-                epic={epic}
-                onClick={() => handleClick(epic.id)}
-              />
-            ))}
-          </div>
+
+          {isSearchLoading && epics.length === 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
+              {Array.from({ length: 2 }).map((_, index) => (
+                <ProjectEpicsSkeleton key={index} />
+              ))}
+            </div>
+          ) : epics.length > 0 ? (
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 ${isSearchLoading ? "opacity-60" : ""}`}
+            >
+              {epics.map((epic) => (
+                <EpicCard
+                  key={epic.id}
+                  epic={epic}
+                  onClick={() => handleClick(epic.id)}
+                />
+              ))}
+            </div>
+          ) : isSearching && status === "succeeded" ? (
+            <p className="px-3 pt-6 text-[#434654]">
+              No epics match &quot;{debouncedSearchTerm}&quot;.
+            </p>
+          ) : null}
         </>
-      ) : (
-        <EmptyEpic />
       )}
 
-      {totalCount > limit && (
+      {!isSearching && totalCount > limit && (
         <div className="hidden md:block pt-6 px-3">
           <Pagination
             limit={limit}
