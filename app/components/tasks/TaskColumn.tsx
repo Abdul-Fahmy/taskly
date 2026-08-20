@@ -39,7 +39,7 @@ export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
   }
 
   return (
-    <div className="flex min-w-72 shrink-0 flex-col">
+    <div className="flex min-w-72 shrink-0 flex-col py-6">
       <div className="flex items-center justify-between p-3">
         <div className="flex items-center gap-2">
           <span

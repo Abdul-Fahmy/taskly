@@ -25,7 +25,6 @@ export default function PaginationForTasks({
 
   return (
     <div className="flex w-full items-center justify-end gap-3 text-[#434654]">
-      {/* Previous */}
       <button
         type="button"
         disabled={currentPage === 1}
@@ -35,12 +34,10 @@ export default function PaginationForTasks({
        <Back />
       </button>
 
-      {/* Page X of Y */}
       <span className="text-sm">
         Page {currentPage} of {totalPages}
       </span>
 
-      {/* Next */}
       <button
         type="button"
         disabled={currentPage === totalPages}

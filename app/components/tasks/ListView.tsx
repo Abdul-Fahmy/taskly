@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import PaginationForTasks from "./PaginationForTasks";
 import TaskListSkeleton from "./Skeleton/TaskListSkeleton";
 import Link from "next/link";
+import { getInitials } from "@/app/constant/getInitials";
 
 export function ListView() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -18,6 +19,7 @@ export function ListView() {
   const tasks = useAppSelector((state) => state.tasks.allTasks);
   const { allTasksCurrentPage, allTasksLimit, allTasksTotalCount, allTasksStatus } =
     useAppSelector((state) => state.tasks);
+    
 
   const statusColors: Record<TaskStatus, string> = {
     TO_DO: "bg-[#D7E2FF]",
@@ -69,7 +71,7 @@ export function ListView() {
 
   return (
     <div className="w-full overflow-hidden mt-8">
-      <div className="grid grid-cols-[120px_1fr_160px_140px_180px] items-center bg-gray-50 px-4 py-3 text-sm font-medium text-gray-500">
+      <div className="hidden md:grid grid-cols-[120px_1fr_160px_140px_180px] items-center bg-gray-50 px-4 py-3 text-sm font-medium text-gray-500">
         <span>Task ID</span>
         <span>Title</span>
         <span>Status</span>
@@ -103,9 +105,13 @@ export function ListView() {
 
           <div className="flex items-center gap-2">
             {task.assignee ? (
-              <span className="truncate text-gray-700">
+              <div className="flex items-center gap-2">
+                                <span className="hidden md:flex items-center justify-center bg-[#DAE2FF] text-[12px] w-6 h-6 rounded-full">{getInitials(task.assignee.name) || 'U'}</span>
+
+                <span className="truncate text-gray-700">
                 {task.assignee.name || "Unassigned"}
               </span>
+              </div>
             ) : (
               <span className="text-gray-400">Unassigned</span>
             )}
@@ -127,7 +133,7 @@ export function ListView() {
         
       )}
  </div>
-    <div className="flex items-center justify-end">
+    <div className="hidden md:flex items-center justify-end">
       <Link href={`/project/${projectId}/tasks/new`} className="btn-primary text-white py-2 px-4 rounded-md mr-6 mt-4">+</Link>
     </div>
     </div>
