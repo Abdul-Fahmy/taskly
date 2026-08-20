@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { statusOptions } from "@/app/constant/taskStatus";
 import { statusColors } from "@/app/constant/taskStatusColor";
 import { getInitials } from "@/app/constant/getInitials";
+import TaskDetailsPopupSkeleton from "./Skeleton/TaskDetailsSkeleton";
 
 function formatDisplayDate(value: string | null | undefined) {
   if (!value) {
@@ -48,7 +49,6 @@ export default function TaskDetailsPopup({
   taskId: string;
   onClose: () => void;
 }) {
-    
   const selectClassNames = {
     control: () => "w-full cursor-pointer",
     valueContainer: () => "p-0",
@@ -83,6 +83,9 @@ export default function TaskDetailsPopup({
   const initials = getInitials(task?.created_by?.name ?? "");
   const formattedDueDate = toDateInputValue(task?.due_date);
   const formattedCreatedAt = formatDisplayDate(task?.created_at);
+  const [isLoading, setIsLoading] = useState(false);
+
+
   useEffect(() => {
     dispatch(fetchEpics({ projectId }));
   }, [dispatch, projectId]);
@@ -91,12 +94,26 @@ export default function TaskDetailsPopup({
       if (!projectId || !taskId) {
         return;
       }
-      const response = await fetch(
-        `/api/project/${projectId}/tasks/taskDetails/${taskId}`,
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setTask(data);
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          `/api/project/${projectId}/tasks/taskDetails/${taskId}`,
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setTask(data);
+          setIsLoading(false);
+        } else {
+          toast.error("Failed to fetch task details");
+          setIsLoading(false);
+        }
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch task details",
+        );
+        setIsLoading(false);
       }
     };
 
@@ -107,6 +124,10 @@ export default function TaskDetailsPopup({
     await navigator.clipboard.writeText(window.location.href);
     toast.success("Link copied to clipboard");
   };
+
+  if (isLoading) {
+    return <TaskDetailsPopupSkeleton />;
+  }
 
   return (
     <div className="flex w-full gap-4 bg-surface-low rounded-lg overflow-hidden">
@@ -143,10 +164,10 @@ export default function TaskDetailsPopup({
             id="description"
             className="w-full h-full bg-white border border-[#D7E2FF] rounded-md px-2 py-2 resize-none"
             rows={10}
-            value={task?.description ?? "No description provided"}
-
+            value={task?.description ?? ""}
+            placeholder="No description provided"
             readOnly
-          ></textarea>
+          />
         </div>
         <div className="bg-surface-low flex items-center justify-between py-6 px-8">
           <button
@@ -187,47 +208,66 @@ export default function TaskDetailsPopup({
           />
         </div>
         <div className="w-full flex flex-col gap-2 border-b border-[#C3C6D633] pb-6">
-       <div className="w-full flex flex-col ">
-       <label
-            htmlFor="assignee"
-            className="uppercase text-[#434654] text-[12px] font-700"
-          >
-            Assignee
-          </label>
-          <Select
-  classNames={selectClassNames}
-  className="w-[255px] rounded-md px-2 border border-[#D7E2FF] bg-white"
-  unstyled
-  instanceId="assignee-select"
-  value={
-    task?.assignee?.name && task?.assignee?.email
-      ? {
-          label: task.assignee.name,
-          value: task.assignee.email,
-        }
-      : null
-  }
-  placeholder="Unassigned"
-/>
-       </div>
-       <div className="w-full flex flex-col ">
-       <label
-            className="uppercase text-[#434654] text-[12px] font-700"
-          >
-            Reporter
-          </label>
-          <p className="flex items-center gap-2">{initials && <span className=" w-6 h-6 rounded-full bg-[#DAE2FF] text-[11px] text-bold flex items-center justify-center">{initials}</span>}{task?.created_by?.name}</p>
-    
-       </div>
+          <div className="w-full flex flex-col ">
+            <label
+              htmlFor="assignee"
+              className="uppercase text-[#434654] text-[12px] font-700"
+            >
+              Assignee
+            </label>
+            <Select
+              classNames={selectClassNames}
+              className="w-[255px] rounded-md px-2 border border-[#D7E2FF] bg-white"
+              unstyled
+              instanceId="assignee-select"
+              value={
+                task?.assignee?.name && task?.assignee?.email
+                  ? {
+                      label: task.assignee.name,
+                      value: task.assignee.email,
+                    }
+                  : null
+              }
+              placeholder="Unassigned"
+            />
+          </div>
+          <div className="w-full flex flex-col ">
+            <label className="uppercase text-[#434654] text-[12px] font-700">
+              Reporter
+            </label>
+            <p className="flex items-center gap-2">
+              {initials && (
+                <span className=" w-6 h-6 rounded-full bg-[#DAE2FF] text-[11px] text-bold flex items-center justify-center">
+                  {initials}
+                </span>
+              )}
+              {task?.created_by?.name}
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col w-full gap-4 ">
-            <label htmlFor="dueDate" className="uppercase text-[#434654] text-[12px] font-700">Due Date</label>
-            <input type="date" id="dueDate" className="w-full rounded-md px-2 py-2 border border-[#D7E2FF] bg-white" value={formattedDueDate ?? ''} readOnly />
-            <div className="flex items-center justify-between">
-                <p className="text-[#434654] text-[12px] font-bold capitalize">Created at</p>
-                <p className="text-[#041B3C] text-[14px] font-500">{formattedCreatedAt}</p>
-            </div>
+          <label
+            htmlFor="dueDate"
+            className="uppercase text-[#434654] text-[12px] font-700"
+          >
+            Due Date
+          </label>
+          <input
+            type="date"
+            id="dueDate"
+            className="w-full rounded-md px-2 py-2 border border-[#D7E2FF] bg-white"
+            value={formattedDueDate ?? ""}
+            readOnly
+          />
+          <div className="flex items-center justify-between">
+            <p className="text-[#434654] text-[12px] font-bold capitalize">
+              Created at
+            </p>
+            <p className="text-[#041B3C] text-[14px] font-500">
+              {formattedCreatedAt}
+            </p>
+          </div>
         </div>
       </div>
     </div>
