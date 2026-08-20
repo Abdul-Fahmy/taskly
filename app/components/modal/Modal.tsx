@@ -41,6 +41,7 @@ export default function Modal({
       <div
         style={{ maxWidth: width }}
         className={`w-full  rounded-lg bg-white  shadow-lg`}
+        onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
         

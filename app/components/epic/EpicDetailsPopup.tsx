@@ -48,10 +48,12 @@ export default function EpicDetailsPopup({
   epic,
   onClose,
   onEpicUpdated,
+  onTaskClick,
 }: {
   epic: Epic;
   onClose: () => void;
   onEpicUpdated?: (epic: Epic) => void;
+  onTaskClick?: (taskId: string) => void;
 }) {
   const { projectId } = useParams<{ projectId: string }>();
   const [localEpic, setLocalEpic] = useState(epic);
@@ -258,7 +260,7 @@ export default function EpicDetailsPopup({
   };
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image
@@ -467,7 +469,11 @@ export default function EpicDetailsPopup({
         ) : (
           <div className="overflow-y-scroll h-[180px]">
             {tasks.map((task) => (
-              <TaskCardEpic key={task.id} task={task} />
+              <TaskCardEpic
+                key={task.id}
+                task={task}
+                onTaskClick={onTaskClick}
+              />
             ))}
           </div>
         )}

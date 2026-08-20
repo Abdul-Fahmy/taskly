@@ -22,6 +22,7 @@ import { useEffect, useRef, useState } from "react";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import ApiError from "@/app/components/apiError/ApiError";
+import TaskDetailsPopup from "@/app/components/tasks/TaskDetailsPopup";
 
 export default function EpicsPage() {
   const router = useRouter();
@@ -37,11 +38,20 @@ export default function EpicsPage() {
     useAppSelector((state) => state.epics);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
+  const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const hasMore = epics.length < totalCount;
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
   });
+
+  const handleTaskClick = (taskId: string) => {
+    setOpen(false);
+    setSelectedEpic(null);
+    setSelectedTaskId(taskId);
+    setTaskModalOpen(true);
+  };
 
   const handleClick = async (epicId: string) => {
     try {
@@ -339,6 +349,7 @@ export default function EpicsPage() {
                 setOpen(false);
                 setSelectedEpic(null);
               }}
+              onTaskClick={handleTaskClick}
               onEpicUpdated={(updatedEpic) => {
                 setSelectedEpic(updatedEpic);
                 dispatch(
@@ -353,6 +364,25 @@ export default function EpicsPage() {
           )}
         </Modal>
       </div>
+
+      <Modal
+        isOpen={taskModalOpen}
+        onClose={() => {
+          setTaskModalOpen(false);
+          setSelectedTaskId(null);
+        }}
+        width="896px"
+      >
+        {selectedTaskId && (
+          <TaskDetailsPopup
+            taskId={selectedTaskId}
+            onClose={() => {
+              setTaskModalOpen(false);
+              setSelectedTaskId(null);
+            }}
+          />
+        )}
+      </Modal>
     </div>
   );
 }
