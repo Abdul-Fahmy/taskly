@@ -23,6 +23,29 @@ import { fetchMembers } from "@/app/store/features/members.slice";
 import CopyIcon from "@/app/assets/icons/copy.svg";
 import CloseModal from "@/app/assets/icons/closeModal.svg";
 
+ const selectClassNames = {
+  control: () => "  w-full cursor-pointer border border-[#D7E2FF] rounded-md p-2 ",
+  valueContainer: () => "p-0",
+  input: () => "m-0 p-0",
+  indicatorsContainer: () => "p-0",
+  dropdownIndicator: () => "p-0",
+  clearIndicator: () => "p-0",
+  menu: () => "mt-1 rounded-md border border-gray-200 bg-white shadow-lg",
+  option: ({
+    isFocused,
+    isSelected,
+  }: {
+    isFocused: boolean;
+    isSelected: boolean;
+  }) =>
+    `cursor-pointer px-3 py-2 ${
+      isSelected
+        ? "bg-blue-500 text-white"
+        : isFocused
+          ? "bg-gray-100"
+          : "bg-white"
+    }`,
+};
 type AssigneeOption = {
   value: string;
   label: string;
@@ -336,7 +359,7 @@ export default function EpicDetailsPopup({
         )}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
         <div className="flex flex-col items-start gap-2">
           <p className="text-[10px] font-bold text-text-secondary">
             created by
@@ -351,21 +374,23 @@ export default function EpicDetailsPopup({
           </div>
         </div>
 
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-2 ">
           <label
             htmlFor="assignee"
             className="text-[10px] font-bold text-text-shadow"
           >
             Assignee
           </label>
-          {isEditingAssignee ? (
-            <Controller
+          
+            {isEditingAssignee ?(<Controller
               control={control}
               name="assignee_id"
               render={({ field }) => (
                 <Select
                   inputId="assignee"
                   className="w-full"
+                  classNames={selectClassNames}
+                  unstyled
                   options={assigneeOptions}
                   value={
                     assigneeOptions.find(
@@ -384,21 +409,37 @@ export default function EpicDetailsPopup({
                   }}
                 />
               )}
+            />) :(
+              <Controller
+              control={control}
+              name="assignee_id"
+              render={({ field }) => (
+                <Select
+                  inputId="assignee"
+                  className="w-full"
+                  classNames={selectClassNames}
+                  unstyled
+                  options={assigneeOptions}
+                  value={
+                    assigneeOptions.find(
+                      (option) => option.value === field.value,
+                    ) ?? assigneeOptions[0]
+                  }
+                  onChange={(option) =>
+                    handleAssigneeChange(option as AssigneeOption | null)
+                  }
+                  onMenuOpen={() => setIsEditingAssignee(true)}
+                  autoFocus
+                  defaultMenuIsOpen
+                  components={{
+                    Option: CustomOption,
+                    SingleValue: CustomSingleValue,
+                  }}
+                />
+              )}
             />
-          ) : (
-            <button
-              type="button"
-              className="flex items-center gap-2 w-full text-[14px] text-left"
-              onClick={() => setIsEditingAssignee(true)}
-            >
-              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-primary text-white">
-                <span className="text-[10px] font-bold uppercase">
-                  {getInitials(selectedAssignee.label) || "U"}
-                </span>
-              </div>
-              <p>{selectedAssignee.label}</p>
-            </button>
-          )}
+            )}
+          
         </div>
 
         <div className="flex flex-col items-start gap-2">
@@ -411,7 +452,7 @@ export default function EpicDetailsPopup({
           <input
             type="date"
             id="deadline"
-            className="border-2 border-surface-low rounded-md p-2"
+            className="border border-[#D7E2FF] rounded-md p-2"
             {...deadlineRegister}
             onChange={(event) => {
               void deadlineRegister.onChange(event);

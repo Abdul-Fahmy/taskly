@@ -12,7 +12,7 @@ export const CustomOption = (props: OptionProps<AssigneeOption>) => {
   return (
     <components.Option {...props}>
       <div className="flex items-center gap-3">
-        <div className="flex h-4 w-4 items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white text-[10px] font-semibold">
           {getInitials(label) || "U"}
         </div>
         <span>{label}</span>
@@ -26,8 +26,8 @@ export const CustomSingleValue = (props: SingleValueProps<AssigneeOption>) => {
 
   return (
     <components.SingleValue {...props}>
-      <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold">
+      <div className="flex items-center gap-2">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white text-[10px] font-semibold">
           {getInitials(label) || "U"}
         </div>
         <span>{label}</span>
