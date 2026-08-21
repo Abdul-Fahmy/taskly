@@ -24,7 +24,7 @@ export default function PaginationForTasks({
   }
 
   return (
-    <div className="flex w-full items-center justify-end gap-3 text-[#434654]">
+    <div className="hidden md:flex w-full items-center justify-end gap-3 text-[#434654]">
       <button
         type="button"
         disabled={currentPage === 1}

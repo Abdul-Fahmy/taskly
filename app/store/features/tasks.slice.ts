@@ -55,7 +55,7 @@ export const fetchTasks = createAsyncThunk<
 
 export const fetchAllTasks = createAsyncThunk<
   AllTasksPaginationResponse,
-  { projectId: string; limit?: number; page?: number }
+  { projectId: string; limit?: number; page?: number; append?: boolean }
 >("tasks/fetchAllTasks", async ({ projectId, limit, page }, { signal }) => {
   const pageLimit = limit ?? 10;
   const currentPage = page ?? 1;
@@ -165,7 +165,14 @@ const taskSlice = createSlice({
       .addCase(fetchAllTasks.fulfilled, (state, action) => {
         state.allTasksProjectId = action.meta.arg.projectId;
         state.allTasksStatus = "succeeded";
-        state.allTasks = action.payload.tasks;
+        if (action.meta.arg.append) {
+          const existingIds = new Set(state.allTasks.map((task) => task.id));
+          state.allTasks.push(
+            ...action.payload.tasks.filter((task) => !existingIds.has(task.id)),
+          );
+        } else {
+          state.allTasks = action.payload.tasks;
+        }
         state.allTasksTotalCount = action.payload.totalCount;
         state.allTasksLimit = action.meta.arg.limit ?? state.allTasksLimit;
         state.allTasksCurrentPage =
@@ -176,7 +183,9 @@ const taskSlice = createSlice({
           return;
         }
         state.allTasksStatus = "failed";
-        state.allTasks = [];
+        if (!action.meta.arg.append) {
+          state.allTasks = [];
+        }
       });
   },
 });
