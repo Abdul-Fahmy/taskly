@@ -55,11 +55,19 @@ export async function createTask(accessToken: string, data: tasksFormData) {
   });
 }
 
-export async function getTasks(
-  projectId: string,
-  status: string,
-  searchTerm?: string,
-) {
+export async function getTasks({
+  projectId,
+  status,
+  limit,
+  offset,
+  searchTerm,
+}: {
+  projectId: string;
+  status: string;
+  limit: number;
+  offset: number;
+  searchTerm?: string;
+}): Promise<{ tasks: Task[]; contentRange: string }> {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const cookiesStore = await cookies();
   const token = cookiesStore.get("access_token")?.value;
@@ -70,18 +78,54 @@ export async function getTasks(
     throw new Error("Missing access token");
   }
 
+  const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!apiKey) {
+    throw new Error("missing supabase api key");
+  }
+
   const trimmedSearchTerm = searchTerm?.trim();
   const searchFilter = trimmedSearchTerm
     ? `&title=ilike.*${encodeURIComponent(trimmedSearchTerm)}*`
     : "";
 
-  return apiFetch(
-    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}${searchFilter}`,
+  const response = await fetch(
+    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}${searchFilter}&limit=${limit}&offset=${offset}`,
     {
       method: "GET",
-      token,
+      headers: {
+        "Content-Type": "application/json",
+        apikey: apiKey,
+        Authorization: `Bearer ${token}`,
+        Prefer: "count=exact",
+      },
     },
   );
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      data,
+      message: (data as { message?: string })?.message || response.statusText,
+    };
+  }
+
+  const tasks = Array.isArray(data) ? (data as Task[]) : null;
+  if (!tasks) {
+    throw new Error("an invalid pagination response");
+  }
+
+  const contentRange = response.headers.get("content-range");
+
+  if (!contentRange) {
+    throw new Error("response is missing the content-range header");
+  }
+
+  return {
+    tasks,
+    contentRange,
+  };
 }
 
 export async function getAllTasksPagination({

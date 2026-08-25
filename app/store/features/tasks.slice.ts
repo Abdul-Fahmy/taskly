@@ -13,6 +13,7 @@ interface TaskState {
   allTasks: Task[];
   tasksByStatus: Partial<Record<TaskStatus, Task[]>>;
   statusByColumn: Partial<Record<TaskStatus, FetchStatus>>;
+  totalCountByColumn: Partial<Record<TaskStatus, number>>;
   boardProjectId: string | null;
   boardSearchTerm: string;
   allTasksStatus: FetchStatus;
@@ -28,6 +29,7 @@ const initialState: TaskState = {
   allTasks: [],
   tasksByStatus: {},
   statusByColumn: {},
+  totalCountByColumn: {},
   boardProjectId: null,
   boardSearchTerm: "",
   allTasksStatus: "idle",
@@ -39,31 +41,57 @@ const initialState: TaskState = {
 };
 
 export const fetchTasks = createAsyncThunk<
-  Task[],
-  { projectId: string; status: TaskStatus; searchTerm?: string }
->("tasks/fetchTasks", async ({ projectId, status, searchTerm }, { signal }) => {
-  const params = new URLSearchParams();
-  const trimmedSearchTerm = searchTerm?.trim();
-  if (trimmedSearchTerm) {
-    params.set("searchTerm", trimmedSearchTerm);
+  AllTasksPaginationResponse,
+  {
+    projectId: string;
+    status: TaskStatus;
+    searchTerm?: string;
+    limit?: number;
+    page?: number;
+    append?: boolean;
   }
-  const query = params.toString();
+>(
+  "tasks/fetchTasks",
+  async ({ projectId, status, searchTerm, limit, page }, { signal }) => {
+    const pageLimit = limit ?? 5;
+    const currentPage = page ?? 1;
+    const offset = (currentPage - 1) * pageLimit;
+    const params = new URLSearchParams({
+      limit: String(pageLimit),
+      offset: String(offset),
+    });
+    const trimmedSearchTerm = searchTerm?.trim();
+    if (trimmedSearchTerm) {
+      params.set("searchTerm", trimmedSearchTerm);
+    }
 
-  const response = await fetch(
-    `/api/project/${projectId}/tasks/${status}${query ? `?${query}` : ""}`,
-    { signal },
-  );
+    const response = await fetch(
+      `/api/project/${projectId}/tasks/${status}?${params.toString()}`,
+      { signal },
+    );
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    throw new Error(error?.message ?? "Failed to fetch tasks");
-  }
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+      throw new Error(error?.message ?? "Failed to fetch tasks");
+    }
 
-  const data = await response.json();
-  const tasks = Array.isArray(data) ? data : data?.tasks;
+    const contentRange = response.headers.get("content-range");
+    const totalPart = contentRange?.split("/")[1];
+    const totalCount = totalPart ? Number(totalPart) : Number.NaN;
 
-  return Array.isArray(tasks) ? tasks : [];
-});
+    if (!Number.isFinite(totalCount)) {
+      throw new Error("Pagination response is missing a valid total count");
+    }
+
+    const data = await response.json();
+    const tasks = Array.isArray(data) ? data : data?.tasks;
+
+    return {
+      tasks: Array.isArray(tasks) ? tasks : [],
+      totalCount,
+    };
+  },
+);
 
 export const fetchAllTasks = createAsyncThunk<
   AllTasksPaginationResponse,
@@ -145,6 +173,7 @@ const taskSlice = createSlice({
     resetBoardTasksState(state) {
       state.tasksByStatus = {};
       state.statusByColumn = {};
+      state.totalCountByColumn = {};
       state.boardProjectId = null;
       state.boardSearchTerm = "";
     },
@@ -161,6 +190,7 @@ const taskSlice = createSlice({
         ) {
           state.tasksByStatus = {};
           state.statusByColumn = {};
+          state.totalCountByColumn = {};
         }
 
         state.boardProjectId = projectId;
@@ -168,16 +198,31 @@ const taskSlice = createSlice({
         state.statusByColumn[status] = "loading";
       })
       .addCase(fetchTasks.fulfilled, (state, action) => {
-        state.boardProjectId = action.meta.arg.projectId;
-        state.statusByColumn[action.meta.arg.status] = "succeeded";
-        state.tasksByStatus[action.meta.arg.status] = action.payload;
+        const { projectId, status, append } = action.meta.arg;
+
+        state.boardProjectId = projectId;
+        state.statusByColumn[status] = "succeeded";
+        if (append) {
+          const existingTasks = state.tasksByStatus[status] ?? [];
+          const existingIds = new Set(existingTasks.map((task) => task.id));
+          state.tasksByStatus[status] = [
+            ...existingTasks,
+            ...action.payload.tasks.filter((task) => !existingIds.has(task.id)),
+          ];
+        } else {
+          state.tasksByStatus[status] = action.payload.tasks;
+        }
+        state.totalCountByColumn[status] = action.payload.totalCount;
       })
       .addCase(fetchTasks.rejected, (state, action) => {
         if (action.meta.aborted) {
           return;
         }
         state.statusByColumn[action.meta.arg.status] = "failed";
-        state.tasksByStatus[action.meta.arg.status] = [];
+        if (!action.meta.arg.append) {
+          state.tasksByStatus[action.meta.arg.status] = [];
+          state.totalCountByColumn[action.meta.arg.status] = 0;
+        }
       })
       .addCase(fetchTasksForEpic.fulfilled, (state, action) => {
         state.tasks = action.payload;
