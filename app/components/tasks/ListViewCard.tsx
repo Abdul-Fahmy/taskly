@@ -9,14 +9,14 @@ export default function ListViewCard({ task }: { task: Task }) {
   const [open, setOpen] = useState(false);
 
   const statusColors: Record<TaskStatus, string> = {
-    TO_DO: "bg-[#D7E2FF]",
-    IN_PROGRESS: "bg-[#CDDDFF]",
-    BLOCKED: "bg-[#FFDAD6]",
-    IN_REVIEW: "bg-[#4F5F7B]",
-    READY_FOR_QA: "bg-purple-500",
-    REOPENED: "bg-orange-500",
-    READY_FOR_PRODUCTION: "bg-pink-500",
-    DONE: "bg-[#82F9BE]",
+    TO_DO: "bg-[#E2E8F0]",                // Slate
+    IN_PROGRESS: "bg-[#DBEAFE]",          // Blue
+    BLOCKED: "bg-[#FEE2E2]",              // Red
+    IN_REVIEW: "bg-[#EDE9FE]",             // Violet
+    READY_FOR_QA: "bg-[#FEF3C7]",          // Amber
+    REOPENED: "bg-[#FFEDD5]",              // Orange
+    READY_FOR_PRODUCTION: "bg-[#FCE7F3]", // Pink
+    DONE: "bg-[#DCFCE7]",                 // Green
   };
 
   const formatStatus = (status: string) => {
