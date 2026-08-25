@@ -12,6 +12,7 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const limitParam = searchParams.get("limit");
   const offsetParam = searchParams.get("offset");
+  const searchTerm = searchParams.get("searchTerm")?.trim() || undefined;
 
   if (!token) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -41,7 +42,12 @@ export async function GET(
   }
 
   try {
-    const result = await getAllTasksPagination({ projectId, limit, offset });
+    const result = await getAllTasksPagination({
+      projectId,
+      limit,
+      offset,
+      searchTerm,
+    });
 
     return NextResponse.json(result.tasks, {
       headers: {

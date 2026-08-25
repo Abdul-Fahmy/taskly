@@ -12,7 +12,7 @@ import TaskListSkeleton from "./Skeleton/TaskListSkeleton";
 import Link from "next/link";
 import ListViewCard from "./ListViewCard";
 
-export function ListView() {
+export function ListView({ searchTerm }: { searchTerm: string }) {
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useAppDispatch();
   const tasks = useAppSelector((state) => state.tasks.allTasks);
@@ -29,7 +29,7 @@ export function ListView() {
 
   useEffect(() => {
     dispatch(setAllTasksCurrentPage(1));
-  }, [dispatch, projectId]);
+  }, [dispatch, projectId, searchTerm]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -56,6 +56,7 @@ export function ListView() {
         limit: allTasksLimit,
         page: allTasksCurrentPage,
         append: isMobile && allTasksCurrentPage > 1,
+        searchTerm: searchTerm.trim() || undefined,
       }),
     );
 
@@ -68,6 +69,7 @@ export function ListView() {
     allTasksLimit,
     allTasksCurrentPage,
     isMobile,
+    searchTerm,
   ]);
 
   useEffect(() => {

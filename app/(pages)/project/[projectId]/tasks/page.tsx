@@ -21,10 +21,12 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
+import { useState } from "react";
 import Select, { SingleValue } from "react-select";
 
 export default function TasksPage() {
   const { projectId } = useParams<{ projectId: string }>();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pathname = usePathname();
   const router = useRouter();
@@ -91,6 +93,9 @@ export default function TasksPage() {
             <Input
               type="search"
               placeholder="Search tasks..."
+              onChange={(e)=>{
+                setSearchTerm(e.target.value)
+              }}
             />
 
             <div className="w-1/2 hidden md:block">
@@ -122,9 +127,9 @@ export default function TasksPage() {
 
       {/* View */}
       {currentView === "list" ? (
-        <ListView />
+        <ListView searchTerm={searchTerm} />
       ) : (
-        <ViewBoard />
+        <ViewBoard searchTerm={searchTerm} />
       )}
     </div>
   );

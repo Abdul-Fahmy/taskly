@@ -4,10 +4,12 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ projectId: string; status: string }> },
 ) {
   const { projectId, status } = await params;
+  const searchTerm =
+    new URL(request.url).searchParams.get("searchTerm")?.trim() || undefined;
   const token = (await cookies()).get("access_token")?.value;
 
   if (!token) {
@@ -28,7 +30,7 @@ export async function GET(
   }
 
   try {
-    const result = await getTasks(projectId, status);
+    const result = await getTasks(projectId, status, searchTerm);
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

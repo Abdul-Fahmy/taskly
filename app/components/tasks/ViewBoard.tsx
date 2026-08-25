@@ -8,7 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { TaskColumn } from "./TaskColumn";
 
-export default function ViewBoard() {
+export default function ViewBoard({ searchTerm }: { searchTerm: string }) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { projectId } = useParams<{ projectId: string }>();
@@ -33,7 +33,10 @@ export default function ViewBoard() {
   );
 
   const showEmptyState =
-    isCurrentProject && allColumnsLoaded && totalTasks === 0;
+    isCurrentProject &&
+    allColumnsLoaded &&
+    totalTasks === 0 &&
+    !searchTerm.trim();
 
   if (showEmptyState) {
     return (
@@ -58,6 +61,7 @@ export default function ViewBoard() {
         <TaskColumn
           key={`${projectId}-${status.value}`}
           status={status}
+          searchTerm={searchTerm}
           onAddTask={() => {
             router.push(
               `/project/${projectId}/tasks/new?status=${status.value}`,

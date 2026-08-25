@@ -54,7 +54,7 @@ export default function InviteMemberPopup({
   };
 
   return (
-    <div className="flex flex-col items-start justify-center gap-2 ">
+    <div className="flex flex-col items-start justify-center gap-2 p-8">
       <div className="flex items-center justify-between w-full ">
         <div className="w-12 h-12 rounded-md bg-[#F1F3FF] flex items-center justify-center">
           <MemberIcon />

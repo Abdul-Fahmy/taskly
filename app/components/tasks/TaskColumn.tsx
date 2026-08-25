@@ -17,9 +17,10 @@ type TaskColumnProps = {
     label: string;
   };
   onAddTask: () => void;
+  searchTerm: string;
 };
 
-export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
+export function TaskColumn({ status, onAddTask, searchTerm }: TaskColumnProps) {
 
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useAppDispatch();
@@ -31,8 +32,18 @@ export function TaskColumn({ status, onAddTask }: TaskColumnProps) {
   );
 
   useEffect(() => {
-    dispatch(fetchTasks({ projectId, status: status.value }));
-  }, [dispatch, projectId, status.value]);
+    const promise = dispatch(
+      fetchTasks({
+        projectId,
+        status: status.value,
+        searchTerm: searchTerm.trim() || undefined,
+      }),
+    );
+
+    return () => {
+      promise.abort();
+    };
+  }, [dispatch, projectId, status.value, searchTerm]);
 
   if (columnStatus === "loading" || columnStatus === "idle") {
     return <TaskColumnSkeleton />;

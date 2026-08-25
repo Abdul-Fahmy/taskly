@@ -14,8 +14,10 @@ interface TaskState {
   tasksByStatus: Partial<Record<TaskStatus, Task[]>>;
   statusByColumn: Partial<Record<TaskStatus, FetchStatus>>;
   boardProjectId: string | null;
+  boardSearchTerm: string;
   allTasksStatus: FetchStatus;
   allTasksProjectId: string | null;
+  allTasksSearchTerm: string;
   allTasksCurrentPage: number;
   allTasksLimit: number;
   allTasksTotalCount: number;
@@ -27,8 +29,10 @@ const initialState: TaskState = {
   tasksByStatus: {},
   statusByColumn: {},
   boardProjectId: null,
+  boardSearchTerm: "",
   allTasksStatus: "idle",
   allTasksProjectId: null,
+  allTasksSearchTerm: "",
   allTasksCurrentPage: 1,
   allTasksLimit: 5,
   allTasksTotalCount: 0,
@@ -36,11 +40,19 @@ const initialState: TaskState = {
 
 export const fetchTasks = createAsyncThunk<
   Task[],
-  { projectId: string; status: TaskStatus }
->("tasks/fetchTasks", async ({ projectId, status }, { signal }) => {
-  const response = await fetch(`/api/project/${projectId}/tasks/${status}`, {
-    signal,
-  });
+  { projectId: string; status: TaskStatus; searchTerm?: string }
+>("tasks/fetchTasks", async ({ projectId, status, searchTerm }, { signal }) => {
+  const params = new URLSearchParams();
+  const trimmedSearchTerm = searchTerm?.trim();
+  if (trimmedSearchTerm) {
+    params.set("searchTerm", trimmedSearchTerm);
+  }
+  const query = params.toString();
+
+  const response = await fetch(
+    `/api/project/${projectId}/tasks/${status}${query ? `?${query}` : ""}`,
+    { signal },
+  );
 
   if (!response.ok) {
     const error = await response.json().catch(() => null);
@@ -55,14 +67,28 @@ export const fetchTasks = createAsyncThunk<
 
 export const fetchAllTasks = createAsyncThunk<
   AllTasksPaginationResponse,
-  { projectId: string; limit?: number; page?: number; append?: boolean }
->("tasks/fetchAllTasks", async ({ projectId, limit, page }, { signal }) => {
+  {
+    projectId: string;
+    limit?: number;
+    page?: number;
+    append?: boolean;
+    searchTerm?: string;
+  }
+>("tasks/fetchAllTasks", async ({ projectId, limit, page, searchTerm }, { signal }) => {
   const pageLimit = limit ?? 10;
   const currentPage = page ?? 1;
   const offset = (currentPage - 1) * pageLimit;
+  const params = new URLSearchParams({
+    limit: String(pageLimit),
+    offset: String(offset),
+  });
+  const trimmedSearchTerm = searchTerm?.trim();
+  if (trimmedSearchTerm) {
+    params.set("searchTerm", trimmedSearchTerm);
+  }
 
   const response = await fetch(
-    `/api/project/${projectId}/tasks/allTasks?limit=${pageLimit}&offset=${offset}`,
+    `/api/project/${projectId}/tasks/allTasks?${params.toString()}`,
     { signal },
   );
 
@@ -120,19 +146,25 @@ const taskSlice = createSlice({
       state.tasksByStatus = {};
       state.statusByColumn = {};
       state.boardProjectId = null;
+      state.boardSearchTerm = "";
     },
   },
   extraReducers(builder) {
     builder
       .addCase(fetchTasks.pending, (state, action) => {
-        const { projectId, status } = action.meta.arg;
+        const { projectId, status, searchTerm } = action.meta.arg;
+        const normalizedSearchTerm = searchTerm?.trim() ?? "";
 
-        if (state.boardProjectId && state.boardProjectId !== projectId) {
+        if (
+          state.boardProjectId !== projectId ||
+          state.boardSearchTerm !== normalizedSearchTerm
+        ) {
           state.tasksByStatus = {};
           state.statusByColumn = {};
         }
 
         state.boardProjectId = projectId;
+        state.boardSearchTerm = normalizedSearchTerm;
         state.statusByColumn[status] = "loading";
       })
       .addCase(fetchTasks.fulfilled, (state, action) => {
@@ -151,19 +183,25 @@ const taskSlice = createSlice({
         state.tasks = action.payload;
       })
       .addCase(fetchAllTasks.pending, (state, action) => {
-        const { projectId } = action.meta.arg;
+        const { projectId, searchTerm } = action.meta.arg;
+        const normalizedSearchTerm = searchTerm?.trim() ?? "";
 
-        if (state.allTasksProjectId && state.allTasksProjectId !== projectId) {
+        if (
+          state.allTasksProjectId !== projectId ||
+          state.allTasksSearchTerm !== normalizedSearchTerm
+        ) {
           state.allTasks = [];
           state.allTasksTotalCount = 0;
           state.allTasksCurrentPage = 1;
         }
 
         state.allTasksProjectId = projectId;
+        state.allTasksSearchTerm = normalizedSearchTerm;
         state.allTasksStatus = "loading";
       })
       .addCase(fetchAllTasks.fulfilled, (state, action) => {
         state.allTasksProjectId = action.meta.arg.projectId;
+        state.allTasksSearchTerm = action.meta.arg.searchTerm?.trim() ?? "";
         state.allTasksStatus = "succeeded";
         if (action.meta.arg.append) {
           const existingIds = new Set(state.allTasks.map((task) => task.id));

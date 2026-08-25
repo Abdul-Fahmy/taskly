@@ -55,7 +55,11 @@ export async function createTask(accessToken: string, data: tasksFormData) {
   });
 }
 
-export async function getTasks(projectId: string, status: string) {
+export async function getTasks(
+  projectId: string,
+  status: string,
+  searchTerm?: string,
+) {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const cookiesStore = await cookies();
   const token = cookiesStore.get("access_token")?.value;
@@ -66,8 +70,13 @@ export async function getTasks(projectId: string, status: string) {
     throw new Error("Missing access token");
   }
 
+  const trimmedSearchTerm = searchTerm?.trim();
+  const searchFilter = trimmedSearchTerm
+    ? `&title=ilike.*${encodeURIComponent(trimmedSearchTerm)}*`
+    : "";
+
   return apiFetch(
-    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}`,
+    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&status=eq.${status}${searchFilter}`,
     {
       method: "GET",
       token,
@@ -79,10 +88,12 @@ export async function getAllTasksPagination({
   projectId,
   limit,
   offset,
+  searchTerm
 }: {
   projectId: string;
   limit: number;
   offset: number;
+  searchTerm?:string
 }): Promise<{ tasks: Task[]; contentRange: string }> {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const cookiesStore = await cookies();
@@ -100,8 +111,13 @@ export async function getAllTasksPagination({
     throw new Error("missing supabase api key");
   }
 
+  const trimmedSearchTerm = searchTerm?.trim();
+  const searchFilter = trimmedSearchTerm
+    ? `&title=ilike.*${encodeURIComponent(trimmedSearchTerm)}*`
+    : "";
+
   const response = await fetch(
-    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}&limit=${limit}&offset=${offset}`,
+    `${baseUrl}/rest/v1/project_tasks?project_id=eq.${projectId}${searchFilter}&limit=${limit}&offset=${offset}`,
     {
       method: "GET",
       headers: {
