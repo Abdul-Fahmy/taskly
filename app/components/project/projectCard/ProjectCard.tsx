@@ -12,7 +12,7 @@ export default function ProjectCard({ project }: { project: Project }) {
   };
 
   return (
-    <div className="w-full rounded-md bg-white p-4 flex flex-col justify-between items-start gap-4 h-[220px]">
+    <div className="w-full rounded-md bg-white p-4 flex flex-col justify-between items-start gap-4 h-[220px] shadow-sm">
       <div className="flex items-center justify-between w-full">
         <Link
           href={`/project/${project.id}/epics`}
