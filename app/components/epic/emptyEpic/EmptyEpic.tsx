@@ -1,13 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import Stars from'@/app/assets/icons/stars.svg'
+import Hierarchy from"@/app/assets/icons/hierarchy.svg"
+import Track from '@/app/assets/icons/track.svg'
 
 export default function EmptyEpic() {
   const { projectId } = useParams<{ projectId: string }>();
   return (
     <div className="w-full min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center gap-4">
-      <div className="grid grid-cols-2 gap-2 bg-white p-6 rounded-md">
-        <div className="bg-[#0052CC33] w-16 h-16">
+      <div className="grid grid-cols-2 gap-2 bg-white p-6 rounded-md ">
+        <div className="bg-[#0052CC33] w-16 h-16 flex items-center justify-center">
           <Image
             src={"/icons/rocket.svg"}
             alt="no epics found"
@@ -16,7 +19,7 @@ export default function EmptyEpic() {
             style={{ width: "25px", height: "25px" }}
           />
         </div>
-        <div className="bg-[#0052CC33] w-16 h-16">
+        <div className="bg-[#0052CC33] w-16 h-16 flex items-center justify-center">
           <Image
             src={"/icons/cut.svg"}
             alt="cut"
@@ -25,7 +28,7 @@ export default function EmptyEpic() {
             style={{ width: "25px", height: "25px" }}
           />
         </div>
-        <div className="bg-[#0052CC33] w-16 h-16">
+        <div className="bg-[#0052CC33] w-16 h-16 flex items-center justify-center">
           <Image
             src={"/icons/track.svg"}
             alt="dots"
@@ -34,7 +37,7 @@ export default function EmptyEpic() {
             style={{ width: "25px", height: "25px" }}
           />
         </div>
-        <div className="bg-[#003D9B33] w-16 h-16 border border-dashed border-primary-container">
+        <div className="bg-[#003D9B33] w-16 h-16 border border-dashed border-primary-container flex items-center justify-center">
           <Image
             src={"/icons/plusEpic.svg"}
             alt="plus"
@@ -65,9 +68,34 @@ export default function EmptyEpic() {
         Create First Epic
       </Link>
       <div className="flex items-center gap-4">
-        <div className=""></div>
-        <div className=""></div>
-        <div className=""></div>
+        <div className="flex flex-col items-start bg-[#F1F3FF] p-6 rounded-md h-[180px] gap-8">
+          <div className="p-2 bg-white rounded-sm">
+          <Stars />
+          </div>
+          
+          <p className="text-[#041B3C] font-600 text-[16px]">High-Level Goals</p>
+          <p className="text-[#434654] font-400 text-[12px] ">Define the broad objectives
+that span across multiple
+cycles.</p>
+        </div>
+        <div className="flex flex-col items-start bg-[#F1F3FF] p-6 rounded-md h-[180px] gap-8">
+        <div className="p-2 bg-white rounded-sm">
+          <Hierarchy />
+          </div>
+          <p className="text-[#041B3C] font-600 text-[16px]">Hierarchy Design</p>
+          <p className="text-[#434654] font-400 text-[12px] ">Link individual tasks to
+parent epics for a
+consolidated view.</p>
+        </div>
+        <div className="flex flex-col items-start bg-[#F1F3FF] p-6 rounded-md h-[180px] gap-8">
+        <div className="p-2 bg-white rounded-sm">
+          <Track />
+          </div>
+          <p className="text-[#041B3C] font-600 text-[16px]">Track Velocity</p>
+          <p className="text-[#434654] font-400 text-[12px] ">Visualize percentage
+completion at a macro
+project level.</p>
+        </div>
       </div>
     </div>
   );
