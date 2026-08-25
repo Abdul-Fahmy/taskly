@@ -40,7 +40,7 @@ export default function ListViewCard({ task }: { task: Task }) {
       </div>
       <div
         key={task.id}
-        className={`hidden md:grid grid-cols-[120px_1fr_160px_140px_180px] items-center gap-2 bg-white px-4 py-4 text-sm hover:bg-gray-50 cursor-pointer
+        className={`hidden md:grid grid-cols-[120px_minmax(0,1fr)_160px_140px_180px] items-center gap-2 bg-white px-4 py-4 text-sm hover:bg-gray-50 cursor-pointer
      
     `}
         onClick={() => setOpen(true)}
@@ -51,10 +51,12 @@ export default function ListViewCard({ task }: { task: Task }) {
         <span className="truncate font-medium text-gray-900">{task.title}</span>
 
         <span
-          className={`text-gray-700 w-fit p-1 rounded-md text-[11px] font-bold ${statusColors[task.status as TaskStatus] ?? ""}`}
-        >
-          {formatStatus(task.status)}
-        </span>
+  className={`w-fit whitespace-nowrap rounded-md p-1 text-[11px] font-bold ${
+    statusColors[task.status as TaskStatus] ?? ""
+  }`}
+>
+  {formatStatus(task.status)}
+</span>
 
         <span className="text-gray-500">
           {task.due_date ? new Date(task.due_date).toLocaleDateString() : "—"}
