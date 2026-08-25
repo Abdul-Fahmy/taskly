@@ -9,7 +9,6 @@ import Pagination from "@/app/components/pagination/Pagination";
 import ProjectEpicsSkeleton from "@/app/components/project/projectEpicSkeleton/ProjectEpicSkeleton";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import {
-  fetchEpicsBySearchTerm,
   fetchEpicsPagination,
   resetEpicsState,
   setCurrentPage,
@@ -41,6 +40,7 @@ export default function EpicsPage() {
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const previousDebouncedSearchTerm = useRef("");
   const hasMore = epics.length < totalCount;
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
@@ -77,6 +77,7 @@ export default function EpicsPage() {
     dispatch(resetEpicsState());
     setSearchTerm("");
     setDebouncedSearchTerm("");
+    previousDebouncedSearchTerm.current = "";
   }, [dispatch, projectId]);
 
   useEffect(() => {
@@ -86,10 +87,6 @@ export default function EpicsPage() {
 
     return () => window.clearTimeout(timer);
   }, [searchTerm]);
-
-  useEffect(() => {
-    dispatch(setCurrentPage(1));
-  }, [debouncedSearchTerm, dispatch]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -105,9 +102,23 @@ export default function EpicsPage() {
     return () => mediaQuery.removeEventListener("change", updateScreenMode);
   }, [dispatch, projectId]);
 
+  const totalPages = Math.ceil(totalCount / limit);
+  const showPagination = totalPages > 1;
+
   useEffect(() => {
-    if (isMobile === null || !projectId || debouncedSearchTerm.length > 0) {
+    if (isMobile === null || !projectId) {
       return;
+    }
+
+    const searchChanged =
+      previousDebouncedSearchTerm.current !== debouncedSearchTerm;
+
+    if (searchChanged) {
+      previousDebouncedSearchTerm.current = debouncedSearchTerm;
+      if (currentPage !== 1) {
+        dispatch(setCurrentPage(1));
+        return;
+      }
     }
 
     const promise = dispatch(
@@ -116,6 +127,7 @@ export default function EpicsPage() {
         limit,
         page: currentPage,
         append: isMobile && currentPage > 1,
+        searchTerm: debouncedSearchTerm || undefined,
       }),
     );
 
@@ -138,7 +150,6 @@ export default function EpicsPage() {
       !isMobile ||
       !target ||
       !hasMore ||
-      debouncedSearchTerm.length > 0 ||
       status === "loading" ||
       status === "failed"
     ) {
@@ -156,24 +167,7 @@ export default function EpicsPage() {
 
     observer.observe(target);
     return () => observer.disconnect();
-  }, [currentPage, debouncedSearchTerm, dispatch, hasMore, isMobile, status]);
-
-  useEffect(() => {
-    if (!projectId || debouncedSearchTerm.length === 0) {
-      return;
-    }
-
-    const promise = dispatch(
-      fetchEpicsBySearchTerm({
-        projectId,
-        searchTerm: debouncedSearchTerm,
-      }),
-    );
-
-    return () => {
-      promise.abort();
-    };
-  }, [debouncedSearchTerm, dispatch, projectId]);
+  }, [currentPage, dispatch, hasMore, isMobile, status]);
 
   const isSearching = debouncedSearchTerm.length > 0;
   const isSearchLoading = isSearching && status === "loading";
@@ -198,7 +192,16 @@ export default function EpicsPage() {
   if (status === "failed" && epics.length === 0) {
     return (
       <ApiError
-        onRetry={() => dispatch(fetchEpicsPagination({ projectId, limit, page: currentPage }))}
+        onRetry={() =>
+          dispatch(
+            fetchEpicsPagination({
+              projectId,
+              limit,
+              page: currentPage,
+              searchTerm: debouncedSearchTerm || undefined,
+            }),
+          )
+        }
         error={error ?? "Something went wrong"}
         projectId={projectId}
         limit={limit}
@@ -286,19 +289,19 @@ export default function EpicsPage() {
               No epics match &quot;{debouncedSearchTerm}&quot;.
             </p>
           ) : null}
-        </>
-      )}
 
-      {!isSearching && totalCount > limit && (
-        <div className="hidden md:block pt-6 px-3">
-          <Pagination
-            limit={limit}
-            totalCount={totalCount}
-            currentPage={currentPage}
-            itemLabel="epics"
-            onPageChange={(page) => dispatch(setCurrentPage(page))}
-          />
-        </div>
+          {showPagination && (
+            <div className="hidden md:block pt-6 px-3">
+              <Pagination
+                limit={limit}
+                totalCount={totalCount}
+                currentPage={currentPage}
+                itemLabel="epics"
+                onPageChange={(page) => dispatch(setCurrentPage(page))}
+              />
+            </div>
+          )}
+        </>
       )}
 
       <div ref={loadMoreRef} className="h-1 md:hidden" aria-hidden="true" />
@@ -324,6 +327,7 @@ export default function EpicsPage() {
                   limit,
                   page: currentPage,
                   append: true,
+                  searchTerm: debouncedSearchTerm || undefined,
                 }),
               )
             }

@@ -20,38 +20,28 @@ export const fetchEpics = createAsyncThunk<Epic[], { projectId: string }>(
 
 export const fetchEpicsPagination = createAsyncThunk<
   PaginationResponse,
-  { projectId: string; limit?: number; page?: number; append?: boolean }
->("epics/fetchPagination", async ({ projectId, limit, page }, { signal }) => {
-  const offset = (page! - 1) * limit!;
-  const response = await fetch(
-    `/api/project/${projectId}/epics?limit=${limit}&offset=${offset}`,
-    { signal },
-  );
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    throw new Error(error?.message ?? "Failed to fetch pagination");
+  {
+    projectId: string;
+    limit?: number;
+    page?: number;
+    append?: boolean;
+    searchTerm?: string;
+  }
+>("epics/fetchPagination", async ({ projectId, limit, page, searchTerm }, { signal }) => {
+  const pageLimit = limit ?? 10;
+  const currentPage = page ?? 1;
+  const offset = (currentPage - 1) * pageLimit;
+  const params = new URLSearchParams({
+    limit: String(pageLimit),
+    offset: String(offset),
+  });
+  const trimmedSearchTerm = searchTerm?.trim();
+  if (trimmedSearchTerm) {
+    params.set("searchTerm", trimmedSearchTerm);
   }
 
-  const contentRange = response.headers.get("content-range");
-  const totalPart = contentRange?.split("/")[1];
-  const totalCount = totalPart ? Number(totalPart) : Number.NaN;
-
-  if (!Number.isFinite(totalCount)) {
-    throw new Error("Pagination response is missing a valid total count");
-  }
-
-  const epics = (await response.json()) as Epic[];
-
-  return { epics, totalCount };
-});
-
-export const fetchEpicsBySearchTerm = createAsyncThunk<
-  PaginationResponse,
-  { projectId: string; append?: boolean; searchTerm: string }
->("epics/fetchBySearchTerm", async ({ projectId, searchTerm }, { signal }) => {
   const response = await fetch(
-    `/api/project/${projectId}/epics/search?searchTerm=${encodeURIComponent(searchTerm)}`,
+    `/api/project/${projectId}/epics?${params.toString()}`,
     { signal },
   );
 
@@ -80,6 +70,7 @@ const initialState: EpicState = {
   currentPage: 1,
   limit: 10,
   totalCount: 0,
+  searchTerm: "",
 };
 
 const epicsSlice = createSlice({
@@ -121,11 +112,22 @@ const epicsSlice = createSlice({
         state.error = action.error.message ?? "Failed to fetch epics";
         state.epics = [];
       })
-      .addCase(fetchEpicsPagination.pending, (state) => {
+      .addCase(fetchEpicsPagination.pending, (state, action) => {
+        const normalizedSearchTerm = action.meta.arg.searchTerm?.trim() ?? "";
+
+        if (state.searchTerm !== normalizedSearchTerm) {
+          state.epics = [];
+          state.totalCount = 0;
+          state.currentPage = 1;
+        }
+
+        state.searchTerm = normalizedSearchTerm;
         state.status = "loading";
+        state.error = null;
       })
       .addCase(fetchEpicsPagination.fulfilled, (state, action) => {
         state.status = "succeeded";
+        state.searchTerm = action.meta.arg.searchTerm?.trim() ?? "";
         if (action.meta.arg.append) {
           const existingIds = new Set(state.epics.map((epic) => epic.id));
           state.epics.push(
@@ -135,6 +137,8 @@ const epicsSlice = createSlice({
           state.epics = action.payload.epics;
         }
         state.totalCount = action.payload.totalCount;
+        state.limit = action.meta.arg.limit ?? state.limit;
+        state.currentPage = action.meta.arg.page ?? state.currentPage;
         state.error = null;
       })
       .addCase(fetchEpicsPagination.rejected, (state, action) => {
@@ -146,25 +150,7 @@ const epicsSlice = createSlice({
         if (!action.meta.arg.append) {
           state.epics = [];
         }
-      })
-      .addCase(fetchEpicsBySearchTerm.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(fetchEpicsBySearchTerm.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.epics = action.payload.epics;
-        state.totalCount = action.payload.totalCount;
-        state.error = null;
-      })
-      .addCase(fetchEpicsBySearchTerm.rejected, (state, action) => {
-        if (action.meta.aborted) {
-          return;
-        }
-        state.status = "failed";
-        state.error = action.error.message ?? "Failed to fetch by search term";
-        state.epics = [];
-      })
+      });
   },
 });
 

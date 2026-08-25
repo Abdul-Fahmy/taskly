@@ -22,6 +22,7 @@ export type EpicState = {
   currentPage: number;
   limit: number;
   totalCount: number;
+  searchTerm: string;
 };
 
 export type PaginationResponse = {
