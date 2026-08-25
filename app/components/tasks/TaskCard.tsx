@@ -1,14 +1,21 @@
 "use client";
+
 import { getInitials } from "@/app/constant/getInitials";
 import { Task } from "@/app/types/task";
 import Calendar from "@/app/assets/icons/date.svg";
 import { useState } from "react";
 import TaskDetailsModal from "./taskDetails/TaskDetailsModal";
+import { useDraggable } from "@dnd-kit/react";
 
-export default function TaskCard({ task }: { task: Task }) {
-  const [open, setOpen] = useState(false)
+interface TaskCardProps {
+  task: Task;
+}
+
+export function TaskCard({ task }: TaskCardProps) {
+  const [open, setOpen] = useState(false);
 
   const initials = getInitials(task.created_by.name || "U");
+
   const createdAt = task.created_at
     ? new Date(task.created_at).toLocaleDateString("en-US", {
         month: "short",
@@ -16,51 +23,58 @@ export default function TaskCard({ task }: { task: Task }) {
       })
     : "No created date";
 
-  // const dueDate = task.due_date
-  // ? new Date(task.due_date).toLocaleDateString("en-US", {
-  //     month: "short",
-  //     day: "numeric",
-  //   })
-  // : "No due date";
-
-  // const getDueDateText = (dueDate: string) => {
-  //   const today = new Date();
-  //   const due = new Date(dueDate);
-
-  //   today.setHours(0, 0, 0, 0);
-  //   due.setHours(0, 0, 0, 0);
-
-  //   if (due.getTime() === today.getTime()) {
-  //     return "Today";
-  //   }
-
-  //   if (due.getTime() < today.getTime()) {
-  //     return "Delayed";
-  //   }
-
-  //   return due.toLocaleDateString();
-  // };
+  const { ref, handleRef, isDragging } = useDraggable({
+    id: `task-${task.id}`,
+    data: {
+      type: "task",
+      task,
+      status: task.status,
+    },
+  });
 
   return (
-    <div className="flex flex-col gap-4 shadow-black/5 shadow-sm cursor-pointer" role="button" onClick={()=>setOpen(true)}>
-      <div className="bg-white flex flex-col items-start p-4 gap-4 rounded-md">
-        <p>{task.title}</p>
-        <div className="flex items-center justify-between w-full">
-          <p className="text-[#94A3B8] text-sm font-700 flex items-center gap-2">
-            <Calendar />
+    <div
+      ref={ref}
+      className={`
+        rounded-md
+        transition-opacity
+        ${isDragging ? "opacity-50" : ""}
+      `}
+    >
+      <div
+        className="flex cursor-grab flex-col gap-4 shadow-sm shadow-black/5 active:cursor-grabbing"
+        ref={handleRef}
+       
+      >
+        <div className="flex flex-col items-start gap-4 rounded-md bg-white p-4">
+          
+          {/* Drag handle */}
+          <div
+             role="button"
+             onClick={() => setOpen(true)}
+            className="w-full cursor-pointer  "
+          >
+            <p>{task.title}</p>
+          </div>
 
-            {createdAt}
-          </p>
-          <div className="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center ">
-            {initials}
+          <div className="flex w-full items-center justify-between">
+            <p className="flex items-center gap-2 text-sm font-700 text-[#94A3B8]">
+              <Calendar />
+              {createdAt}
+            </p>
+
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
+              {initials}
+            </div>
           </div>
         </div>
+
+        <TaskDetailsModal
+          taskId={task.id}
+          isOpen={open}
+          onClose={() => setOpen(false)}
+        />
       </div>
-      <TaskDetailsModal
-        taskId={task.id}
-        isOpen={open}
-        onClose={() => setOpen(false)}
-      />
     </div>
   );
 }

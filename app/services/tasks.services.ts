@@ -248,3 +248,36 @@ export async function getTaskDetails({
 
   return task;
 }
+
+export async function updateTaskStatus({
+  taskId,
+  status,
+}: {
+  taskId: string;
+  status: string;
+}) {
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!baseUrl) {
+    throw new Error("Missing Supabase environment variables");
+  }
+
+  const cookiesStore = await cookies();
+  const token = cookiesStore.get("access_token")?.value;
+  if (!token) {
+    throw new Error("Missing access token");
+  }
+
+  await apiFetch(`${baseUrl}/rest/v1/tasks?id=eq.${taskId}`, {
+    method: "PATCH",
+    token,
+    headers: {
+      Prefer: "return=representation",
+    },
+    body: { status },
+  });
+
+  return {
+    taskId,
+    status,
+  };
+}

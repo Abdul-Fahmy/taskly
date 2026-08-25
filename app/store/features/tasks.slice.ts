@@ -163,6 +163,34 @@ export const fetchTasksForEpic = createAsyncThunk<
   return Array.isArray(tasks) ? tasks : [];
 });
 
+export const updateTaskStatus = createAsyncThunk(
+  "tasks/updateTaskStatus",
+  async ({
+    taskId,
+    status,
+    projectId
+  }: {
+    projectId: string;
+    taskId: string;
+    status: TaskStatus;
+  }) => {
+    const response = await fetch(
+      `/api/project/${projectId}/tasks/updateStatus`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ taskId, status }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to update task status");
+    }
+    return response.json();
+  }
+);
+
 const taskSlice = createSlice({
   name: "task",
   initialState,
@@ -176,6 +204,51 @@ const taskSlice = createSlice({
       state.totalCountByColumn = {};
       state.boardProjectId = null;
       state.boardSearchTerm = "";
+    },
+    moveTaskOptimistically: (
+      state,
+      action: PayloadAction<{
+        taskId: string;
+        fromStatus: TaskStatus;
+        toStatus: TaskStatus;
+      }>,
+    ) => {
+      const { taskId, fromStatus, toStatus } = action.payload;
+    
+      // Don't do anything if the status didn't change
+      if (fromStatus === toStatus) return;
+    
+      const sourceTasks = state.tasksByStatus[fromStatus] ?? [];
+    
+      // Find the task in the old column
+      const taskIndex = sourceTasks.findIndex(
+        (task) => task.id === taskId,
+      );
+    
+      if (taskIndex === -1) return;
+    
+      // Remove task from old column
+      const [task] = sourceTasks.splice(taskIndex, 1);
+    
+      // Update its status
+      task.status = toStatus;
+    
+      // Make sure destination column exists
+      if (!state.tasksByStatus[toStatus]) {
+        state.tasksByStatus[toStatus] = [];
+      }
+    
+      // Add task to destination column
+      state.tasksByStatus[toStatus].unshift(task);
+    
+      // Update counts
+      state.totalCountByColumn[fromStatus] = Math.max(
+        0,
+        (state.totalCountByColumn[fromStatus] ?? 0) - 1,
+      );
+    
+      state.totalCountByColumn[toStatus] =
+        (state.totalCountByColumn[toStatus] ?? 0) + 1;
     },
   },
   extraReducers(builder) {
@@ -273,6 +346,6 @@ const taskSlice = createSlice({
   },
 });
 
-export const { setAllTasksCurrentPage, resetBoardTasksState } =
+export const { setAllTasksCurrentPage, resetBoardTasksState,moveTaskOptimistically } =
   taskSlice.actions;
 export const tasksReducer = taskSlice.reducer;
