@@ -68,7 +68,7 @@ export default function InviteMemberPopup({
         Send an invitation to join the Architectural Studio workspace.
       </p>
 
-      <form className="w-full space-y-4">
+      <form className="w-full space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="w-full">
           <label
             htmlFor="email"
@@ -90,7 +90,6 @@ export default function InviteMemberPopup({
             Close
           </button>
           <Button
-            onClick={form.handleSubmit(onSubmit)}
             displayText={`${form.formState.isSubmitting ? "Sending..." : "Send Invitation"}`}
             className="w-1/2"
             type="submit"
