@@ -8,7 +8,6 @@ import {
 import { Epic, UserInfo } from "@/app/types/epicResponse";
 import { Member } from "@/app/types/members";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -22,6 +21,12 @@ import TaskCardEpic from "../tasks/TaskCardEpic";
 import { fetchMembers } from "@/app/store/features/members.slice";
 import CopyIcon from "@/app/assets/icons/copy.svg";
 import CloseModal from "@/app/assets/icons/closeModal.svg";
+import DateIcon from '@/app/assets/icons/date.svg'
+import Epics from '@/app/assets/icons/epics.svg'
+import ErrorIcon from '@/app/assets/icons/error.svg'
+import EpicsTasks from '@/app/assets/icons/epicsTasks.svg'
+
+
 
 const selectClassNames = {
   control: () =>
@@ -282,13 +287,7 @@ export default function EpicDetailsPopup({
     <div className="flex flex-col space-y-4 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Image
-            src={"/icons/epics.svg"}
-            alt="epics"
-            width={20}
-            height={14}
-            style={{ width: "20px", height: "14px" }}
-          />
+          <Epics />
           <p>{localEpic.epic_id}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -323,13 +322,7 @@ export default function EpicDetailsPopup({
           />
           {errors.title && (
             <div className="flex items-center gap-1 mt-1">
-              <Image
-                src={"/icons/error.svg"}
-                alt="error"
-                width={13}
-                height={13}
-                style={{ width: "13px", height: "13px" }}
-              />
+             <ErrorIcon />
               <p className="text-[12px] text-[#BA1A1A]">
                 {errors.title.message}
               </p>
@@ -461,13 +454,7 @@ export default function EpicDetailsPopup({
         <div className="flex flex-col items-start gap-2">
           <p className="text-[10px] font-bold">Created at</p>
           <p className="text-[14px] flex gap-2 items-center">
-            <Image
-              src={"/icons/date.svg"}
-              alt="time"
-              width={13}
-              height={15}
-              style={{ width: "13px", height: "15px" }}
-            />
+           <DateIcon />
             {formatted}
           </p>
         </div>
@@ -486,13 +473,7 @@ export default function EpicDetailsPopup({
         {tasks.length === 0 ? (
           <div className="mt-2 w-full bg-surface-low rounded-sm p-4 flex flex-col items-center justify-center gap-4">
             <span className="p-4 bg-[#D7E2FF] rounded-sm">
-              <Image
-                src={"/icons/epicsTasks.svg"}
-                alt="tasks"
-                width={18}
-                height={16}
-                style={{ width: "18px", height: "16px" }}
-              />
+              <EpicsTasks />
             </span>
             <p className="text-lg font-medium">
               No tasks have been added to this epic yet

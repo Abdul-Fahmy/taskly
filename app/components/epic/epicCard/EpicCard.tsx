@@ -1,6 +1,7 @@
 import { getInitials } from "@/app/constant/getInitials";
 import { Epic } from "@/app/types/epicResponse";
-import Image from "next/image";
+import DateIcon from '@/app/assets/icons/date.svg'
+import UserIcon from '@/app/assets/icons/user.svg'
 
 export function EpicCard({
   epic,
@@ -25,13 +26,7 @@ export function EpicCard({
     >
       <div className="flex items-center justify-between w-full">
         <p className="w-fit py-1 px-2.5 bg-[#82F9BE]">{epic.epic_id}</p>
-        <Image
-          src={"/icons/dots.svg"}
-          alt="dots"
-          width={4}
-          height={16}
-          style={{ width: "4px", height: "16px" }}
-        />
+       <DateIcon />
       </div>
       <p className="font-semibold text-xl ">{epic.title}</p>
       <div className="flex items-start flex-col w-full">
@@ -48,26 +43,14 @@ export function EpicCard({
         </div>
         <div className="w-full pt-2 border-t border-surface-low flex items-center justify-between text-surface-highest">
           <div className="flex items-center gap-2">
-            <Image
-              src={"/icons/user.svg"}
-              alt="user"
-              width={11}
-              height={10}
-              style={{ width: "11px", height: "10px" }}
-            />
+           <UserIcon />
             <p className="text-[#434654CC]">
               Created by:{" "}
               <span className="text-black">{epic.created_by.name}</span>
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Image
-              src={"/icons/date.svg"}
-              alt="date icon"
-              width={10}
-              height={12}
-              style={{ width: "10.5px", height: "12px" }}
-            />
+         <DateIcon />
             <p className="text-[#434654CC]">{formatted}</p>
           </div>
         </div>
