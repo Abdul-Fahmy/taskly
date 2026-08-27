@@ -171,21 +171,9 @@ export default function EpicsPage() {
   const isSearchLoading = isSearching && status === "loading";
   const showInitialEmptyState =
     !isSearching && status === "succeeded" && epics.length === 0;
-  const showPageSkeleton =
-    isMobile === null ||
-    (status === "loading" && !isSearching && epics.length === 0);
 
-  if (showPageSkeleton) {
-    return (
-      <section className="w-full p-2">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <ProjectEpicsSkeleton key={index} />
-          ))}
-        </div>
-      </section>
-    );
-  }
+
+
 
   if (status === "failed" && epics.length === 0) {
     return (
