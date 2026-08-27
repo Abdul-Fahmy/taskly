@@ -1,5 +1,6 @@
-"use client";
-import Image from "next/image";
+
+import BackArrow from '@/app/assets/icons/backArrow.svg'
+import ForwardArrow from '@/app/assets/icons/forwardArrow.svg'
 
 function getPagination(currentPage: number, totalPages: number) {
   const pages: (number | "...")[] = [];
@@ -61,13 +62,7 @@ export default function Pagination({
             onPageChange(currentPage - 1);
           }}
         >
-          <Image
-            src={"/icons/backArrow.svg"}
-            alt="back arrow"
-            width={20}
-            height={20}
-            style={{ width: "10px", height: "10px" }}
-          />
+        <BackArrow />
         </button>
         {getPagination(currentPage, totalPages).map((item, index) =>
           item === "..." ? (
@@ -93,13 +88,7 @@ export default function Pagination({
             onPageChange(currentPage + 1);
           }}
         >
-          <Image
-            src={"/icons/forwardArrow.svg"}
-            alt="forward arrow"
-            width={10}
-            height={10}
-            style={{ width: "10px", height: "10px" }}
-          />
+         <ForwardArrow/>
         </button>
       </div>
     </div>
