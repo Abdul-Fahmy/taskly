@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 export default function MembersPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useAppDispatch();
-  const {members, status} = useAppSelector((state) => state.members);
+  const { members, status } = useAppSelector((state) => state.members);
   const pathname = usePathname();
   const project = useAppSelector((state) => state.project.project);
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
@@ -82,7 +82,7 @@ export default function MembersPage() {
           </span>
         </div>
 
-        {status === 'loading' ? (
+        {status === "loading" ? (
           <MemberSkeleton />
         ) : members.length === 0 ? (
           <p className="px-4 py-6 text-[14px] text-[#434654]">No members yet</p>

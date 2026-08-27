@@ -103,8 +103,7 @@ export function ListView({ searchTerm }: { searchTerm: string }) {
   };
 
   const showInitialSkeleton =
-    isMobile === null ||
-    (allTasksStatus === "loading" && tasks.length === 0);
+    isMobile === null || (allTasksStatus === "loading" && tasks.length === 0);
 
   if (showInitialSkeleton) {
     return <TaskListSkeleton />;

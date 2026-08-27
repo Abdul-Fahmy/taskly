@@ -1,5 +1,3 @@
-import { cookies } from "next/headers";
-
 type FetchOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
   token?: string;
@@ -54,7 +52,7 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!apiKey) throw new Error("missing supabase api key");
-  
+
   const response = await fetch(url, {
     ...options,
     headers: {

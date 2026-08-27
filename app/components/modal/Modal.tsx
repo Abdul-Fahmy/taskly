@@ -44,8 +44,6 @@ export default function Modal({
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
-        
-
         {children}
       </div>
     </div>

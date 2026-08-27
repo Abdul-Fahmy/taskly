@@ -27,41 +27,44 @@ export const fetchEpicsPagination = createAsyncThunk<
     append?: boolean;
     searchTerm?: string;
   }
->("epics/fetchPagination", async ({ projectId, limit, page, searchTerm }, { signal }) => {
-  const pageLimit = limit ?? 10;
-  const currentPage = page ?? 1;
-  const offset = (currentPage - 1) * pageLimit;
-  const params = new URLSearchParams({
-    limit: String(pageLimit),
-    offset: String(offset),
-  });
-  const trimmedSearchTerm = searchTerm?.trim();
-  if (trimmedSearchTerm) {
-    params.set("searchTerm", trimmedSearchTerm);
-  }
+>(
+  "epics/fetchPagination",
+  async ({ projectId, limit, page, searchTerm }, { signal }) => {
+    const pageLimit = limit ?? 10;
+    const currentPage = page ?? 1;
+    const offset = (currentPage - 1) * pageLimit;
+    const params = new URLSearchParams({
+      limit: String(pageLimit),
+      offset: String(offset),
+    });
+    const trimmedSearchTerm = searchTerm?.trim();
+    if (trimmedSearchTerm) {
+      params.set("searchTerm", trimmedSearchTerm);
+    }
 
-  const response = await fetch(
-    `/api/project/${projectId}/epics?${params.toString()}`,
-    { signal },
-  );
+    const response = await fetch(
+      `/api/project/${projectId}/epics?${params.toString()}`,
+      { signal },
+    );
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    throw new Error(error?.message ?? "Failed to fetch pagination");
-  }
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+      throw new Error(error?.message ?? "Failed to fetch pagination");
+    }
 
-  const contentRange = response.headers.get("content-range");
-  const totalPart = contentRange?.split("/")[1];
-  const totalCount = totalPart ? Number(totalPart) : Number.NaN;
+    const contentRange = response.headers.get("content-range");
+    const totalPart = contentRange?.split("/")[1];
+    const totalCount = totalPart ? Number(totalPart) : Number.NaN;
 
-  if (!Number.isFinite(totalCount)) {
-    throw new Error("Pagination response is missing a valid total count");
-  }
+    if (!Number.isFinite(totalCount)) {
+      throw new Error("Pagination response is missing a valid total count");
+    }
 
-  const epics = (await response.json()) as Epic[];
+    const epics = (await response.json()) as Epic[];
 
-  return { epics, totalCount };
-});
+    return { epics, totalCount };
+  },
+);
 
 const initialState: EpicState = {
   epics: [],

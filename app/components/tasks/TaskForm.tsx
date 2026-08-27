@@ -15,8 +15,6 @@ import { fetchMembers } from "@/app/store/features/members.slice";
 import { statusOptions } from "@/app/constant/taskStatus";
 import { selectClassNames } from "@/app/constant/classesForSelect";
 
-
-
 const emptySubscribe = () => () => {};
 
 function useIsClient() {

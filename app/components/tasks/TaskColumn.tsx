@@ -8,7 +8,6 @@ import { fetchTasks } from "@/app/store/features/tasks.slice";
 import TaskColumnSkeleton from "./Skeleton/TaskColumnSkeleton";
 import { useDroppable } from "@dnd-kit/react";
 
-
 import { statusColors } from "@/app/constant/taskStatusColor";
 
 const EMPTY_TASKS: Task[] = [];
@@ -23,14 +22,7 @@ type TaskColumnProps = {
   searchTerm: string;
 };
 
-
-
-
-export function TaskColumn({
-  status,
-  onAddTask,
-  searchTerm,
-}: TaskColumnProps) {
+export function TaskColumn({ status, onAddTask, searchTerm }: TaskColumnProps) {
   const { projectId } = useParams<{ projectId: string }>();
 
   const dispatch = useAppDispatch();
@@ -48,6 +40,13 @@ export function TaskColumn({
   );
 
   const [page, setPage] = useState(1);
+  const columnKey = `${projectId}-${searchTerm}-${status.value}`;
+  const [prevColumnKey, setPrevColumnKey] = useState(columnKey);
+
+  if (columnKey !== prevColumnKey) {
+    setPrevColumnKey(columnKey);
+    setPage(1);
+  }
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -61,10 +60,6 @@ export function TaskColumn({
       status: status.value,
     },
   });
-
-  useEffect(() => {
-    setPage(1);
-  }, [projectId, searchTerm, status.value]);
 
   useEffect(() => {
     const promise = dispatch(
@@ -138,9 +133,7 @@ export function TaskColumn({
             className={`h-2 w-2 rounded-full ${statusColors[status.value]}`}
           />
 
-          <h3 className="text-sm font-semibold">
-            {status.label}
-          </h3>
+          <h3 className="text-sm font-semibold">{status.label}</h3>
 
           <p className="bg-task-count px-1.5 py-0.5 text-[10px] font-bold">
             {totalCount}
@@ -166,27 +159,15 @@ export function TaskColumn({
             +
           </span>
 
-          <p className="text-[12px] font-bold uppercase">
-            Add new task
-          </p>
+          <p className="text-[12px] font-bold uppercase">Add new task</p>
         </button>
 
-        <div
-          ref={scrollRef}
-          className="max-h-96 overflow-y-auto"
-        >
+        <div ref={scrollRef} className="max-h-96 overflow-y-auto">
           {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-            />
+            <TaskCard key={task.id} task={task} />
           ))}
 
-          <div
-            ref={loadMoreRef}
-            className="h-1"
-            aria-hidden="true"
-          />
+          <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
 
           {columnStatus === "loading" && tasks.length > 0 && (
             <div className="my-2 h-24 animate-pulse rounded-lg bg-gray-100" />

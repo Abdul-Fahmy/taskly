@@ -23,8 +23,9 @@ import { fetchMembers } from "@/app/store/features/members.slice";
 import CopyIcon from "@/app/assets/icons/copy.svg";
 import CloseModal from "@/app/assets/icons/closeModal.svg";
 
- const selectClassNames = {
-  control: () => "  w-full cursor-pointer border border-[#D7E2FF] rounded-md p-2 ",
+const selectClassNames = {
+  control: () =>
+    "  w-full cursor-pointer border border-[#D7E2FF] rounded-md p-2 ",
   valueContainer: () => "p-0",
   input: () => "m-0 p-0",
   indicatorsContainer: () => "p-0",
@@ -151,11 +152,6 @@ export default function EpicDetailsPopup({
       label: member.metadata?.name ?? member.email,
     })) ?? []),
   ];
-
-  const selectedAssignee =
-    assigneeOptions.find(
-      (option) => option.value === (localEpic.assignee?.sub ?? ""),
-    ) ?? assigneeOptions[0];
 
   const commitEpic = (partial: Partial<Epic>) => {
     const next = { ...localEpicRef.current, ...partial };
@@ -381,8 +377,9 @@ export default function EpicDetailsPopup({
           >
             Assignee
           </label>
-          
-            {isEditingAssignee ?(<Controller
+
+          {isEditingAssignee ? (
+            <Controller
               control={control}
               name="assignee_id"
               render={({ field }) => (
@@ -409,8 +406,9 @@ export default function EpicDetailsPopup({
                   }}
                 />
               )}
-            />) :(
-              <Controller
+            />
+          ) : (
+            <Controller
               control={control}
               name="assignee_id"
               render={({ field }) => (
@@ -438,8 +436,7 @@ export default function EpicDetailsPopup({
                 />
               )}
             />
-            )}
-          
+          )}
         </div>
 
         <div className="flex flex-col items-start gap-2">

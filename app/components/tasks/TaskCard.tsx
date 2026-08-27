@@ -44,14 +44,12 @@ export function TaskCard({ task }: TaskCardProps) {
       <div
         className="flex cursor-grab flex-col gap-4 shadow-sm shadow-black/5 active:cursor-grabbing"
         ref={handleRef}
-       
       >
         <div className="flex flex-col items-start gap-4 rounded-md bg-white p-4">
-          
           {/* Drag handle */}
           <div
-             role="button"
-             onClick={() => setOpen(true)}
+            role="button"
+            onClick={() => setOpen(true)}
             className="w-full cursor-pointer  "
           >
             <p>{task.title}</p>

@@ -12,8 +12,7 @@
   --color-surface-highest: #d7e2ff;
   --color-surface-low: #f1f3ff;
   --color-background: #f9f9ff;
-  --color-text-secondary: #434654 
-  --color-text-shadow: #041b3c66;
+  --color-text-secondary: #434654 --color-text-shadow: #041b3c66;
 
   /* ===========================
    Slate

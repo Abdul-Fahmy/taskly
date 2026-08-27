@@ -38,8 +38,7 @@ export default function TasksPage() {
 
   const viewParam = searchParams.get("view");
 
-  const view: "board" | "list" =
-    viewParam === "list" ? "list" : "board";
+  const view: "board" | "list" = viewParam === "list" ? "list" : "board";
 
   const currentView = isMobile ? "list" : view;
 
@@ -59,11 +58,7 @@ export default function TasksPage() {
         <span className=" hidden md:block font-bold uppercase text-[12px] flex items-center gap-1">
           {breadcrumbs.map((item, index) => (
             <span key={item}>
-              {index > 0 && (
-                <span className="mx-2 text-neutral-400">
-                  &gt;
-                </span>
-              )}
+              {index > 0 && <span className="mx-2 text-neutral-400">&gt;</span>}
 
               <span
                 className={
@@ -93,8 +88,8 @@ export default function TasksPage() {
             <Input
               type="search"
               placeholder="Search tasks..."
-              onChange={(e)=>{
-                setSearchTerm(e.target.value)
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
               }}
             />
 
@@ -109,7 +104,7 @@ export default function TasksPage() {
                   SingleValue: CustomSingleValue,
                 }}
                 value={viewOptions.find(
-                  (option) => option.value === currentView
+                  (option) => option.value === currentView,
                 )}
                 onChange={handleViewChange}
                 name="view"
@@ -118,12 +113,14 @@ export default function TasksPage() {
           </div>
         </div>
         <div className="md:hidden block mt-4 w-full px-4 ">
-        <Link   href={`/project/${projectId}/tasks/new`} className="md:hidden block w-full px-4 text-center w-full  btn-primary text-white py-2 rounded-md  mt-4">Create Task</Link>
-
+          <Link
+            href={`/project/${projectId}/tasks/new`}
+            className="md:hidden block w-full px-4 text-center w-full  btn-primary text-white py-2 rounded-md  mt-4"
+          >
+            Create Task
+          </Link>
         </div>
-
       </div>
-
 
       {/* View */}
       {currentView === "list" ? (

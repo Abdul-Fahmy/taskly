@@ -6,9 +6,9 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import TaskDetailsPopupSkeleton from "../Skeleton/TaskDetailsSkeleton";
-import CloseIcon from '@/app/assets/icons/closeModal.svg'
+import CloseIcon from "@/app/assets/icons/closeModal.svg";
 import { statusColors } from "@/app/constant/taskStatusColor";
- 
+
 function formatDisplayDate(value: string | null | undefined) {
   if (!value) {
     return "—";
@@ -44,7 +44,6 @@ export default function TaskDetailsForMobile({
   const { projectId } = useParams<{ projectId: string }>();
   const [task, setTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
 
   useEffect(() => {
     if (!isOpen || !projectId || !taskId) {
@@ -128,7 +127,9 @@ export default function TaskDetailsForMobile({
           </h2>
 
           <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className={`inline-flex h-8 items-center gap-1.5 rounded-full ${statusColors[task.status as keyof typeof statusColors]} px-3.5 text-[13px] font-bold text-[#092B24]`}>
+            <span
+              className={`inline-flex h-8 items-center gap-1.5 rounded-full ${statusColors[task.status as keyof typeof statusColors]} px-3.5 text-[13px] font-bold text-[#092B24]`}
+            >
               {formatStatus(task.status)}
             </span>
 

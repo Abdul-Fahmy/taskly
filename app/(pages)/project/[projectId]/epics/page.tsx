@@ -32,6 +32,14 @@ export default function EpicsPage() {
   const project = useAppSelector((state) => state.project.project);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [prevProjectId, setPrevProjectId] = useState(projectId);
+  const previousDebouncedSearchTerm = useRef("");
+
+  if (projectId !== prevProjectId) {
+    setPrevProjectId(projectId);
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
+  }
 
   const { epics, status, error, currentPage, totalCount, limit } =
     useAppSelector((state) => state.epics);
@@ -40,7 +48,6 @@ export default function EpicsPage() {
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
-  const previousDebouncedSearchTerm = useRef("");
   const hasMore = epics.length < totalCount;
   const breadcrumbs = generateBreadcrumbs(pathname, breadcrumbMap, {
     [projectId]: project?.name || "projectId",
@@ -75,8 +82,6 @@ export default function EpicsPage() {
 
   useEffect(() => {
     dispatch(resetEpicsState());
-    setSearchTerm("");
-    setDebouncedSearchTerm("");
     previousDebouncedSearchTerm.current = "";
   }, [dispatch, projectId]);
 
@@ -134,14 +139,7 @@ export default function EpicsPage() {
     return () => {
       promise.abort();
     };
-  }, [
-    dispatch,
-    currentPage,
-    limit,
-    isMobile,
-    projectId,
-    debouncedSearchTerm,
-  ]);
+  }, [dispatch, currentPage, limit, isMobile, projectId, debouncedSearchTerm]);
 
   useEffect(() => {
     const target = loadMoreRef.current;
@@ -203,9 +201,6 @@ export default function EpicsPage() {
           )
         }
         error={error ?? "Something went wrong"}
-        projectId={projectId}
-        limit={limit}
-        currentPage={currentPage}
       />
     );
   }

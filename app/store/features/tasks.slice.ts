@@ -102,44 +102,47 @@ export const fetchAllTasks = createAsyncThunk<
     append?: boolean;
     searchTerm?: string;
   }
->("tasks/fetchAllTasks", async ({ projectId, limit, page, searchTerm }, { signal }) => {
-  const pageLimit = limit ?? 10;
-  const currentPage = page ?? 1;
-  const offset = (currentPage - 1) * pageLimit;
-  const params = new URLSearchParams({
-    limit: String(pageLimit),
-    offset: String(offset),
-  });
-  const trimmedSearchTerm = searchTerm?.trim();
-  if (trimmedSearchTerm) {
-    params.set("searchTerm", trimmedSearchTerm);
-  }
+>(
+  "tasks/fetchAllTasks",
+  async ({ projectId, limit, page, searchTerm }, { signal }) => {
+    const pageLimit = limit ?? 10;
+    const currentPage = page ?? 1;
+    const offset = (currentPage - 1) * pageLimit;
+    const params = new URLSearchParams({
+      limit: String(pageLimit),
+      offset: String(offset),
+    });
+    const trimmedSearchTerm = searchTerm?.trim();
+    if (trimmedSearchTerm) {
+      params.set("searchTerm", trimmedSearchTerm);
+    }
 
-  const response = await fetch(
-    `/api/project/${projectId}/tasks/allTasks?${params.toString()}`,
-    { signal },
-  );
+    const response = await fetch(
+      `/api/project/${projectId}/tasks/allTasks?${params.toString()}`,
+      { signal },
+    );
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => null);
-    throw new Error(error?.message ?? "Failed to fetch tasks");
-  }
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+      throw new Error(error?.message ?? "Failed to fetch tasks");
+    }
 
-  const contentRange = response.headers.get("content-range");
-  const totalPart = contentRange?.split("/")[1];
-  const totalCount = totalPart ? Number(totalPart) : Number.NaN;
+    const contentRange = response.headers.get("content-range");
+    const totalPart = contentRange?.split("/")[1];
+    const totalCount = totalPart ? Number(totalPart) : Number.NaN;
 
-  if (!Number.isFinite(totalCount)) {
-    throw new Error("Pagination response is missing a valid total count");
-  }
+    if (!Number.isFinite(totalCount)) {
+      throw new Error("Pagination response is missing a valid total count");
+    }
 
-  const tasks = (await response.json()) as Task[];
+    const tasks = (await response.json()) as Task[];
 
-  return {
-    tasks: Array.isArray(tasks) ? tasks : [],
-    totalCount,
-  };
-});
+    return {
+      tasks: Array.isArray(tasks) ? tasks : [],
+      totalCount,
+    };
+  },
+);
 
 export const fetchTasksForEpic = createAsyncThunk<
   Task[],
@@ -168,7 +171,7 @@ export const updateTaskStatus = createAsyncThunk(
   async ({
     taskId,
     status,
-    projectId
+    projectId,
   }: {
     projectId: string;
     taskId: string;
@@ -188,7 +191,7 @@ export const updateTaskStatus = createAsyncThunk(
       throw new Error("Failed to update task status");
     }
     return response.json();
-  }
+  },
 );
 
 const taskSlice = createSlice({
@@ -214,39 +217,37 @@ const taskSlice = createSlice({
       }>,
     ) => {
       const { taskId, fromStatus, toStatus } = action.payload;
-    
+
       // Don't do anything if the status didn't change
       if (fromStatus === toStatus) return;
-    
+
       const sourceTasks = state.tasksByStatus[fromStatus] ?? [];
-    
+
       // Find the task in the old column
-      const taskIndex = sourceTasks.findIndex(
-        (task) => task.id === taskId,
-      );
-    
+      const taskIndex = sourceTasks.findIndex((task) => task.id === taskId);
+
       if (taskIndex === -1) return;
-    
+
       // Remove task from old column
       const [task] = sourceTasks.splice(taskIndex, 1);
-    
+
       // Update its status
       task.status = toStatus;
-    
+
       // Make sure destination column exists
       if (!state.tasksByStatus[toStatus]) {
         state.tasksByStatus[toStatus] = [];
       }
-    
+
       // Add task to destination column
       state.tasksByStatus[toStatus].unshift(task);
-    
+
       // Update counts
       state.totalCountByColumn[fromStatus] = Math.max(
         0,
         (state.totalCountByColumn[fromStatus] ?? 0) - 1,
       );
-    
+
       state.totalCountByColumn[toStatus] =
         (state.totalCountByColumn[toStatus] ?? 0) + 1;
     },
@@ -346,6 +347,9 @@ const taskSlice = createSlice({
   },
 });
 
-export const { setAllTasksCurrentPage, resetBoardTasksState,moveTaskOptimistically } =
-  taskSlice.actions;
+export const {
+  setAllTasksCurrentPage,
+  resetBoardTasksState,
+  moveTaskOptimistically,
+} = taskSlice.actions;
 export const tasksReducer = taskSlice.reducer;

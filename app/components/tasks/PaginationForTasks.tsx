@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import Back from '@/app/assets/icons/backPagination.svg'
-import Forward from '@/app/assets/icons/forwardPagination.svg'
+import Back from "@/app/assets/icons/backPagination.svg";
+import Forward from "@/app/assets/icons/forwardPagination.svg";
 
 interface PaginationForTasksProps {
   limit: number;
@@ -31,7 +30,7 @@ export default function PaginationForTasks({
         onClick={() => onPageChange(currentPage - 1)}
         className="flex h-8 w-8 items-center justify-center  disabled:cursor-not-allowed "
       >
-       <Back />
+        <Back />
       </button>
 
       <span className="text-sm">
@@ -44,7 +43,7 @@ export default function PaginationForTasks({
         onClick={() => onPageChange(currentPage + 1)}
         className="flex h-8 w-8 items-center justify-center   disabled:cursor-not-allowed "
       >
-       <Forward/>
+        <Forward />
       </button>
     </div>
   );

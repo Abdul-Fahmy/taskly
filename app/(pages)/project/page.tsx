@@ -95,12 +95,10 @@ export default function Project() {
 
   if (status === "failed" && projects.length === 0) {
     return (
-      
-        <ApiError 
-          error={error ?? "Failed to load projects."}
-          onRetry={() => dispatch(fetchPagination({ limit, page: currentPage }))}
-        />
-        
+      <ApiError
+        error={error ?? "Failed to load projects."}
+        onRetry={() => dispatch(fetchPagination({ limit, page: currentPage }))}
+      />
     );
   }
 

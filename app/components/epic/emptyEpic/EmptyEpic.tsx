@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import Stars from'@/app/assets/icons/stars.svg'
-import Hierarchy from"@/app/assets/icons/hierarchy.svg"
-import Track from '@/app/assets/icons/track.svg'
+import Stars from "@/app/assets/icons/stars.svg";
+import Hierarchy from "@/app/assets/icons/hierarchy.svg";
+import Track from "@/app/assets/icons/track.svg";
 
 export default function EmptyEpic() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -70,31 +70,35 @@ export default function EmptyEpic() {
       <div className="flex items-center gap-4">
         <div className="flex flex-col items-start bg-[#F1F3FF] p-6 rounded-md h-[180px] gap-8">
           <div className="p-2 bg-white rounded-sm">
-          <Stars />
+            <Stars />
           </div>
-          
-          <p className="text-[#041B3C] font-600 text-[16px]">High-Level Goals</p>
-          <p className="text-[#434654] font-400 text-[12px] ">Define the broad objectives
-that span across multiple
-cycles.</p>
+
+          <p className="text-[#041B3C] font-600 text-[16px]">
+            High-Level Goals
+          </p>
+          <p className="text-[#434654] font-400 text-[12px] ">
+            Define the broad objectives that span across multiple cycles.
+          </p>
         </div>
         <div className="flex flex-col items-start bg-[#F1F3FF] p-6 rounded-md h-[180px] gap-8">
-        <div className="p-2 bg-white rounded-sm">
-          <Hierarchy />
+          <div className="p-2 bg-white rounded-sm">
+            <Hierarchy />
           </div>
-          <p className="text-[#041B3C] font-600 text-[16px]">Hierarchy Design</p>
-          <p className="text-[#434654] font-400 text-[12px] ">Link individual tasks to
-parent epics for a
-consolidated view.</p>
+          <p className="text-[#041B3C] font-600 text-[16px]">
+            Hierarchy Design
+          </p>
+          <p className="text-[#434654] font-400 text-[12px] ">
+            Link individual tasks to parent epics for a consolidated view.
+          </p>
         </div>
         <div className="flex flex-col items-start bg-[#F1F3FF] p-6 rounded-md h-[180px] gap-8">
-        <div className="p-2 bg-white rounded-sm">
-          <Track />
+          <div className="p-2 bg-white rounded-sm">
+            <Track />
           </div>
           <p className="text-[#041B3C] font-600 text-[16px]">Track Velocity</p>
-          <p className="text-[#434654] font-400 text-[12px] ">Visualize percentage
-completion at a macro
-project level.</p>
+          <p className="text-[#434654] font-400 text-[12px] ">
+            Visualize percentage completion at a macro project level.
+          </p>
         </div>
       </div>
     </div>

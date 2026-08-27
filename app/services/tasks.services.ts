@@ -132,12 +132,12 @@ export async function getAllTasksPagination({
   projectId,
   limit,
   offset,
-  searchTerm
+  searchTerm,
 }: {
   projectId: string;
   limit: number;
   offset: number;
-  searchTerm?:string
+  searchTerm?: string;
 }): Promise<{ tasks: Task[]; contentRange: string }> {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const cookiesStore = await cookies();
@@ -215,7 +215,6 @@ export async function getTasksForEpic(epicId: string) {
     token,
   });
 }
-
 
 export async function getTaskDetails({
   projectId,
