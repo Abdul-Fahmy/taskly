@@ -1,8 +1,9 @@
-import Image from "next/image";
 import Input from "../../input/Input";
 import Link from "next/link";
 import Button from "../../button/Button";
 import { ProjectFormProps } from "@/app/types/projectFormCompnent";
+import Icon from '@/app/assets/icons/icon.svg'
+import ErrorIcon from '@/app/assets/icons/error.svg'
 
 export default function ProjectForm({
   form,
@@ -23,13 +24,7 @@ export default function ProjectForm({
     <div className="w-full md:w-2xl bg-white rounded-md shadow-[0_1px_2px_0_#0000000D] mx-auto ">
       <div className="p-8 flex items-center justify-start gap-4">
         <div className="hidden md:blockp-3 h-auto rounded-md bg-[#0052CC1A]">
-          <Image
-            src={"/icons/icon.svg"}
-            alt="icon"
-            width={22}
-            height={20}
-            style={{ width: "22px", height: "20px" }}
-          />
+          <Icon/>
         </div>
         <div className="flex flex-col">
           <p className="text-[24px] font-semibold text-[#041B3C] leading-8">
@@ -57,13 +52,7 @@ export default function ProjectForm({
           />
           {errors.name && (
             <div className="flex items-center gap-1">
-              <Image
-                src={"/icons/error.svg"}
-                alt="error"
-                width={13}
-                height={13}
-                style={{ width: "13px", height: "13px" }}
-              />
+             <ErrorIcon/>
               <p className="text-[12px] text-[#BA1A1A]">
                 {" "}
                 {errors.name?.message}

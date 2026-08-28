@@ -5,12 +5,11 @@ import { useAppSelector } from "@/app/hooks/store.hooks";
 import { projectFormData, projectSchema } from "@/app/schemas/addProjectSchema";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import TipIcon from '@/app/assets/icons/tipIcon.svg'
 
 export default function EditPage() {
   const pathname = usePathname();
@@ -96,13 +95,7 @@ export default function EditPage() {
         displayText="Save changes"
       />
       <div className="md:w-2xl mx-auto pb-8 flex items-center justify-center gap-2 mt-8 px-3">
-        <Image
-          src={"/icons/tip.svg"}
-          alt="tip icon"
-          width={12}
-          height={15}
-          style={{ width: "12px", height: "15px" }}
-        />
+      <TipIcon/>
         <p className="text-[12px] text-[#4F5F7B] ">
           <span className="font-bold">Pro Tip:</span> You can invite project
           members and assign epics immediately after the initial creation

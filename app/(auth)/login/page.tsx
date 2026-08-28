@@ -6,11 +6,11 @@ import { useAppDispatch } from "@/app/hooks/store.hooks";
 import { LoginFormData, loginSchema } from "@/app/schemas/signInSchema";
 import { setUser } from "@/app/store/features/user.slice";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import Logo from '@/app/assets/Logo.svg'
 
 export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
@@ -65,13 +65,7 @@ export default function LoginPage() {
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
         <Link href={"/"} className="ml-10 flex items-center gap-2">
-          <Image
-            src={"/Logo.svg"}
-            alt="Logo"
-            width={18}
-            height={20}
-            style={{ width: "18px", height: "20px" }}
-          />
+        <Logo />
           <p className="font-bold text-xl ">Taskly</p>
         </Link>
       </div>

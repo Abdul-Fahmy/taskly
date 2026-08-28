@@ -1,5 +1,5 @@
 import { Member } from "@/app/types/members";
-import Image from "next/image";
+import DotsIcon from '@/app/assets/icons/dots.svg'
 
 function getInitials(name: string) {
   return name
@@ -50,13 +50,7 @@ export function MemberCard({ members }: { members: Member[] }) {
                   aria-label={`Actions for ${name}`}
                   className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-black/5"
                 >
-                  <Image
-                    src="/icons/dots.svg"
-                    alt=""
-                    width={4}
-                    height={16}
-                    style={{ width: "4px", height: "16px" }}
-                  />
+                  <DotsIcon/>
                 </button>
               ) : null}
             </div>

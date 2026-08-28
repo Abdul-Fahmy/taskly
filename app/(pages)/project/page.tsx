@@ -10,10 +10,13 @@ import {
   fetchPagination,
   setCurrentPage,
 } from "@/app/store/features/project.slice";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import PlusIcon from '@/app/assets/icons/plusIcon.svg'
+import RoundedPlusIcon from '@/app/assets/icons/roundedPlus.svg'
+import WhitePlusIcon from '@/app/assets/icons/whitPlus.svg'
+import NoProjectsIcon from '@/app/assets/icons/noProjects.svg'
 
 export default function Project() {
   const router = useRouter();
@@ -122,13 +125,7 @@ export default function Project() {
               displayText="Create New Project"
               className="hidden md:flex items-center gap-2 btn-primary w-fit "
             >
-              <Image
-                src={"/icons/plusIcon.svg"}
-                alt="plus Icon"
-                width={11}
-                height={11}
-                style={{ width: "11px", height: "11px" }}
-              />
+             <PlusIcon/>
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4 pb-6 ">
@@ -140,13 +137,7 @@ export default function Project() {
               className="hidden md:flex flex-col w-full items-center justify-center gap-2"
             >
               <div className="p-4 bg-[#F1F3FF]">
-                <Image
-                  src={"/icons/roundedPlus.svg"}
-                  alt="rounded plus icon"
-                  width={20}
-                  height={20}
-                  style={{ width: "20px", height: "20px" }}
-                />
+               <RoundedPlusIcon/>
               </div>
               <p className="text-[#434654] font-bold text-[14px]">
                 ADD PROJECT
@@ -162,26 +153,14 @@ export default function Project() {
               displayText=""
               className="flex md:hidden items-center gap-2 btn-primary w-fit "
             >
-              <Image
-                src={"/icons/plusIcon.svg"}
-                alt="plus Icon"
-                width={11}
-                height={11}
-                style={{ width: "11px", height: "11px" }}
-              />
+              <PlusIcon />
             </Button>
           </div>
         </>
       ) : (
         <>
           <div className="w-full min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center gap-4">
-            <Image
-              src={"/noProjects.svg"}
-              alt="no projects found"
-              width={288}
-              height={288}
-              style={{ width: "288px", height: "288px" }}
-            />
+           <NoProjectsIcon/>
             <h3 className="text-[36px] font-semibold">No Projects </h3>
             <p className="text-[18px] text-[#434654] ">
               You don’t have any projects yet. Start by defining your first
@@ -191,13 +170,7 @@ export default function Project() {
               href={"/project/add"}
               className="btn-primary w-fit flex items-center gap-2"
             >
-              <Image
-                src={"/icons/whitPlus.svg"}
-                alt="rounded plus icon"
-                width={20}
-                height={20}
-                style={{ width: "20px", height: "20px" }}
-              />
+             <WhitePlusIcon />
               Create New Project
             </Link>
           </div>

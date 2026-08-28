@@ -3,9 +3,14 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import Input from "@/app/components/input/Input";
 import Button from "@/app/components/button/Button";
+import Logo from '@/app/assets/Logo.svg'
+import ExpiredIcon from '@/app/assets/icons/expiredIcon.svg'
+import CheckedIcon from '@/app/assets/icons/checkedIcon.svg'
+import UncheckedIcon from '@/app/assets/icons/uncheckedIcon.svg'
+import BackArrowIcon from '@/app/assets/icons/backArrowIcon.svg'
+
 import {
   passwordRules,
   ResetPasswordFormData,
@@ -88,13 +93,7 @@ function ResetPasswordForm() {
     return (
       <div className="flex flex-col gap-4 items-center justify-center h-screen">
         <p className="flex items-center gap-2">
-          <Image
-            alt="expired Icon"
-            src={"/icons/expiredIcon.svg"}
-            width={30}
-            height={30}
-            style={{ width: "30px", height: "30px" }}
-          />
+        <ExpiredIcon/>
           Invalid or expired reset link.
         </p>
         <Link href={"/login"} className="text-primary underline">
@@ -108,13 +107,7 @@ function ResetPasswordForm() {
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-white p-4">
         <Link href={"/"} className="ml-10 flex items-center gap-2">
-          <Image
-            src={"/Logo.svg"}
-            alt="Logo"
-            width={18}
-            height={20}
-            style={{ width: "18px", height: "20px" }}
-          />
+         <Logo />
           <p className="font-bold text-xl ">Taskly</p>
         </Link>
       </div>
@@ -159,27 +152,9 @@ function ResetPasswordForm() {
                 >
                   <span>
                     {rule.valid ? (
-                      <Image
-                        src={"/icons/checkedIcon.svg"}
-                        alt="check icon"
-                        width={12}
-                        height={12}
-                        style={{
-                          width: "12px",
-                          height: "12px",
-                        }}
-                      />
+                     <CheckedIcon/>
                     ) : (
-                      <Image
-                        src={"/icons/uncheckedIcon.svg"}
-                        alt="unchecked icon"
-                        width={12}
-                        height={12}
-                        style={{
-                          width: "12px",
-                          height: "12px",
-                        }}
-                      />
+                      <UncheckedIcon/>
                     )}
                   </span>
                   {rule.message}

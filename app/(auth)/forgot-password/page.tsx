@@ -7,10 +7,13 @@ import {
   forgotPasswordSchema,
 } from "@/app/schemas/forgotPassword";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import Logo from '@/app/assets/Logo.svg'
+import BackArrowIcon from '@/app/assets/icons/backArrowIcon.svg'
+import CheckedIcon from '@/app/assets/icons/checkedIcon.svg'
+import TimerIcon from '@/app/assets/icons/timerIcon.svg'
 
 const SUCCESS_MESSAGE =
   "If an account exists with this email, we’ve sent a password reset link.";
@@ -224,13 +227,7 @@ export default function ForgotPasswordPage() {
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
         <Link href={"/"} className="ml-10 flex items-center gap-2">
-          <Image
-            src={"/Logo.svg"}
-            alt="Logo"
-            width={18}
-            height={20}
-            style={{ width: "auto", height: "20px" }}
-          />
+         <Logo />
           <p className="font-bold text-xl uppercase">Taskly</p>
         </Link>
       </div>
@@ -277,27 +274,14 @@ export default function ForgotPasswordPage() {
           href={"/login"}
           className="text-primary flex items-center gap-2 font-medium text-sm"
         >
-          <Image
-            src={"/icons/backArrowIcon.svg"}
-            alt="arrow-left icon"
-            width={16}
-            height={16}
-            style={{ width: "16px", height: "16px" }}
-          />
+         <BackArrowIcon />
           Back to log in
         </Link>
 
         {ready && successMessage && (
           <div className="w-full max-w-[366px] flex flex-col gap-4 pt-2">
             <div className="flex items-start gap-3 rounded-md bg-[#E7F8EF] px-4 py-3">
-              <Image
-                src={"/icons/checkedIcon.svg"}
-                alt="success"
-                width={16}
-                height={16}
-                className="mt-0.5 shrink-0"
-                style={{ width: "16px", height: "16px" }}
-              />
+             <CheckedIcon />
               <p className="text-sm text-[#004E32] leading-relaxed">
                 {successMessage}
               </p>
@@ -318,13 +302,8 @@ export default function ForgotPasswordPage() {
                   "Sending..."
                 ) : cooldownLeft > 0 ? (
                   <>
-                    <Image
-                      src={"/icons/timerIcon.svg"}
-                      alt="timer"
-                      width={16}
-                      height={16}
-                      style={{ width: "16px", height: "16px" }}
-                    />
+                    
+                    <TimerIcon />
                     Resend in {formatCountdown(cooldownLeft)}
                   </>
                 ) : trials >= MAX_TRIALS ? (

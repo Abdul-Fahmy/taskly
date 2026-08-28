@@ -3,11 +3,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Button from "../../button/Button";
 import { FormProps } from "@/app/types/epicForm";
-import Image from "next/image";
 import { useEffect } from "react";
 import { epicFormData } from "@/app/schemas/addEpicSchema";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { fetchMembers } from "@/app/store/features/members.slice";
+import ErrorIcon from '@/app/assets/icons/error.svg'
 
 export default function EpicForm({
   form,
@@ -46,13 +46,7 @@ export default function EpicForm({
             />
             {errors.title && (
               <div className="flex items-center gap-1">
-                <Image
-                  src={"/icons/error.svg"}
-                  alt="error"
-                  width={13}
-                  height={13}
-                  style={{ width: "13px", height: "13px" }}
-                />
+               <ErrorIcon/>
                 <p className="text-[12px] text-[#BA1A1A]">
                   {" "}
                   {errors.title?.message}

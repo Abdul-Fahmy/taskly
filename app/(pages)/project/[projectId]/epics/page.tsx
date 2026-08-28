@@ -15,13 +15,15 @@ import {
   setEpics,
 } from "@/app/store/features/epics.slice";
 import { Epic } from "@/app/types/epicResponse";
-import Image from "next/image";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import ApiError from "@/app/components/apiError/ApiError";
 import TaskDetailsModal from "@/app/components/tasks/taskDetails/TaskDetailsModal";
+import PlusIcon from '@/app/assets/icons/plusIcon.svg'
+
+
 
 export default function EpicsPage() {
   const router = useRouter();
@@ -235,13 +237,7 @@ export default function EpicsPage() {
                 displayText="Create New Epic"
                 className="hidden md:flex items-center gap-2 btn-primary w-full "
               >
-                <Image
-                  src={"/icons/plusIcon.svg"}
-                  alt="plus Icon"
-                  width={11}
-                  height={11}
-                  style={{ width: "11px", height: "11px" }}
-                />
+                <PlusIcon/>
               </Button>
             </div>
           </div>
