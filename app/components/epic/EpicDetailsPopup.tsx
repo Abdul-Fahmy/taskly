@@ -21,12 +21,10 @@ import TaskCardEpic from "../tasks/TaskCardEpic";
 import { fetchMembers } from "@/app/store/features/members.slice";
 import CopyIcon from "@/app/assets/icons/copy.svg";
 import CloseModal from "@/app/assets/icons/closeModal.svg";
-import DateIcon from '@/app/assets/icons/date.svg'
-import Epics from '@/app/assets/icons/epics.svg'
-import ErrorIcon from '@/app/assets/icons/error.svg'
-import EpicsTasks from '@/app/assets/icons/epicsTasks.svg'
-
-
+import DateIcon from "@/app/assets/icons/date.svg";
+import Epics from "@/app/assets/icons/epics.svg";
+import ErrorIcon from "@/app/assets/icons/error.svg";
+import EpicsTasks from "@/app/assets/icons/epicsTasks.svg";
 
 const selectClassNames = {
   control: () =>
@@ -322,7 +320,7 @@ export default function EpicDetailsPopup({
           />
           {errors.title && (
             <div className="flex items-center gap-1 mt-1">
-             <ErrorIcon />
+              <ErrorIcon />
               <p className="text-[12px] text-[#BA1A1A]">
                 {errors.title.message}
               </p>
@@ -454,7 +452,7 @@ export default function EpicDetailsPopup({
         <div className="flex flex-col items-start gap-2">
           <p className="text-[10px] font-bold">Created at</p>
           <p className="text-[14px] flex gap-2 items-center">
-           <DateIcon />
+            <DateIcon />
             {formatted}
           </p>
         </div>

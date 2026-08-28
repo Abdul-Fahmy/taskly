@@ -172,9 +172,6 @@ export default function EpicsPage() {
   const showInitialEmptyState =
     !isSearching && status === "succeeded" && epics.length === 0;
 
-
-
-
   if (status === "failed" && epics.length === 0) {
     return (
       <ApiError
