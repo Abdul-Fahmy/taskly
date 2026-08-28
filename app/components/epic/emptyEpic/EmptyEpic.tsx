@@ -3,10 +3,10 @@ import { useParams } from "next/navigation";
 import Stars from "@/app/assets/icons/stars.svg";
 import Hierarchy from "@/app/assets/icons/hierarchy.svg";
 import Track from "@/app/assets/icons/track.svg";
-import RocketIcon from '@/app/assets/icons/rocket.svg'
-import CutIcon from '@/app/assets/icons/cut.svg'
-import PlusEpicIcon from '@/app/assets/icons/plusEpic.svg'
-import SpeedIcon from '@/app/assets/icons/speed.svg'
+import RocketIcon from "@/app/assets/icons/rocket.svg";
+import CutIcon from "@/app/assets/icons/cut.svg";
+import PlusEpicIcon from "@/app/assets/icons/plusEpic.svg";
+import SpeedIcon from "@/app/assets/icons/speed.svg";
 
 export default function EmptyEpic() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -14,16 +14,16 @@ export default function EmptyEpic() {
     <div className="w-full min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center gap-4">
       <div className="grid grid-cols-2 gap-2 bg-white p-6 rounded-md ">
         <div className="bg-[#0052CC33] w-16 h-16 flex items-center justify-center">
-         <RocketIcon/>
+          <RocketIcon />
         </div>
         <div className="bg-[#0052CC33] w-16 h-16 flex items-center justify-center">
-        <CutIcon/>
+          <CutIcon />
         </div>
         <div className="bg-[#0052CC33] w-16 h-16 flex items-center justify-center">
-          <Track/>
+          <Track />
         </div>
         <div className="bg-[#003D9B33] w-16 h-16 border border-dashed border-primary-container flex items-center justify-center">
-         <PlusEpicIcon/>
+          <PlusEpicIcon />
         </div>
       </div>
       <h3 className="text-[36px] font-semibold">
@@ -37,7 +37,7 @@ export default function EmptyEpic() {
         href={`/project/${projectId}/epics/new`}
         className="btn-primary w-fit flex items-center gap-2"
       >
-        <SpeedIcon/>
+        <SpeedIcon />
         Create First Epic
       </Link>
       <div className="flex items-center gap-4">

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { fetchCurrentUser } from "@/app/store/features/user.slice";
 import Link from "next/link";
 import { useEffect } from "react";
-import MenuIcon from '@/app/assets/icons/menu.svg'
+import MenuIcon from "@/app/assets/icons/menu.svg";
 
 function getInitials(name: string) {
   return name
@@ -40,7 +40,7 @@ export default function NavBar() {
     >
       <div className="flex h-full items-center justify-between md:justify-end gap-2">
         <div className="flex items-center gap-2 md:hidden">
-          <MenuIcon/>
+          <MenuIcon />
           <Link href={"/project"} className="text-[20px] font-bold">
             Taskly
           </Link>

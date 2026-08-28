@@ -5,11 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Input from "@/app/components/input/Input";
 import Button from "@/app/components/button/Button";
-import Logo from '@/app/assets/Logo.svg'
-import ExpiredIcon from '@/app/assets/icons/expiredIcon.svg'
-import CheckedIcon from '@/app/assets/icons/checkedIcon.svg'
-import UncheckedIcon from '@/app/assets/icons/uncheckedIcon.svg'
-import BackArrowIcon from '@/app/assets/icons/backArrowIcon.svg'
+import Logo from "@/app/assets/Logo.svg";
+import ExpiredIcon from "@/app/assets/icons/expiredIcon.svg";
+import CheckedIcon from "@/app/assets/icons/checkedIcon.svg";
+import UncheckedIcon from "@/app/assets/icons/uncheckedIcon.svg";
 
 import {
   passwordRules,
@@ -93,7 +92,7 @@ function ResetPasswordForm() {
     return (
       <div className="flex flex-col gap-4 items-center justify-center h-screen">
         <p className="flex items-center gap-2">
-        <ExpiredIcon/>
+          <ExpiredIcon />
           Invalid or expired reset link.
         </p>
         <Link href={"/login"} className="text-primary underline">
@@ -107,7 +106,7 @@ function ResetPasswordForm() {
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-white p-4">
         <Link href={"/"} className="ml-10 flex items-center gap-2">
-         <Logo />
+          <Logo />
           <p className="font-bold text-xl ">Taskly</p>
         </Link>
       </div>
@@ -151,11 +150,7 @@ function ResetPasswordForm() {
                   }`}
                 >
                   <span>
-                    {rule.valid ? (
-                     <CheckedIcon/>
-                    ) : (
-                      <UncheckedIcon/>
-                    )}
+                    {rule.valid ? <CheckedIcon /> : <UncheckedIcon />}
                   </span>
                   {rule.message}
                 </li>

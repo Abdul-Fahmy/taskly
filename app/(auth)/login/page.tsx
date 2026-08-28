@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import Logo from '@/app/assets/Logo.svg'
+import Logo from "@/app/assets/Logo.svg";
 
 export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
@@ -65,7 +65,7 @@ export default function LoginPage() {
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
         <Link href={"/"} className="ml-10 flex items-center gap-2">
-        <Logo />
+          <Logo />
           <p className="font-bold text-xl ">Taskly</p>
         </Link>
       </div>

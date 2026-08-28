@@ -15,9 +15,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import Logo from '@/app/assets/Logo.svg'
-import CheckedIcon from '@/app/assets/icons/checkedIcon.svg'
-import UncheckedIcon from '@/app/assets/icons/uncheckedIcon.svg'
+import Logo from "@/app/assets/Logo.svg";
+import CheckedIcon from "@/app/assets/icons/checkedIcon.svg";
+import UncheckedIcon from "@/app/assets/icons/uncheckedIcon.svg";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -83,7 +83,7 @@ export default function SignupPage() {
     <section className="section">
       <div className="fixed top-0 left-0 right-0 bg-transparent p-4">
         <div className="md:ml-10 flex items-center gap-2">
-        <Logo/>
+          <Logo />
           <p className="font-bold text-xl ">Taskly</p>
         </div>
       </div>
@@ -142,11 +142,7 @@ export default function SignupPage() {
               {passwordStatus.map((rule) => (
                 <li key={rule.message} className="flex items-center gap-2">
                   <span>
-                    {rule.valid ? (
-                      <CheckedIcon />
-                    ) : (
-                      <UncheckedIcon/>
-                    )}
+                    {rule.valid ? <CheckedIcon /> : <UncheckedIcon />}
                   </span>
                   {rule.message}
                 </li>

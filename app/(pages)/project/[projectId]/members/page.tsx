@@ -10,8 +10,7 @@ import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { fetchMembers } from "@/app/store/features/members.slice";
 import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import PlusIcon from '@/app/assets/icons/plusIcon.svg'
-
+import PlusIcon from "@/app/assets/icons/plusIcon.svg";
 
 export default function MembersPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -60,7 +59,7 @@ export default function MembersPage() {
           displayText="Invite Members"
           className="hidden md:flex items-center gap-2 btn-primary w-fit "
         >
-         <PlusIcon/>
+          <PlusIcon />
         </Button>
       </div>
 

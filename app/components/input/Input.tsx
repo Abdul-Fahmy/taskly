@@ -1,8 +1,8 @@
 "use client";
 
 import { forwardRef, InputHTMLAttributes, useState } from "react";
-import EyeIconOpen from '@/app/assets/icons/eyeIcon.svg'
-import ClosedEyeIcon from '@/app/assets/icons/closedEyeIcon.svg'
+import EyeIconOpen from "@/app/assets/icons/eyeIcon.svg";
+import ClosedEyeIcon from "@/app/assets/icons/closedEyeIcon.svg";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: React.ReactNode;
@@ -11,14 +11,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 function EyeIcon({ open }: { open: boolean }) {
   if (open) {
-    return (
-      <EyeIconOpen open={open} />
-    );
+    return <EyeIconOpen open={open} />;
   }
 
-  return (
-   <ClosedEyeIcon/>
-  );
+  return <ClosedEyeIcon />;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(

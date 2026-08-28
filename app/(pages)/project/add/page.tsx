@@ -6,8 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import TipIcon from '@/app/assets/icons/tipIcon.svg'
-
+import TipIcon from "@/app/assets/icons/tipIcon.svg";
 
 const breadcrumbMap: Record<string, string> = {
   project: "Projects",
@@ -96,7 +95,7 @@ export default function AddProject() {
         displayText="Create Project"
       />
       <div className="md:w-2xl mx-auto pb-8 flex items-center justify-center gap-2 mt-8 px-3">
-      <TipIcon/>
+        <TipIcon />
         <p className="text-[12px] text-[#4F5F7B] ">
           <span className="font-bold">Pro Tip:</span> You can invite project
           members and assign epics immediately after the initial creation

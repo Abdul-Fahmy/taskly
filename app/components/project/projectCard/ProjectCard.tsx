@@ -1,6 +1,6 @@
 import { Project } from "@/app/types/project";
 import Link from "next/link";
-import EditIcon from '@/app/assets/icons/Orion_edit.svg'
+import EditIcon from "@/app/assets/icons/Orion_edit.svg";
 
 export default function ProjectCard({ project }: { project: Project }) {
   const formatDate = (date: string) => {
@@ -21,7 +21,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           {project.name}
         </Link>
         <Link href={`/project/${project.id}/edit`}>
-        <EditIcon />
+          <EditIcon />
         </Link>
       </div>
       <Link

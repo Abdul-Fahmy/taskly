@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { epicFormData } from "@/app/schemas/addEpicSchema";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { fetchMembers } from "@/app/store/features/members.slice";
-import ErrorIcon from '@/app/assets/icons/error.svg'
+import ErrorIcon from "@/app/assets/icons/error.svg";
 
 export default function EpicForm({
   form,
@@ -46,7 +46,7 @@ export default function EpicForm({
             />
             {errors.title && (
               <div className="flex items-center gap-1">
-               <ErrorIcon/>
+                <ErrorIcon />
                 <p className="text-[12px] text-[#BA1A1A]">
                   {" "}
                   {errors.title?.message}

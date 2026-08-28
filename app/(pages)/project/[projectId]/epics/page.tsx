@@ -21,9 +21,7 @@ import { generateBreadcrumbs } from "@/app/services/breadcrum";
 import { breadcrumbMap } from "@/app/constant/breadcrumbs";
 import ApiError from "@/app/components/apiError/ApiError";
 import TaskDetailsModal from "@/app/components/tasks/taskDetails/TaskDetailsModal";
-import PlusIcon from '@/app/assets/icons/plusIcon.svg'
-
-
+import PlusIcon from "@/app/assets/icons/plusIcon.svg";
 
 export default function EpicsPage() {
   const router = useRouter();
@@ -237,7 +235,7 @@ export default function EpicsPage() {
                 displayText="Create New Epic"
                 className="hidden md:flex items-center gap-2 btn-primary w-full "
               >
-                <PlusIcon/>
+                <PlusIcon />
               </Button>
             </div>
           </div>

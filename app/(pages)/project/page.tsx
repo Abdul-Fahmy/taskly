@@ -13,10 +13,10 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import PlusIcon from '@/app/assets/icons/plusIcon.svg'
-import RoundedPlusIcon from '@/app/assets/icons/roundedPlus.svg'
-import WhitePlusIcon from '@/app/assets/icons/whitPlus.svg'
-import NoProjectsIcon from '@/app/assets/icons/noProjects.svg'
+import PlusIcon from "@/app/assets/icons/plusIcon.svg";
+import RoundedPlusIcon from "@/app/assets/icons/roundedPlus.svg";
+import WhitePlusIcon from "@/app/assets/icons/whitPlus.svg";
+import NoProjectsIcon from "@/app/assets/icons/noProjects.svg";
 
 export default function Project() {
   const router = useRouter();
@@ -125,7 +125,7 @@ export default function Project() {
               displayText="Create New Project"
               className="hidden md:flex items-center gap-2 btn-primary w-fit "
             >
-             <PlusIcon/>
+              <PlusIcon />
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4 pb-6 ">
@@ -137,7 +137,7 @@ export default function Project() {
               className="hidden md:flex flex-col w-full items-center justify-center gap-2"
             >
               <div className="p-4 bg-[#F1F3FF]">
-               <RoundedPlusIcon/>
+                <RoundedPlusIcon />
               </div>
               <p className="text-[#434654] font-bold text-[14px]">
                 ADD PROJECT
@@ -160,7 +160,7 @@ export default function Project() {
       ) : (
         <>
           <div className="w-full min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center gap-4">
-           <NoProjectsIcon/>
+            <NoProjectsIcon />
             <h3 className="text-[36px] font-semibold">No Projects </h3>
             <p className="text-[18px] text-[#434654] ">
               You don’t have any projects yet. Start by defining your first
@@ -170,7 +170,7 @@ export default function Project() {
               href={"/project/add"}
               className="btn-primary w-fit flex items-center gap-2"
             >
-             <WhitePlusIcon />
+              <WhitePlusIcon />
               Create New Project
             </Link>
           </div>
