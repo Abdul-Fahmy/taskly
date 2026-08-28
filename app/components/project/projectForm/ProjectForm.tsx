@@ -2,7 +2,7 @@ import Input from "../../input/Input";
 import Link from "next/link";
 import Button from "../../button/Button";
 import { ProjectFormProps } from "@/app/types/projectFormCompnent";
-import Icon from "@/app/assets/icons/icon.svg";
+import Icon from "@/app/assets/icons/Icon.svg";
 import ErrorIcon from "@/app/assets/icons/error.svg";
 
 export default function ProjectForm({

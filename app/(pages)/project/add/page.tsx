@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import TipIcon from "@/app/assets/icons/tipIcon.svg";
+import TipIcon from "@/app/assets/icons/tip.svg";
 
 const breadcrumbMap: Record<string, string> = {
   project: "Projects",

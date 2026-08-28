@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import LogoTaskly from "@/app/assets/logoTaskly.svg";
+import LogoTaskly from "@/app/assets/icons/logoTaskly.svg";
 import UserInvitation from "@/app/assets/icons/userInvitation.svg";
 import Button from "@/app/components/button/Button";
 import { zodResolver } from "@hookform/resolvers/zod";
