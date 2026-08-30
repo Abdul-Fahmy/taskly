@@ -80,7 +80,7 @@ export function TaskCard({ task }: TaskCardProps) {
           ${isDragging ? "opacity-50" : ""}
         `}
       >
-        <div className="flex shadow-sm shadow-black/5">
+        <div className="flex shadow-sm shadow-black/5 mb-2">
           <button
             type="button"
             ref={handleRef}
