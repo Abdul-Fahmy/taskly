@@ -58,6 +58,11 @@ export default function EpicsPage() {
     setSelectedEpic(null);
     setSelectedTaskId(taskId);
     setTaskModalOpen(true);
+    window.history.pushState(
+      null,
+      "",
+      `${window.location.pathname}#task-${taskId}`
+    );
   };
 
   const handleClick = async (epicId: string) => {
@@ -78,6 +83,16 @@ export default function EpicsPage() {
     } catch (error) {
       console.error(error);
     }
+  };
+  const handleCloseEpic = () => {
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${window.location.search}`
+    );
+  
+    setOpen(false);
+    setSelectedEpic(null);
   };
 
   useEffect(() => {
@@ -166,6 +181,55 @@ export default function EpicsPage() {
     observer.observe(target);
     return () => observer.disconnect();
   }, [currentPage, dispatch, hasMore, isMobile, status]);
+ 
+
+  useEffect(() => {
+    const hash = window.location.hash;
+  
+    if (!hash.startsWith("#epic-") || !projectId) {
+      return;
+    }
+  
+    const epicId = hash.replace("#epic-", "");
+  
+    const openEpicFromHash = async () => {
+      try {
+        const res = await fetch(
+          `/api/project/${projectId}/epicDetails/${epicId}`
+        );
+  
+        if (!res.ok) {
+          throw new Error("Failed to fetch epic");
+        }
+  
+        const data = await res.json();
+        const epic = Array.isArray(data) ? data[0] : (data?.epic ?? data);
+  
+        if (!epic?.id) {
+          throw new Error("Epic not found");
+        }
+  
+        setSelectedEpic(epic);
+        setOpen(true);
+      } catch (error) {
+        console.error("Failed to open epic from link:", error);
+      }
+    };
+  
+    void openEpicFromHash();
+  }, [projectId]);
+  useEffect(() => {
+    const hash = window.location.hash;
+  
+    if (!hash.startsWith("#task-")) {
+      return;
+    }
+  
+    const taskId = hash.replace("#task-", "");
+  
+    setSelectedTaskId(taskId);
+    setTaskModalOpen(true);
+  }, []);
 
   const isSearching = debouncedSearchTerm.length > 0;
   const isSearchLoading = isSearching && status === "loading";
@@ -314,19 +378,13 @@ export default function EpicsPage() {
       <div className="max-w-2xl">
         <Modal
           isOpen={open}
-          onClose={() => {
-            setOpen(false);
-            setSelectedEpic(null);
-          }}
+          onClose={handleCloseEpic}
           width="672px"
         >
           {selectedEpic && (
             <EpicDetailsPopup
               epic={selectedEpic}
-              onClose={() => {
-                setOpen(false);
-                setSelectedEpic(null);
-              }}
+              onClose={handleCloseEpic}
               onTaskClick={handleTaskClick}
               onEpicUpdated={(updatedEpic) => {
                 setSelectedEpic(updatedEpic);
@@ -350,6 +408,11 @@ export default function EpicsPage() {
           onClose={() => {
             setTaskModalOpen(false);
             setSelectedTaskId(null);
+            window.history.replaceState(
+              null,
+              "",
+              `${window.location.pathname}${window.location.search}`
+            );
           }}
         />
       )}
