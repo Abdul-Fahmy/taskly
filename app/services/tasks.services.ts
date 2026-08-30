@@ -1,6 +1,7 @@
 import { apiFetch } from "@/app/lib/api";
 import { tasksFormData } from "@/app/schemas/newTasksSchema";
 import { Task } from "@/app/types/task";
+import { UpdateTaskPayload } from "@/app/types/taskUpdate";
 import { cookies } from "next/headers";
 type CreateTaskPayload = {
   title: string;
@@ -248,12 +249,14 @@ export async function getTaskDetails({
   return task;
 }
 
-export async function updateTaskStatus({
+export type { UpdateTaskPayload } from "@/app/types/taskUpdate";
+
+export async function updateTask({
   taskId,
-  status,
+  patch,
 }: {
   taskId: string;
-  status: string;
+  patch: UpdateTaskPayload;
 }) {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!baseUrl) {
@@ -266,14 +269,24 @@ export async function updateTaskStatus({
     throw new Error("Missing access token");
   }
 
-  await apiFetch(`${baseUrl}/rest/v1/tasks?id=eq.${taskId}`, {
+  return apiFetch(`${baseUrl}/rest/v1/tasks?id=eq.${taskId}`, {
     method: "PATCH",
     token,
     headers: {
       Prefer: "return=representation",
     },
-    body: { status },
+    body: patch,
   });
+}
+
+export async function updateTaskStatus({
+  taskId,
+  status,
+}: {
+  taskId: string;
+  status: string;
+}) {
+  await updateTask({ taskId, patch: { status } });
 
   return {
     taskId,

@@ -1,4 +1,5 @@
 import { Task, TaskStatus } from "@/app/types/task";
+import { UpdateTaskPayload } from "@/app/types/taskUpdate";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type FetchStatus = "idle" | "loading" | "succeeded" | "failed";
@@ -166,6 +167,36 @@ export const fetchTasksForEpic = createAsyncThunk<
   return Array.isArray(tasks) ? tasks : [];
 });
 
+export const updateTask = createAsyncThunk(
+  "tasks/updateTask",
+  async ({
+    projectId,
+    taskId,
+    updates,
+  }: {
+    projectId: string;
+    taskId: string;
+    updates: UpdateTaskPayload;
+  }) => {
+    const response = await fetch(
+      `/api/project/${projectId}/tasks/taskDetails/${taskId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update task");
+    }
+
+    return { taskId, updates };
+  },
+);
+
 export const updateTaskStatus = createAsyncThunk(
   "tasks/updateTaskStatus",
   async ({
@@ -250,6 +281,94 @@ const taskSlice = createSlice({
 
       state.totalCountByColumn[toStatus] =
         (state.totalCountByColumn[toStatus] ?? 0) + 1;
+    },
+    patchTaskInStore: (
+      state,
+      action: PayloadAction<{
+        taskId: string;
+        updates: Partial<Task>;
+      }>,
+    ) => {
+      const { taskId, updates } = action.payload;
+
+      const applyUpdate = (task: Task): Task => ({ ...task, ...updates });
+
+      const allTaskIndex = state.allTasks.findIndex((task) => task.id === taskId);
+      if (allTaskIndex !== -1) {
+        state.allTasks[allTaskIndex] = applyUpdate(state.allTasks[allTaskIndex]);
+      }
+
+      const epicTaskIndex = state.tasks.findIndex((task) => task.id === taskId);
+      if (epicTaskIndex !== -1) {
+        state.tasks[epicTaskIndex] = applyUpdate(state.tasks[epicTaskIndex]);
+      }
+
+      if (updates.status) {
+        const nextStatus = updates.status as TaskStatus;
+        let foundTask: Task | undefined;
+        let fromStatus: TaskStatus | undefined;
+
+        for (const status of Object.keys(state.tasksByStatus) as TaskStatus[]) {
+          const columnTasks = state.tasksByStatus[status];
+          if (!columnTasks) {
+            continue;
+          }
+
+          const taskIndex = columnTasks.findIndex((task) => task.id === taskId);
+          if (taskIndex === -1) {
+            continue;
+          }
+
+          foundTask = columnTasks[taskIndex];
+          fromStatus = status;
+
+          if (fromStatus !== nextStatus) {
+            columnTasks.splice(taskIndex, 1);
+            state.totalCountByColumn[fromStatus] = Math.max(
+              0,
+              (state.totalCountByColumn[fromStatus] ?? 0) - 1,
+            );
+          }
+          break;
+        }
+
+        if (!foundTask || !fromStatus) {
+          return;
+        }
+
+        const updatedTask = applyUpdate(foundTask);
+
+        if (fromStatus === nextStatus) {
+          const columnTasks = state.tasksByStatus[fromStatus] ?? [];
+          const taskIndex = columnTasks.findIndex((task) => task.id === taskId);
+          if (taskIndex !== -1) {
+            columnTasks[taskIndex] = updatedTask;
+          }
+          return;
+        }
+
+        if (!state.tasksByStatus[nextStatus]) {
+          state.tasksByStatus[nextStatus] = [];
+        }
+
+        state.tasksByStatus[nextStatus]!.unshift(updatedTask);
+        state.totalCountByColumn[nextStatus] =
+          (state.totalCountByColumn[nextStatus] ?? 0) + 1;
+        return;
+      }
+
+      for (const status of Object.keys(state.tasksByStatus) as TaskStatus[]) {
+        const columnTasks = state.tasksByStatus[status];
+        if (!columnTasks) {
+          continue;
+        }
+
+        const taskIndex = columnTasks.findIndex((task) => task.id === taskId);
+        if (taskIndex !== -1) {
+          columnTasks[taskIndex] = applyUpdate(columnTasks[taskIndex]);
+          break;
+        }
+      }
     },
   },
   extraReducers(builder) {
@@ -351,5 +470,6 @@ export const {
   setAllTasksCurrentPage,
   resetBoardTasksState,
   moveTaskOptimistically,
+  patchTaskInStore,
 } = taskSlice.actions;
 export const tasksReducer = taskSlice.reducer;
