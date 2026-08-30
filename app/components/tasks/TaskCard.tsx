@@ -3,7 +3,7 @@
 import { getInitials } from "@/app/constant/getInitials";
 import { Task } from "@/app/types/task";
 import Calendar from "@/app/assets/icons/date.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskDetailsModal from "./taskDetails/TaskDetailsModal";
 import { useDraggable } from "@dnd-kit/react";
 
@@ -32,47 +32,96 @@ export function TaskCard({ task }: TaskCardProps) {
     },
   });
 
+  const handleOpen = () => {
+    setOpen(true);
+
+    window.history.pushState(
+      null,
+      "",
+      `${window.location.pathname}${window.location.search}#task-${task.id}`,
+    );
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${window.location.search}`,
+    );
+  };
+
+  useEffect(() => {
+    const checkHash = () => {
+      const hash = window.location.hash;
+
+      if (hash === `#task-${task.id}`) {
+        setOpen(true);
+      }
+    };
+
+    checkHash();
+
+    window.addEventListener("hashchange", checkHash);
+
+    return () => {
+      window.removeEventListener("hashchange", checkHash);
+    };
+  }, [task.id]);
+
   return (
-    <div
-      ref={ref}
-      className={`
-        rounded-md
-        transition-opacity
-        ${isDragging ? "opacity-50" : ""}
-      `}
-    >
+    <>
       <div
-        className="flex cursor-grab flex-col gap-4 shadow-sm shadow-black/5 active:cursor-grabbing"
-        ref={handleRef}
+        ref={ref}
+        className={`
+          rounded-md
+          transition-opacity
+          ${isDragging ? "opacity-50" : ""}
+        `}
       >
-        <div className="flex flex-col items-start gap-4 rounded-md bg-white p-4">
-          {/* Drag handle */}
+        <div className="flex shadow-sm shadow-black/5">
+          <button
+            type="button"
+            ref={handleRef}
+            aria-label="Drag task"
+            className="flex cursor-grab items-center rounded-l-md bg-white px-2 text-[#94A3B8] active:cursor-grabbing"
+          >
+            ⋮⋮
+          </button>
+
           <div
+            className="flex flex-1 cursor-pointer flex-col gap-4 rounded-r-md bg-white p-4"
+            onClick={handleOpen}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                handleOpen();
+              }
+            }}
             role="button"
-            onClick={() => setOpen(true)}
-            className="w-full cursor-pointer  "
+            tabIndex={0}
           >
             <p>{task.title}</p>
-          </div>
 
-          <div className="flex w-full items-center justify-between">
-            <p className="flex items-center gap-2 text-sm font-700 text-[#94A3B8]">
-              <Calendar />
-              {createdAt}
-            </p>
+            <div className="flex w-full items-center justify-between">
+              <p className="flex items-center gap-2 text-sm font-700 text-[#94A3B8]">
+                <Calendar />
+                {createdAt}
+              </p>
 
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
-              {initials}
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
+                {initials}
+              </div>
             </div>
           </div>
         </div>
-
-        <TaskDetailsModal
-          taskId={task.id}
-          isOpen={open}
-          onClose={() => setOpen(false)}
-        />
       </div>
-    </div>
+
+      <TaskDetailsModal
+        taskId={task.id}
+        isOpen={open}
+        onClose={handleClose}
+      />
+    </>
   );
 }

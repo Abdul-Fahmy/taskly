@@ -121,7 +121,10 @@ export default function TaskDetailsPopup({
   }, [projectId, taskId]);
 
   const handleCopyLink = async () => {
-    await navigator.clipboard.writeText(window.location.href);
+    const url = `${window.location.origin}${window.location.pathname}${window.location.search}#task-${taskId}`;
+  
+    await navigator.clipboard.writeText(url);
+  
     toast.success("Link copied to clipboard");
   };
 
