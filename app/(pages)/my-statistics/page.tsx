@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import DateRangePicker from "@/app/components/myStatistics/DateRangePicker";
 import ProjectFilter from "@/app/components/myStatistics/ProjectsFilter";
 import StatusFilter, { StatusOption } from "@/app/components/myStatistics/StatusFilter";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
+import { fetchProjects } from "@/app/store/features/project.slice";
 
 interface ProjectOption {
   value: string;
@@ -49,21 +51,23 @@ const statuses = [
     },
   ];
 export default function MyStatisticsPage() {
-  const projects: ProjectOption[] = [
-    {
-        value: "all",
+    const dispatch = useAppDispatch()
+    const project = useAppSelector((state) => state.project.projects);
+
+    const projects: ProjectOption[] = [
+      {
+        value: "",
         label: "All Projects",
       },
-    {
-      value: "project1",
-      label: "Project 1",
-    },
-    {
-      value: "project2",
-      label: "Project 2",
-    },
-  ];
+      ...project.map((item) => ({
+        value: item.id,
+        label: item.name,
+      })),
+    ];
 
+    useEffect(()=>{
+        dispatch(fetchProjects())
+    },[dispatch])
   const [selectedProject, setSelectedProject] =
     useState<ProjectOption | null>(projects[0]);
 
