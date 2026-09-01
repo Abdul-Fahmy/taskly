@@ -6,11 +6,9 @@ import ReduxProvider from "./components/reduxProvider/ReduxProvider";
 import { Toaster } from "react-hot-toast";
 import RecoveryHashRedirect from "./components/RecoveryHashRedirect";
 import SessionKeepAlive from "./components/SessionKeepAlive";
+import { cn } from "@/lib/utils";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Taskly",
@@ -33,7 +31,7 @@ export default async function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${inter.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", "font-sans", inter.variable)}
     >
       <body className="min-h-full flex flex-col font-sans">
         <ReduxProvider>

@@ -18,6 +18,13 @@ export default function SideBar() {
 
   const navItems = [
     {
+      label:'My Statistics',
+      src: "/icons/vector.svg",
+      width: 20,
+      height: 16,
+      href: "/my-statistics",
+    },
+    {
       label: "Projects",
       src: "/icons/projectIcon.svg",
       width: 22,
