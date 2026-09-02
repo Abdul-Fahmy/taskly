@@ -19,3 +19,14 @@ export type TaskStatisticsResponse = {
   done_tasks: number;
   overdue_tasks: number;
 };
+
+export type TaskStatisticsProject = {
+  p_start_date: string;
+  p_end_date: string;
+
+};
+export type TasksByProjectResponse = {
+  project_id: string;
+  project_name: string;
+  tasks_count: number;
+}[];

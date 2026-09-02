@@ -7,7 +7,7 @@ import ProjectFilter from "@/app/components/myStatistics/ProjectsFilter";
 import StatusFilter, { StatusOption } from "@/app/components/myStatistics/StatusFilter";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { fetchProjects } from "@/app/store/features/project.slice";
-import { TaskStatisticsResponse } from "@/app/types/myStatisticsParams";
+import { TasksByProjectResponse, TaskStatisticsResponse } from "@/app/types/myStatisticsParams";
 import {
   endOfWeek,
   startOfWeek,
@@ -20,6 +20,7 @@ import StatisticsCard from "@/app/components/myStatistics/StatisticsCard";
 import DaysCard from "@/app/components/myStatistics/DaysCard";
 import MyStatisticsSkeleton from "@/app/components/myStatistics/Skeleton";
 import TasksByStatus from "@/app/components/myStatistics/TasksByStatus";
+import AllProjectCard from "@/app/components/myStatistics/AllProjectCard";
 
 interface ProjectOption {
   value: string | null;
@@ -108,6 +109,7 @@ export default function MyStatisticsPage() {
 
 
   const [statisticsCalendar, setStatisticsCalendar] = useState<TaskStatisticsResponse | null>(null)
+  const [projectsStatistics, setProjectsStatistics] = useState<TasksByProjectResponse | null>(null)
   const days = dateRange.from && dateRange.to
   ? eachDayOfInterval({
       start: dateRange.from,
@@ -155,6 +157,41 @@ export default function MyStatisticsPage() {
   
     fetchStatisticsCalendar();
   }, [dateRange, selectedProject, selectedStatus]);
+
+  useEffect(() => {
+    const fetchStatisticsCalendar = async () => {
+      if (!dateRange.from || !dateRange.to) return;
+  
+      try {
+        setIsLoading(true);
+  
+        const params = new URLSearchParams({
+          startDate: format(dateRange.from, "yyyy-MM-dd"),
+          endDate: format(dateRange.to, "yyyy-MM-dd"),
+        });
+  
+      
+  
+        const response = await fetch(
+          `/api/myStatistics/projects?${params.toString()}`
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch statistics");
+        }
+  
+        const data: TasksByProjectResponse = await response.json();
+  
+        setProjectsStatistics(data);
+      } catch (error) {
+        console.error("Failed to fetch statistics:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchStatisticsCalendar();
+  }, [dateRange]);
 
   if(isLoading) {
     return <MyStatisticsSkeleton />
@@ -207,9 +244,12 @@ export default function MyStatisticsPage() {
     statisticsCalendar={statisticsCalendar}
   />
 </div>
-<div className="flex">
+<div className="flex gap-4">
   <div className="w-full">
     {statisticsCalendar && <TasksByStatus tasks={statisticsCalendar} />}
+  </div>
+  <div className="w-full">
+    <AllProjectCard projects={projectsStatistics} />
   </div>
 </div>
     </div>
