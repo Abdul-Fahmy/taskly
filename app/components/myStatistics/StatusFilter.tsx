@@ -27,7 +27,7 @@ const selectClassNames = {
   };
 
 export type StatusOption = {
-  value: string;
+  value: string | null;
   label: string;
 };
 

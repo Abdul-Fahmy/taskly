@@ -106,5 +106,6 @@ export const config = {
     "/login",
     "/sign-up",
     "/forgot-password",
+    '/my-statistics',
   ],
 };

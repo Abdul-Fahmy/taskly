@@ -27,7 +27,7 @@ import Select from "react-select";
   };
 
 interface ProjectOption {
-  value: string;
+  value: string | null;
   label: string;
 }
 
