@@ -18,6 +18,7 @@ import {
 import type { DateRange } from "react-day-picker";
 import StatisticsCard from "@/app/components/myStatistics/StatisticsCard";
 import DaysCard from "@/app/components/myStatistics/DaysCard";
+import MyStatisticsSkeleton from "@/app/components/myStatistics/Skeleton";
 
 interface ProjectOption {
   value: string | null;
@@ -79,6 +80,8 @@ export default function MyStatisticsPage() {
         to: endOfWeek(today, { weekStartsOn: 1 }),
       };
     });
+    const [isLoading, setIsLoading] = useState(false);
+
 
  
 
@@ -115,32 +118,46 @@ export default function MyStatisticsPage() {
     const fetchStatisticsCalendar = async () => {
       if (!dateRange.from || !dateRange.to) return;
   
-      const params = new URLSearchParams({
-        startDate: format(dateRange.from, "yyyy-MM-dd"),
-        endDate: format(dateRange.to, "yyyy-MM-dd"),
-      });
+      try {
+        setIsLoading(true);
   
-      if (selectedProject?.value) {
-        params.set("projectId", selectedProject.value);
+        const params = new URLSearchParams({
+          startDate: format(dateRange.from, "yyyy-MM-dd"),
+          endDate: format(dateRange.to, "yyyy-MM-dd"),
+        });
+  
+        if (selectedProject?.value) {
+          params.set("projectId", selectedProject.value);
+        }
+  
+        if (selectedStatus?.value) {
+          params.set("status", selectedStatus.value);
+        }
+  
+        const response = await fetch(
+          `/api/myStatistics/byCalender?${params.toString()}`
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch statistics");
+        }
+  
+        const data: TaskStatisticsResponse = await response.json();
+  
+        setStatisticsCalendar(data);
+      } catch (error) {
+        console.error("Failed to fetch statistics:", error);
+      } finally {
+        setIsLoading(false);
       }
-  
-      if (selectedStatus?.value) {
-        params.set("status", selectedStatus.value);
-      }
-  
-      const response = await fetch(
-        `/api/myStatistics/byCalender?${params.toString()}`
-      );
-  
-      const data: TaskStatisticsResponse = await response.json();
-  console.log(data);
-  
-      setStatisticsCalendar(data);
     };
   
     fetchStatisticsCalendar();
   }, [dateRange, selectedProject, selectedStatus]);
 
+  if(isLoading) {
+    return <MyStatisticsSkeleton />
+  }
   return (
     <div className="flex flex-col gap-8 p-8">
       <div className="flex w-full flex-col items-start">
