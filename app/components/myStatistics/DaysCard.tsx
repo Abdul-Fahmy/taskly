@@ -31,7 +31,7 @@ export default function DaysCard({ days, statisticsCalendar }: DaysCardProps) {
             </p>
 
             <p className="text-xl font-bold text-[#041B3C]">
-              {format(day, "MMM d")}
+              {format(day, " d MMM")}
             </p></div>
 
             <div className="mt-2 text-2xl font-bold text-[#041B3C]">
