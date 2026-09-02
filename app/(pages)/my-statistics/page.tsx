@@ -19,6 +19,7 @@ import type { DateRange } from "react-day-picker";
 import StatisticsCard from "@/app/components/myStatistics/StatisticsCard";
 import DaysCard from "@/app/components/myStatistics/DaysCard";
 import MyStatisticsSkeleton from "@/app/components/myStatistics/Skeleton";
+import TasksByStatus from "@/app/components/myStatistics/TasksByStatus";
 
 interface ProjectOption {
   value: string | null;
@@ -205,6 +206,11 @@ export default function MyStatisticsPage() {
     days={days}
     statisticsCalendar={statisticsCalendar}
   />
+</div>
+<div className="flex">
+  <div className="w-full">
+    {statisticsCalendar && <TasksByStatus tasks={statisticsCalendar} />}
+  </div>
 </div>
     </div>
   );

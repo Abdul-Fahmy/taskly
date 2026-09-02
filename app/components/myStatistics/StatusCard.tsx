@@ -4,7 +4,7 @@ type StatusCardProps = {
   status: TaskStatus;
   count: number;
 };
-const statusColors: Record<TaskStatus, string> = {
+export const statusColors: Record<TaskStatus, string> = {
     TO_DO: "#D7E2FF",
     IN_PROGRESS: "#CDDDFF",
     BLOCKED: "#FFDAD6",
@@ -15,7 +15,7 @@ const statusColors: Record<TaskStatus, string> = {
     DONE: "#82F9BE",
   };
 
-const statusLabels: Record<TaskStatus, string> = {
+export const statusLabels: Record<TaskStatus, string> = {
   TO_DO: "To Do",
   IN_PROGRESS: "In Progress",
   BLOCKED: "Blocked",
