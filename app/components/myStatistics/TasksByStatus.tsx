@@ -62,13 +62,17 @@ export default function TasksByStatus({ tasks }: TasksByStatusProps) {
       ];
 
   return (
-    <div className="flex w-full flex-col gap-6 rounded-md bg-white p-6 shadow-md">
+    <div className="flex w-full flex-col gap-6 rounded-md bg-white p-6 shadow-sm">
       <h3 className="text-lg font-bold text-[#041B3C]">Tasks By Status</h3>
 
       <div className="flex w-full items-center gap-10">
         {/* Doughnut Chart */}
         <div className="relative h-[260px] w-1/2 min-w-0">
-          <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer
+    width="100%"
+    height="100%"
+    initialDimension={{ width: 300, height: 260 }}
+  >
             <PieChart>
               <Pie
                 data={displayChartData}

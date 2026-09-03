@@ -7,14 +7,17 @@ const statisticsConfig = {
   "Total tasks": {
     icon: TotalTasks,
     key: "total_tasks",
+    bg: "bg-[#0052CC]/10",
   },
   "Done tasks": {
     icon: DoneTasks,
     key: "done_tasks",
+    bg: "bg-[#00A86B]/10",
   },
   "Overdue tasks": {
     icon: OverdueTasks,
     key: "overdue_tasks",
+    bg: "bg-[#E53935]/10",
   },
 } as const;
 
@@ -27,12 +30,12 @@ type StatisticsCardProps = {
     title,
     statistics,
   }: StatisticsCardProps) {
-    const { icon: Icon, key } = statisticsConfig[title];
+    const { icon: Icon, key , bg} = statisticsConfig[title];
   
     return (
-      <div className="bg-[#FFFFFF] rounded-md flex justify-between items-center p-4 shadow-md">
+      <div className="bg-[#FFFFFF] rounded-md flex justify-between items-center p-4 shadow-sm">
         <div className="flex flex-col gap-2 items-start">
-          <p className="text-[12px] font-700 text-[#041B3C99]">
+          <p className="text-[12px] font-bold text-[#041B3C99]">
             {title}
           </p>
   
@@ -41,7 +44,9 @@ type StatisticsCardProps = {
           </p>
         </div>
   
+        <div className={`rounded-sm p-4 ${bg}`}>
         <Icon />
+        </div>
       </div>
     );
   }

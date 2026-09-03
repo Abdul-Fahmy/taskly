@@ -213,7 +213,7 @@ export default function MyStatisticsPage() {
   value={dateRange}
   onChange={setDateRange}
 />
-        <div className="flex items-center w-1/2 gap-2">
+        <div className="flex items-center gap-2">
           <ProjectFilter
             projects={projects}
             value={selectedProject}
