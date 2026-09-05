@@ -70,7 +70,11 @@ export default function TasksByStatus({ tasks }: TasksByStatusProps) {
           <div className="flex w-full flex-col items-center gap-8 lg:flex-row lg:gap-10">
             {/* Doughnut Chart */}
             <div className="relative h-[220px] w-full shrink-0 sm:h-[260px] lg:w-[45%]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                initialDimension={{ width: 300, height: 220 }}
+              >
                 <PieChart>
                   <Pie
                     data={displayChartData}
