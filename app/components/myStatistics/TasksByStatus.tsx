@@ -61,68 +61,71 @@ export default function TasksByStatus({ tasks }: TasksByStatusProps) {
         },
       ];
 
-  return (
-    <div className="flex w-full flex-col gap-6 rounded-md bg-white p-6 shadow-sm">
-      <h3 className="text-lg font-bold text-[#041B3C]">Tasks By Status</h3>
-
-      <div className="flex w-full items-center gap-10">
-        {/* Doughnut Chart */}
-        <div className="relative h-[260px] w-1/2 min-w-0">
-        <ResponsiveContainer
-    width="100%"
-    height="100%"
-    initialDimension={{ width: 300, height: 260 }}
-  >
-            <PieChart>
-              <Pie
-                data={displayChartData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={70}
-                outerRadius={100}
-                paddingAngle={hasChartData ? 2 : 0}
-                stroke="none"
-              />
-              {hasChartData && <Tooltip />}{" "}
-            </PieChart>
-          </ResponsiveContainer>
-
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-bold text-[#041B3C]">{total}</span>
-
-            <span className="text-sm text-[#434654]">Total</span>
-          </div>
-        </div>
-
-        {/* Progress */}
-        <div className="flex w-1/2 flex-col gap-6">
-          {progressItems.map((item) => (
-            <div key={item.label} className="flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-[#041B3C]">
-                  {item.label}
+      return (
+        <div className="flex w-full flex-col gap-6 rounded-md bg-white p-4 shadow-sm sm:p-6">
+          <h3 className="text-lg font-bold text-[#041B3C]">
+            Tasks By Status
+          </h3>
+      
+          <div className="flex w-full flex-col items-center gap-8 lg:flex-row lg:gap-10">
+            {/* Doughnut Chart */}
+            <div className="relative h-[220px] w-full shrink-0 sm:h-[260px] lg:w-[45%]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={displayChartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={65}
+                    outerRadius={90}
+                    paddingAngle={hasChartData ? 2 : 0}
+                    stroke="none"
+                  />
+      
+                  {hasChartData && <Tooltip />}
+                </PieChart>
+              </ResponsiveContainer>
+      
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-2xl font-bold text-[#041B3C] sm:text-3xl">
+                  {total}
                 </span>
-
-                <span className="text-sm font-semibold text-[#041B3C]">
-                  {item.value}
+      
+                <span className="text-xs text-[#434654] sm:text-sm">
+                  Total
                 </span>
-              </div>
-
-              <div className="h-2 w-full overflow-hidden rounded-full bg-[#E8EDF3]">
-                <div
-                  className="h-full rounded-full transition-all duration-300"
-                  style={{
-                    width: `${item.percentage}%`,
-                    backgroundColor: item.color,
-                  }}
-                />
               </div>
             </div>
-          ))}
+      
+            {/* Progress */}
+            <div className="flex min-w-0 w-full flex-1 flex-col gap-5 lg:gap-6">
+              {progressItems.map((item) => (
+                <div key={item.label} className="flex min-w-0 flex-col gap-2">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="min-w-0 truncate text-sm font-medium text-[#041B3C]">
+                      {item.label}
+                    </span>
+      
+                    <span className="shrink-0 text-sm font-semibold text-[#041B3C]">
+                      {item.value}
+                    </span>
+                  </div>
+      
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#E8EDF3]">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{
+                        width: `${item.percentage}%`,
+                        backgroundColor: item.color,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  );
+      );
 }

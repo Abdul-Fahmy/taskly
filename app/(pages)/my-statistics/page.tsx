@@ -4,17 +4,16 @@ import { useEffect, useState } from "react";
 
 import DateRangePicker from "@/app/components/myStatistics/DateRangePicker";
 import ProjectFilter from "@/app/components/myStatistics/ProjectsFilter";
-import StatusFilter, { StatusOption } from "@/app/components/myStatistics/StatusFilter";
+import StatusFilter, {
+  StatusOption,
+} from "@/app/components/myStatistics/StatusFilter";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { fetchProjects } from "@/app/store/features/project.slice";
-import { TasksByProjectResponse, TaskStatisticsResponse } from "@/app/types/myStatisticsParams";
 import {
-  endOfWeek,
-  startOfWeek,
-  format,
-  eachDayOfInterval,
-  
-} from "date-fns";
+  TasksByProjectResponse,
+  TaskStatisticsResponse,
+} from "@/app/types/myStatisticsParams";
+import { endOfWeek, startOfWeek, format, eachDayOfInterval } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import StatisticsCard from "@/app/components/myStatistics/StatisticsCard";
 import DaysCard from "@/app/components/myStatistics/DaysCard";
@@ -27,126 +26,123 @@ interface ProjectOption {
   label: string;
 }
 const statuses = [
-    {
-      value: null,
-      label: "All Statuses",
-    },
-    {
-      value: "TO_DO",
-      label: "To Do",
-    },
-    {
-      value: "IN_PROGRESS",
-      label: "In Progress",
-    },
-    {
-      value: "BLOCKED",
-      label: "Blocked",
-    },
-    {
-      value: "IN_REVIEW",
-      label: "In Review",
-    },
-    {
-      value: "READY_FOR_QA",
-      label: "Ready for QA",
-    },
-    {
-      value: "REOPENED",
-      label: "Reopened",
-    },
-    {
-      value: "READY_FOR_PRODUCTION",
-      label: "Ready for Production",
-    },
-    {
-      value: "DONE",
-      label: "Done",
-    },
-  ];
+  {
+    value: null,
+    label: "All Statuses",
+  },
+  {
+    value: "TO_DO",
+    label: "To Do",
+  },
+  {
+    value: "IN_PROGRESS",
+    label: "In Progress",
+  },
+  {
+    value: "BLOCKED",
+    label: "Blocked",
+  },
+  {
+    value: "IN_REVIEW",
+    label: "In Review",
+  },
+  {
+    value: "READY_FOR_QA",
+    label: "Ready for QA",
+  },
+  {
+    value: "REOPENED",
+    label: "Reopened",
+  },
+  {
+    value: "READY_FOR_PRODUCTION",
+    label: "Ready for Production",
+  },
+  {
+    value: "DONE",
+    label: "Done",
+  },
+];
 
-  const statisticsCards = [
-    "Total tasks",
-    "Done tasks",
-    "Overdue tasks",
-  ] as const;
+const statisticsCards = ["Total tasks", "Done tasks", "Overdue tasks"] as const;
 
 export default function MyStatisticsPage() {
-    const dispatch = useAppDispatch()
-    const project = useAppSelector((state) => state.project.projects);
-    const [dateRange, setDateRange] = useState<DateRange>(() => {
-      const today = new Date();
-    
-      return {
-        from: startOfWeek(today, { weekStartsOn: 1 }),
-        to: endOfWeek(today, { weekStartsOn: 1 }),
-      };
-    });
-    const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const project = useAppSelector((state) => state.project.projects);
+  const [dateRange, setDateRange] = useState<DateRange>(() => {
+    const today = new Date();
 
+    return {
+      from: startOfWeek(today, { weekStartsOn: 1 }),
+      to: endOfWeek(today, { weekStartsOn: 1 }),
+    };
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
- 
+  const projects: ProjectOption[] = [
+    {
+      value: null,
+      label: "All Projects",
+    },
+    ...project.map((item) => ({
+      value: item.id,
+      label: item.name,
+    })),
+  ];
 
-    const projects: ProjectOption[] = [
-      {
-        value: null,
-        label: "All Projects",
-      },
-      ...project.map((item) => ({
-        value: item.id,
-        label: item.name,
-      })),
-    ];
+  useEffect(() => {
+    dispatch(fetchProjects());
+  }, [dispatch]);
+  const [selectedProject, setSelectedProject] = useState<ProjectOption | null>(
+    projects[0],
+  );
 
-    useEffect(()=>{
-        dispatch(fetchProjects())
-    },[dispatch])
-  const [selectedProject, setSelectedProject] =
-    useState<ProjectOption | null>(projects[0]);
+  const [selectedStatus, setSelectedStatus] = useState<StatusOption | null>(
+    statuses[0] as StatusOption,
+  );
 
-    const [selectedStatus, setSelectedStatus] =
-  useState<StatusOption | null>(statuses[0] as StatusOption);
-
-
-  const [statisticsCalendar, setStatisticsCalendar] = useState<TaskStatisticsResponse | null>(null)
-  const [projectsStatistics, setProjectsStatistics] = useState<TasksByProjectResponse | null>(null)
-  const days = dateRange.from && dateRange.to
-  ? eachDayOfInterval({
-      start: dateRange.from,
-      end: dateRange.to,
-    })
-  : [];
+  const [statisticsCalendar, setStatisticsCalendar] =
+    useState<TaskStatisticsResponse | null>(null);
+  const [projectsStatistics, setProjectsStatistics] =
+    useState<TasksByProjectResponse | null>(null);
+  const days =
+    dateRange.from && dateRange.to
+      ? eachDayOfInterval({
+          start: dateRange.from,
+          end: dateRange.to,
+        })
+      : [];
 
   useEffect(() => {
     const fetchStatisticsCalendar = async () => {
       if (!dateRange.from || !dateRange.to) return;
-  
+
       try {
         setIsLoading(true);
-  
+
         const params = new URLSearchParams({
           startDate: format(dateRange.from, "yyyy-MM-dd"),
           endDate: format(dateRange.to, "yyyy-MM-dd"),
         });
-  
+
         if (selectedProject?.value) {
           params.set("projectId", selectedProject.value);
         }
-  
+
         if (selectedStatus?.value) {
           params.set("status", selectedStatus.value);
         }
-  
+
         const response = await fetch(
-          `/api/myStatistics/byCalender?${params.toString()}`
+          `/api/myStatistics/byCalender?${params.toString()}`,
         );
-  
+
         if (!response.ok) {
           throw new Error("Failed to fetch statistics");
         }
-  
+
         const data: TaskStatisticsResponse = await response.json();
-  
+
         setStatisticsCalendar(data);
       } catch (error) {
         console.error("Failed to fetch statistics:", error);
@@ -154,34 +150,32 @@ export default function MyStatisticsPage() {
         setIsLoading(false);
       }
     };
-  
+
     fetchStatisticsCalendar();
   }, [dateRange, selectedProject, selectedStatus]);
 
   useEffect(() => {
     const fetchStatisticsCalendar = async () => {
       if (!dateRange.from || !dateRange.to) return;
-  
+
       try {
         setIsLoading(true);
-  
+
         const params = new URLSearchParams({
           startDate: format(dateRange.from, "yyyy-MM-dd"),
           endDate: format(dateRange.to, "yyyy-MM-dd"),
         });
-  
-      
-  
+
         const response = await fetch(
-          `/api/myStatistics/projects?${params.toString()}`
+          `/api/myStatistics/projects?${params.toString()}`,
         );
-  
+
         if (!response.ok) {
           throw new Error("Failed to fetch statistics");
         }
-  
+
         const data: TasksByProjectResponse = await response.json();
-  
+
         setProjectsStatistics(data);
       } catch (error) {
         console.error("Failed to fetch statistics:", error);
@@ -189,30 +183,25 @@ export default function MyStatisticsPage() {
         setIsLoading(false);
       }
     };
-  
+
     fetchStatisticsCalendar();
   }, [dateRange]);
 
-  if(isLoading) {
-    return <MyStatisticsSkeleton />
+  if (isLoading) {
+    return <MyStatisticsSkeleton />;
   }
   return (
-    <div className="flex flex-col gap-8 p-8">
-      <div className="flex w-full flex-col items-start">
-        <h1 className="text-3xl font-bold text-[#041B3C]">
-          My Statistics
-        </h1>
+    <div className="flex flex-col gap-6 p-4 sm:gap-8 sm:p-6 lg:p-8">
+    
+      <div className="hidden md:flex w-full flex-col items-start">
+        <h1 className="text-3xl font-bold text-[#041B3C]">My Statistics</h1>
 
         <p className="text-[#434654]">
           Manage your deadlines and track team velocity.
         </p>
       </div>
-
-      <div className="flex w-full justify-between rounded-md bg-surface-highest p-2">
-      <DateRangePicker
-  value={dateRange}
-  onChange={setDateRange}
-/>
+      <div className="flex md:flex-row flex-col w-full justify-between rounded-md bg-surface-highest p-2">
+        <DateRangePicker value={dateRange} onChange={setDateRange} />
         <div className="flex items-center gap-2">
           <ProjectFilter
             projects={projects}
@@ -220,35 +209,47 @@ export default function MyStatisticsPage() {
             onChange={setSelectedProject}
           />
           <StatusFilter
-    statuses={statuses}
-    value={selectedStatus}
-    onChange={setSelectedStatus}
-  />
+            statuses={statuses}
+            value={selectedStatus}
+            onChange={setSelectedStatus}
+          />
         </div>
       </div>
-
-     {statisticsCards && (
-  <div className="grid grid-cols-3 gap-4">
-    {statisticsCards.map((title) => (
-      <StatisticsCard
-        key={title}
-        title={title}
-        statistics={statisticsCalendar}
-      />
-    ))}
-  </div>
-)}
-<div className="grid grid-cols-7 gap-3 h-[420px] ">
+      {statisticsCards && (
+        <div className="grid grid-cols-3 gap-4 overflow-x-auto">
+          {statisticsCards.map((title) => (
+            <StatisticsCard
+              key={title}
+              title={title}
+              statistics={statisticsCalendar}
+            />
+          ))}
+        </div>
+      )}
+     <div
+  className="
+    grid
+    grid-cols-1
+    gap-3
+    md:grid-cols-4
+    lg:grid-cols-7
+    lg:gap-4
+    min-h-[420px]
+  "
+>
   <DaysCard
     days={days}
     statisticsCalendar={statisticsCalendar}
   />
 </div>
-<div className="flex gap-4">
-  <div className="w-full">
-    {statisticsCalendar && <TasksByStatus tasks={statisticsCalendar} />}
+      <div className="mb-16 flex flex-col gap-4 md:flex-row">
+  <div className="relative min-w-0 w-full flex-1">
+    {statisticsCalendar && (
+      <TasksByStatus tasks={statisticsCalendar} />
+    )}
   </div>
-  <div className="w-full">
+
+  <div className="min-w-0 w-full md:w-1/2 ">
     <AllProjectCard projects={projectsStatistics} />
   </div>
 </div>
