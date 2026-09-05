@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/store.hooks";
 import { clearUser } from "@/app/store/features/user.slice";
 import { toggle } from "@/app/store/features/sidebar.slice";
 
+
 export default function SideBar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function SideBar() {
   const navItems = [
     {
       label:'My Statistics',
-      src: "/icons/vector.svg",
+      src: "/icons/Vector.svg",
       width: 20,
       height: 16,
       href: "/my-statistics",
