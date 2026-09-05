@@ -27,12 +27,15 @@ export default function DateRangePicker({
   value,
   onChange,
 }: DateRangePickerProps) {
-  const handleSelect = (selectedDate: Date | undefined) => {
-    if (!selectedDate) return;
-
+  const handleSelect = (range: DateRange | undefined) => {
+    if (!range?.from) return;
+  
+    const from = startOfWeek(range.from, { weekStartsOn: 1 });
+    const to = endOfWeek(range.from, { weekStartsOn: 1 });
+  
     onChange({
-      from: startOfWeek(selectedDate, { weekStartsOn: 1 }),
-      to: endOfWeek(selectedDate, { weekStartsOn: 1 }),
+      from,
+      to,
     });
   };
 
@@ -79,10 +82,10 @@ export default function DateRangePicker({
           )}
         </PopoverTrigger>
 
-        <PopoverContent className="w-auto p-0" align="center">
+        <PopoverContent className="w-auto p-0 bg-white" align="center">
           <Calendar
-            mode="single"
-            selected={value.from}
+            mode="range"
+            selected={value}
             onSelect={handleSelect}
             weekStartsOn={1}
           />
